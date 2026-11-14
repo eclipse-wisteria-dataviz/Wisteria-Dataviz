@@ -138,12 +138,12 @@ elseif(APPLE)
     target_compile_definitions(${TEST_APP} PUBLIC __WXOSX__ __UNITTEST
         $<$<CONFIG:Debug>:__WXDEBUG__ wxDEBUG_LEVEL=2> $<$<CONFIG:Release>:wxDEBUG_LEVEL=0>)
     target_compile_options(${TEST_APP} PUBLIC -Wall -Wextra -Wpedantic
-                           $<$<CONFIG:Debug>:-Og> $<$<CONFIG:Release>:-O2>)
+                           $<$<CONFIG:Debug>:-O0> $<$<CONFIG:Release>:-O2>)
 elseif(UNIX)
     target_compile_definitions(${TEST_APP} PUBLIC __WXGTK__ __UNITTEST
         $<$<CONFIG:Debug>:__WXDEBUG__ wxDEBUG_LEVEL=2> $<$<CONFIG:Release>:wxDEBUG_LEVEL=0>)
     target_compile_options(${TEST_APP} PUBLIC -Wall -Wextra -Wpedantic
-                           $<$<CONFIG:Debug>:-Og> $<$<CONFIG:Release>:-O2>)
+                           $<$<CONFIG:Debug>:-O0> $<$<CONFIG:Release>:-O2>)
 endif()
 
 # Link required libraries to the executable

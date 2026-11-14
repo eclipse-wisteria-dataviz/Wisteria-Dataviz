@@ -189,10 +189,6 @@ if(NOT EXISTS "${wxWidgets_BASEDIR}")
     message(FATAL_ERROR "wxWidgets base directory not found: ${wxWidgets_BASEDIR}")
 endif()
 add_subdirectory(${wxWidgets_BASEDIR} ${CMAKE_CURRENT_SOURCE_DIR}/wxWidgets_lib)
-# workaround for wxscintilla/wxstc circular dependency
-if(TARGET wxscintilla AND TARGET wxstc AND NOT wxBUILD_SHARED)
-    target_link_libraries(wxscintilla INTERFACE wxstc)
-endif()
 set(wxWidgets_LIBRARIES wx::core wx::base wx::xrc wx::propgrid wx::xml
                         wx::aui wx::ribbon wx::qa wx::stc wx::net wx::richtext wx::webview)
 # Apply compiler warning suppressions to wxWidgets targets
@@ -399,8 +395,8 @@ elseif(MINGW OR MSYS)
             $<$<CONFIG:Debug>:__WXDEBUG__> $<$<CONFIG:Release>:NDEBUG>)
     target_compile_options(${WISTERIA_LIB} PUBLIC -Wall -Wextra -Wpedantic -Wshadow -Werror
                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-fstack-protector-strong>
-                           $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-D_FORTIFY_SOURCE=2>
-                           $<$<CONFIG:Debug>:-Og ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
+                           $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<NOT:$<CONFIG:Debug>>>:-D_FORTIFY_SOURCE=2>
+                           $<$<CONFIG:Debug>:-O0 ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
                            $<$<CONFIG:Release>:-O2>)
     target_link_options(${WISTERIA_LIB} PUBLIC
         $<$<CONFIG:Debug>:${SANITIZER_LINK_FLAGS}>)
@@ -410,8 +406,8 @@ elseif(APPLE)
     target_compile_options(${WISTERIA_LIB} PUBLIC -Wall -Wextra -Wpedantic -Wshadow -Werror
                            # Security hardening (only for GCC and Clang)
                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-fstack-protector-strong>
-                           $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-D_FORTIFY_SOURCE=2>
-                           $<$<CONFIG:Debug>:-Og ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
+                           $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<NOT:$<CONFIG:Debug>>>:-D_FORTIFY_SOURCE=2>
+                           $<$<CONFIG:Debug>:-O0 ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
                            $<$<CONFIG:Release>:-O2>)
     target_link_options(${WISTERIA_LIB} PUBLIC
         $<$<CONFIG:Debug>:${SANITIZER_LINK_FLAGS}>)
@@ -420,8 +416,8 @@ elseif(UNIX)
         $<$<CONFIG:Debug>:__WXDEBUG__> $<$<CONFIG:Release>:NDEBUG>)
     target_compile_options(${WISTERIA_LIB} PUBLIC -Wall -Wextra -Wpedantic -Wshadow -Werror
                            $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-fstack-protector-strong>
-                           $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-D_FORTIFY_SOURCE=2>
-                           $<$<CONFIG:Debug>:-Og ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
+                           $<$<AND:$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>,$<NOT:$<CONFIG:Debug>>>:-D_FORTIFY_SOURCE=2>
+                           $<$<CONFIG:Debug>:-O0 ${SANITIZER_FLAGS} ${SANITIZER_EXTRA_FLAGS}>
                            $<$<CONFIG:Release>:-O2>)
     target_link_options(${WISTERIA_LIB} PUBLIC
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:-Wl,-z,relro,-z,now>
