@@ -1,5 +1,6 @@
 project:
   output-dir: "docs-online"
+bibliography: cites.bib
 book:
   cover-image: "docs-manual/wisteria-dataviz-manual-thumb.png"
   chapters:
@@ -11,3 +12,5 @@ book:
     - part: "Options"
       chapters:
       - program-options.qmd
+  appendices:
+    - references.qmd

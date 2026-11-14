@@ -4,6 +4,12 @@ toc: true
 toc-depth: 2
 links-as-notes: true
 linestretch: 1.15
+biblio-title: References
+biblio-style: mla
+biblatexoptions: maxbibnames=4
+link-citations: true
+nocite: '@*'
+csl: modern-language-association.csl
 number-sections: true
 metadata:
   pdf-cover: "images/non-generated/cover.png"

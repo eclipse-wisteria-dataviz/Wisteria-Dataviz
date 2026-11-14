@@ -180,6 +180,8 @@ namespace Wisteria::Graphs
         @par Citation:
          Inspired by the following article:
 
+         Kacira, O., &amp; Klassen, N. (2021, August 19). <i>Data visualization: Quick tips.</i>
+         Association for Institutional Research.
          https://www.airweb.org/article/2021/08/20/data-visualization-quick-tips
     */
     class LikertChart final : public BarChart

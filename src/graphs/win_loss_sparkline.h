@@ -124,7 +124,7 @@ namespace Wisteria::Graphs
          @endcode
 
          @par Citations:
-            Tufte, Edward Rolfe. *Beautiful Evidence*. Graphics Press, 2019.
+            Tufte, Edward Rolfe. *Beautiful Evidence*. Graphics Press, 2006.
      */
     class WinLossSparkline final : public Graph2D
         {
