@@ -1,4 +1,4 @@
-# Notices for *Eclipse Wisteria Dataviz*®
+# Notices for *Eclipse Wisteria-Dataviz*®
 
 This content is produced and maintained by the Eclipse Foundation.
 
@@ -6,7 +6,8 @@ This content is produced and maintained by the Eclipse Foundation.
 
 ## Trademarks
 
-* Eclipse Wisteria Dataviz® is a Trademark of the Eclipse Foundation AISBL.
+* Eclipse Wisteria-Dataviz® is a Trademark of the Eclipse Foundation AISBL.
+* Jakarta and Jakarta EE are Trademarks of the Eclipse Foundation AISBL.
 * Eclipse® is a Trademark of the Eclipse Foundation AISBL.
 * Eclipse Foundation is a Trademark of the Eclipse Foundation AISBL.
 

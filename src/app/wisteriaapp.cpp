@@ -240,7 +240,7 @@ void WisteriaApp::OnQuitMenu([[maybe_unused]] wxCommandEvent& event)
 bool WisteriaApp::OnInit()
     {
     SetAppName(WISTERIA_APP_NAME);
-    SetVendorName(L"Blake Madden");
+    SetVendorName(WISTERIA_PUBLISHER);
 
 #ifdef __WXMSW__
     MSWEnableDarkMode();
@@ -331,11 +331,23 @@ void WisteriaApp::ShowAboutDialog(wxWindow* parent)
         wxLogMessage(L"Unable to read EULA from '%s'", licensePath);
         }
 
+    wxDateTime buildDate;
+    buildDate.ParseDate(__DATE__);
+
     Wisteria::UI::AboutDlgInfo info;
     info.AppName(GetAppName())
         .AppVersion(Wisteria::GetLibraryVersionInfo().GetNumericVersionString())
         .Logo(GetMainFrame()->GetLogo())
-        .Copyright(WISTERIA_COPYRIGHT)
+        // TRANSLATORS: "%s" is the software publisher.
+        .Copyright(wxString::Format(_(L"Copyright ©2005–2026 Blake Madden.\n"
+                                      "Copyright ©2026–%d %s.\nAll rights reserved.\n\n"
+                                      "%s® is a Trademark of %s.\n"
+                                      "Jakarta and Jakarta EE are Trademarks of %s.\n"
+                                      "Eclipse® is a Trademark of %s.\n"
+                                      "Eclipse Foundation is a Trademark of %s."),
+                                    buildDate.GetYear(), WISTERIA_PUBLISHER, WISTERIA_APP_LONG_NAME,
+                                    WISTERIA_PUBLISHER, WISTERIA_PUBLISHER, WISTERIA_PUBLISHER,
+                                    WISTERIA_PUBLISHER))
         .Eula(eula)
         .AddCitationFile(_DT(L"MLA:"), FindResourceFile(_DT(L"citations.mla")))
         .AddCitationFile(_DT(L"APA:"), FindResourceFile(_DT(L"citations.apa")))

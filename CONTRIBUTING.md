@@ -1,10 +1,10 @@
-# Contributing to *Eclipse Wisteria Dataviz*®
+# Contributing to *Eclipse Wisteria-Dataviz*®
 
 Thanks for your interest in this project.
 
 ## Project Description
 
-This is the *Eclipse Wisteria Dataviz* project, a desktop-based data visualization application.
+This is the *Eclipse Wisteria-Dataviz* project, a desktop-based data visualization application.
 
 ## Eclipse Contributor Agreement
 
