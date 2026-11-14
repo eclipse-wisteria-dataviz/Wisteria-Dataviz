@@ -5,24 +5,24 @@ Wisteria Dataviz
 
 | Platforms     | Result        |
 | ------------- | ------------- |
-| Linux  | [![Linux Build & Unit Tests](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/unix-build.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/unix-build.yml) |
-| macOS  | [![macOS Build & Unit Tests](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/macos-build.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/macos-build.yml) |
-| Windows  | [![Windows Build & Unit Tests](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/msbuild.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/msbuild.yml ) |
+| Linux  | [![Linux Build & Unit Tests](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/unix-build.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/unix-build.yml) |
+| macOS  | [![macOS Build & Unit Tests](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/macos-build.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/macos-build.yml) |
+| Windows  | [![Windows Build & Unit Tests](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/msbuild.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/msbuild.yml ) |
 
 | Code Analyses | Result        |
 | ------------- | ------------- |
-| cppcheck | [![cppcheck](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/cppcheck.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/cppcheck.yml) |
-| clang-tidy | [![clang-tidy](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/clang-tidy.yml) |
-| MS PREfast | [![Microsoft C++ Code Analysis](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/msvc.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/msvc.yml) |
-| Quneiform | [![Quneiform](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/i18n-check.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/i18n-check.yml) |
+| cppcheck | [![cppcheck](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/cppcheck.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/cppcheck.yml) |
+| clang-tidy | [![clang-tidy](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/clang-tidy.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/clang-tidy.yml) |
+| MS PREfast | [![Microsoft C++ Code Analysis](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/msvc.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/msvc.yml) |
+| Quneiform | [![Quneiform](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/i18n-check.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/i18n-check.yml) |
 
 | Documentation & Formatting | Result        |
 | --------------------  | ------------- |
-| Doxygen | [![doxygen](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/doxygen.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/doxygen.yml) |
-| Spellcheck | [![Spell Check](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/spell-check.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/spell-check.yml) |
-| Profanity Check | [![Profanity Check](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/profanity-check.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/profanity-check.yml) |
-| clang-format | [![clang-format](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/clang-format-check.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/clang-format-check.yml) |
-| UNIX Newlines | [![Check LF line endings](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/newlines-check.yml/badge.svg)](https://github.com/Blake-Madden/Wisteria-Dataviz/actions/workflows/newlines-check.yml) |
+| Doxygen | [![doxygen](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/doxygen.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/doxygen.yml) |
+| Spellcheck | [![Spell Check](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/spell-check.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/spell-check.yml) |
+| Profanity Check | [![Profanity Check](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/profanity-check.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/profanity-check.yml) |
+| clang-format | [![clang-format](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/clang-format-check.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/clang-format-check.yml) |
+| UNIX Newlines | [![Check LF line endings](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/newlines-check.yml/badge.svg)](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz/actions/workflows/newlines-check.yml) |
 
 About
 =============================
@@ -275,7 +275,7 @@ Download [wxWidgets](https://github.com/wxWidgets/wxWidgets) 3.3.4 or higher:
 Next, download and build *Wisteria*:
 
 - Open *Visual Studio* and select *Clone a Repository*
-  - Enter [https://github.com/Blake-Madden/Wisteria-Dataviz.git](https://github.com/Blake-Madden/Wisteria-Dataviz.git) and clone it.
+  - Enter [https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz.git](https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz.git) and clone it.
     Note that this project's folder should be at the same level as the *wxWidgets* folder.
 - Open this project's *CMake* file in *Visual Studio*:
   - Open **Project** > **CMake Settings for Wisteria**
@@ -305,7 +305,7 @@ git clone https://github.com/wxWidgets/wxWidgets.git --recurse-submodules
 Next, download *Wisteria* and build the library, demo, and documentation:
 
 ```
-git clone https://github.com/Blake-Madden/Wisteria-Dataviz.git --recurse-submodules
+git clone https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz.git --recurse-submodules
 cd Wisteria-Dataviz
 cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release
 cmake --build ./build -j4 --config Release
@@ -331,7 +331,7 @@ git clone https://github.com/wxWidgets/wxWidgets.git --recurse-submodules
 Next, download *Wisteria* and build the library, demo, and documentation:
 
 ```
-git clone https://github.com/Blake-Madden/Wisteria-Dataviz.git --recurse-submodules
+git clone https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz.git --recurse-submodules
 cd Wisteria-Dataviz
 cmake -S . -B ./build -DCMAKE_BUILD_TYPE=Release
 cmake --build ./build -j4 --config Release

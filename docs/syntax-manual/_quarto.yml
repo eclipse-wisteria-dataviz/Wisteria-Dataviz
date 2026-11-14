@@ -28,7 +28,7 @@ book:
     logo: wisteria-dv.svg
     right:
       - icon: github
-        href: https://github.com/Blake-Madden/Wisteria-Dataviz
+        href: https://github.com/eclipse-wisteria-dataviz/Wisteria-Dataviz
         aria-label: Github
   chapters:
     - index.qmd
