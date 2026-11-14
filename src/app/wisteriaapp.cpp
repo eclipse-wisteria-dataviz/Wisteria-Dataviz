@@ -17,6 +17,7 @@
 #include "../lua/lua.h"
 #include "../ui/dialogs/aboutdlg.h"
 #include "../ui/dialogs/optionsdlg.h"
+#include "../util/textstream.h"
 #include "../wxSimpleJSON/src/cJSON/cJSON.h"
 #include "../wxpdfdoc/include/wx/pdfdoc_version.h"
 #include "sbom.h"
@@ -323,11 +324,19 @@ bool WisteriaApp::OnInit()
 //-------------------------------------------
 void WisteriaApp::ShowAboutDialog(wxWindow* parent)
     {
+    wxString licensePath{ FindResourceFile(_DT(L"LICENSE")) };
+    wxString eula;
+    if (!wxFileName::FileExists(licensePath) || !Wisteria::TextStream::ReadFile(licensePath, eula))
+        {
+        wxLogMessage(L"Unable to read EULA from '%s'", licensePath);
+        }
+
     Wisteria::UI::AboutDlgInfo info;
     info.AppName(GetAppName())
         .AppVersion(Wisteria::GetLibraryVersionInfo().GetNumericVersionString())
         .Logo(GetMainFrame()->GetLogo())
         .Copyright(WISTERIA_COPYRIGHT)
+        .Eula(eula)
         .AddCitationFile(_DT(L"MLA:"), FindResourceFile(_DT(L"citations.mla")))
         .AddCitationFile(_DT(L"APA:"), FindResourceFile(_DT(L"citations.apa")))
         .AddCitationFile(_DT(L"BibTeX:"), FindResourceFile(_DT(L"citations.bib")),

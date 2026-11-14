@@ -101,7 +101,7 @@ set(ISSUE_PAGE "")
 set(REMOTE_VERSION_FILE "")
 set(DOWNLOAD_PAGE "")
 set(INNOSETUP_GUID "")
-set(PROGRAM_LICENSE "")
+set(PROGRAM_LICENSE "Apache-2.0")
 
 set(FULL_VERSION ${Wisteria_VERSION_MAJOR}.${Wisteria_VERSION_MINOR}.${Wisteria_VERSION_PATCH}.${Wisteria_VERSION_TWEAK})
 # Build a displayable version string that only includes the necessary parts
@@ -543,6 +543,13 @@ foreach(CITATION_FILE IN LISTS CITATION_FILES)
                        "${CMAKE_BINARY_DIR}/${CITATION_FILE}"
                        $<TARGET_FILE_DIR:${WISTERIA_APP}>/${CITATION_FILE})
 endforeach()
+
+# Copy the license file into build folder (shown in the About dialog)
+add_custom_command(TARGET ${WISTERIA_APP}
+                   POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                   "${CMAKE_SOURCE_DIR}/LICENSE"
+                   $<TARGET_FILE_DIR:${WISTERIA_APP}>/LICENSE)
 
 # Copy datasets into build folder
 add_custom_command(TARGET ${WISTERIA_APP}
