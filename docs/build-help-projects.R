@@ -12,11 +12,43 @@ if (nchar(tinytex::tinytex_root()) == 0)
   }
 # call tinytex::reinstall_tinytex() if you get a "tlmgr: Remote repository is newer than local..." error message
 
+args <- commandArgs(trailingOnly = TRUE)
+# Works for key=value args, current value (if set), then a fallback value
+parse_arg <- function(key, fallback)
+  {
+  # 1. Match CLI arg key=value style
+  match <- grep(paste0("^", key, "="), args, value = TRUE)
+  if (length(match) > 0) {
+    value <- sub("^[^=]*=", "", match)
+    return(value)
+  }
+
+  # 2. If variable already exists in calling environment:
+  caller <- parent.frame()
+  if (exists(key, envir = caller, inherits = FALSE)) {
+    return(get(key, envir = caller))
+  }
+
+  # 3. Otherwise return the fallback default
+  return(fallback)
+  }
+
+# Command line from RScript to build a translated manual
+# (its folder must already be created by build-localized-docs.R)
+# Rscript build-help-projects.R --args docsLanguage=es
+docsLanguage <- parse_arg("docsLanguage", "")
+
+scriptFolder <- this.path::this.dir()
 docFolder <- this.path::this.dir()
+# build subfolder of translated docs (if requested)
+if (nzchar(docsLanguage) && docsLanguage != "en") {
+  docFolder <- file.path(docFolder, docsLanguage)
+  message(str_glue("🏗️ Building translated subfolder '{docsLanguage}' → {docFolder}"))
+}
 manualFolder <- glue("{docFolder}/wisteria-dataviz-manual")
 
-source(glue("{manualFolder}/R/cover-art.R"))
-source(glue("{manualFolder}/R/appdown.r"))
+source(glue("{scriptFolder}/wisteria-dataviz-manual/R/cover-art.R"))
+source(glue("{scriptFolder}/wisteria-dataviz-manual/R/appdown.r"))
 
 createPolaroidCover(glue("{manualFolder}/images/non-generated/cover-placeholder-1.png"),
                     glue("{manualFolder}/images/non-generated/cover-placeholder-2.png"),

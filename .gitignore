@@ -29,6 +29,7 @@
 /docs/wisteria-dataviz-manual/_quarto.yml
 /docs/wisteria-dataviz-manual/images/non-generated/cover.png
 /docs/_variables.yml
+/docs/es/
 
 # Compiler helper files
 CMakeSettings.json
