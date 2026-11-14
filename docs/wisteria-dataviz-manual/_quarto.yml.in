@@ -59,6 +59,8 @@ format:
     csquotes: true
     latex-engine: xelatex
     keep-tex: true
+    citation-package: biblatex
+    cite-method: biblatex
     lot: true
     lof: true
     code-block-bg: false
