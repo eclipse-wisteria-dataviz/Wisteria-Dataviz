@@ -14,6 +14,7 @@
 # WisteriaDV: builds the stand-alone (experimental) application (included with ALL)
 # doxygen-docs: builds the API documentation (included with ALL if Doxygen is found)
 # quarto-docs: builds the JSON syntax documentation (included with ALL if Quarto is found)
+# manuals: builds the user manual (PDF and online) with R and Quarto (not included with ALL)
 
 # Options:
 # ENABLE_SANITIZERS to use ASAN & UBSAN (ignored in release build)
@@ -153,6 +154,18 @@ add_custom_target(quarto-docs
             COMMENT "Generating JSON syntax documentation with Quarto"
             VERBATIM)
 
+# User manual (PDF and online)
+include(cmake/FindR.cmake)
+if(NOT R_FOUND)
+    message(STATUS "R not found. User manual cannot be built.")
+endif()
+
+add_custom_target(manuals
+            COMMAND "${R_SCRIPT}" "${CMAKE_SOURCE_DIR}/docs/build-help-projects.R"
+            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/docs"
+            COMMENT "Generating user manual with Quarto"
+            VERBATIM)
+
 # Add wxWidgets to the build
 include(cmake/folders.cmake)
 
@@ -222,6 +235,10 @@ endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/src/base/version.h")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/_variables.yml.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/docs/_variables.yml")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/wisteria-dataviz-manual/_quarto.yml.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/docs/wisteria-dataviz-manual/_quarto.yml")
 set(CITATION_FILES citations.bib citations.mla citations.apa)
 foreach(CITATION_FILE IN LISTS CITATION_FILES)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${CITATION_FILE}.in"

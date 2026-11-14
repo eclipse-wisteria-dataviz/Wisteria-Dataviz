@@ -1,0 +1,13 @@
+project:
+  output-dir: "docs-online"
+book:
+  cover-image: "docs-manual/wisteria-dataviz-manual-thumb.png"
+  chapters:
+    - index.qmd
+    - part: "Overviews"
+      chapters:
+      - overviews/intro.qmd
+      - overviews/program.qmd
+    - part: "Options"
+      chapters:
+      - program-options.qmd

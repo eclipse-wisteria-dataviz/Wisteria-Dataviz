@@ -1,0 +1,18 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('R/appdown.r')
+```
+
+# Preface {#sec-preface .unnumbered}
+
+This book is a guide to the software product *{{< var PROGRAM_NAME >}}*.
+
+::: {.content-visible when-format="html"}
+<!-- PDF output will have its own copyright page after the title.-->
+
+![](images/non-generated/by-sa.png){width=20%}
+
+This book is licensed under the [Creative Commons Attribution-Sharealike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/).
+:::

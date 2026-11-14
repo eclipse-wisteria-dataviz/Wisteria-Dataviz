@@ -24,6 +24,11 @@
 /docs/syntax-manual/site_libs
 /src/app/sbom.h
 /src/xrc_menu_strings.cpp
+/docs/wisteria-dataviz-manual/docs-manual
+/docs/wisteria-dataviz-manual/docs-online
+/docs/wisteria-dataviz-manual/_quarto.yml
+/docs/wisteria-dataviz-manual/images/non-generated/cover.png
+/docs/_variables.yml
 
 # Compiler helper files
 CMakeSettings.json

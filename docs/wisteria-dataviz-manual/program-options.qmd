@@ -1,0 +1,61 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('R/appdown.r')
+```
+
+# Options {#sec-options-overview}
+
+The **Options** dialog manages the program's global settings.
+To open it, click the `r keys("Options")` button in the **Tools** section of the **Home** tab.
+(On macOS, you can also select **Preferences** from the application menu.)
+
+## General {#sec-options-general}
+
+The options on this page manage the program's general settings.
+
+### Projects {-}
+
+**Auto-refresh new projects when their data files change**: Check this option to turn on auto refresh for newly created projects.
+When auto refresh is on, the project watches its datasets' files and reloads them when they change.
+This option only affects new projects; existing projects keep their own setting, which is saved with the project.
+To change it for an individual project, click the `r keys("Auto Refresh")` button in the **Pages** section of the **Home** tab.
+
+::: {.notesection data-latex=""}
+Auto refresh is only available when all of a project's datasets are imported from local files.
+:::
+
+### Log {-}
+
+**Auto-refresh log**: Check this option to automatically update the **Log** tab with new messages while it is open.
+This can also be toggled with the `r keys("Auto Refresh")` button on the **Log** tab.
+
+**Verbose logging**: Check this option to include more detailed messages in the log.
+This can be useful when troubleshooting.
+
+## Page Setup {#sec-options-page-setup}
+
+The options on this page are the default print settings for projects.
+
+### Paper {-}
+
+**Paper size**: Select the paper size to print to.
+
+### Orientation {-}
+
+**Portrait**: Select this option to print pages in portrait (vertical) orientation.
+
+**Landscape**: Select this option to print pages in landscape (horizontal) orientation.
+
+### Printing {-}
+
+**Duplex**: Select how to print on both sides of the paper:
+
+- **None**: Prints on only one side of each sheet.
+- **Flip on long edge**: Prints on both sides of each sheet, flipping pages along the long edge (like a book).
+- **Flip on short edge**: Prints on both sides of each sheet, flipping pages along the short edge (like a notepad).
+
+**Collate copies**: Check this option to print multiple copies as complete, ordered sets.
+
+**Print in color**: Check this option to print in color. Uncheck it to print in grayscale.

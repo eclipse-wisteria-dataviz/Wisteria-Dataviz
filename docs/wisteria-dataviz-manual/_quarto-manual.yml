@@ -1,0 +1,12 @@
+project:
+  output-dir: "docs-manual"
+book:
+  chapters:
+    - index.qmd
+    - part: "Overviews"
+      chapters:
+      - overviews/intro.qmd
+      - overviews/program.qmd
+    - part: "Options"
+      chapters:
+      - program-options.qmd
