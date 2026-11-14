@@ -60,8 +60,11 @@ jobs:
       run: |-
         set -x
         source /etc/os-release
-        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb https://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}-20 main"
+        sudo install -d -m 0755 /etc/apt/keyrings
+        wget -qO - https://apt.llvm.org/llvm-snapshot.gpg.key \
+            | sudo gpg --dearmor -o /etc/apt/keyrings/llvm-snapshot.gpg
+        echo "deb [signed-by=/etc/apt/keyrings/llvm-snapshot.gpg] https://apt.llvm.org/${UBUNTU_CODENAME}/ llvm-toolchain-${UBUNTU_CODENAME}-20 main" \
+            | sudo tee /etc/apt/sources.list.d/llvm.list
         sudo apt-get update  # due to new repository
         sudo apt-get install --yes --no-install-recommends -V \
             clang-20 \
