@@ -775,7 +775,8 @@ namespace Wisteria::UI
                     }
                 }
             }
-        catch (const std::exception& exc)
+        catch ([[maybe_unused]]
+               const std::exception& exc)
             {
             wxLogDebug(L"Subset preview failed: %s", wxString::FromUTF8(exc.what()));
             ResetPreviewGrid();

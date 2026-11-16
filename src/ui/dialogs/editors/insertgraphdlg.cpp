@@ -2081,7 +2081,7 @@ namespace Wisteria::UI
                 xSpin->SetValue(pt.m_x);
                 sizer->Add(xSpin, wxSizerFlags{}.Expand());
 
-                sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axisY:")),
+                sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axis:")),
                            wxSizerFlags{}.CenterVertical());
                 auto* ySpin = new wxSpinCtrlDouble(&ipDlg, wxID_ANY);
                 ySpin->SetRange(-1e9, 1e9);

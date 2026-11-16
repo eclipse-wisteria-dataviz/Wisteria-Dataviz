@@ -487,7 +487,8 @@ namespace Wisteria::UI
                 return;
                 }
             }
-        catch (const std::exception& exc)
+        catch ([[maybe_unused]]
+               const std::exception& exc)
             {
             wxLogDebug(L"Join preview failed: %s", wxString::FromUTF8(exc.what()));
             ResetPreviewGrid();
