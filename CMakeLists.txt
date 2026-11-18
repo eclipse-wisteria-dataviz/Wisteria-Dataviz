@@ -121,7 +121,9 @@ if(NOT ${Wisteria_VERSION_TWEAK} EQUAL 0)
 endif()
 
 string(TIMESTAMP BUILD_YEAR "%Y")
-set(WISTERIA_COPYRIGHT "Copyright (c) 2005-2026 Blake Madden\\nCopyright (c) 2026-${BUILD_YEAR} ${PUBLISHER}")
+set(WISTERIA_COPYRIGHT "Copyright (c) 2005-2026 Oleander Software, Ltd.\\nCopyright (c) 2026-${BUILD_YEAR} ${PUBLISHER}")
+# Single-line version for the macOS Info.plist and Windows RC file
+string(REPLACE "\\n" " " WISTERIA_COPYRIGHT_SINGLE_LINE "${WISTERIA_COPYRIGHT}")
 
 # Build the documentation
 #########################
@@ -188,7 +190,7 @@ find_directory("wxWidgets" wxWidgets_BASEDIR)
 if(NOT EXISTS "${wxWidgets_BASEDIR}")
     message(FATAL_ERROR "wxWidgets base directory not found: ${wxWidgets_BASEDIR}")
 endif()
-add_subdirectory(${wxWidgets_BASEDIR} ${CMAKE_CURRENT_SOURCE_DIR}/wxWidgets_lib)
+add_subdirectory(${wxWidgets_BASEDIR} ${CMAKE_CURRENT_SOURCE_DIR}/wxWidgets_lib EXCLUDE_FROM_ALL)
 set(wxWidgets_LIBRARIES wx::core wx::base wx::xrc wx::propgrid wx::xml
                         wx::aui wx::ribbon wx::qa wx::stc wx::net wx::richtext wx::webview)
 # Apply compiler warning suppressions to wxWidgets targets
@@ -230,11 +232,94 @@ if(UNIX AND NOT APPLE)
 endif()
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/version.h.in"
-               "${CMAKE_CURRENT_SOURCE_DIR}/src/base/version.h")
+               "${CMAKE_CURRENT_SOURCE_DIR}/src/base/version.h"
+               NEWLINE_STYLE UNIX)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/_variables.yml.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/docs/_variables.yml")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/docs/wisteria-dataviz-manual/_quarto.yml.in"
                "${CMAKE_CURRENT_SOURCE_DIR}/docs/wisteria-dataviz-manual/_quarto.yml")
+set(WISTERIA_RC_BINARY_NAME "WisteriaDV.exe")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/resource.h.in"
+               "${CMAKE_CURRENT_SOURCE_DIR}/resource.h"
+               NEWLINE_STYLE UNIX)
+
+# Linux desktop file, AppStream metainfo, and icon for the AppImage, DEB, and RPM staging areas
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
+string(TIMESTAMP CHANGELOG_DATE_RFC "%a, %d %b %Y %H:%M:%S +0000" UTC)
+string(TIMESTAMP RPM_CHANGELOG_DATE "%a %b %d %Y" UTC)
+set(UNIX_BINARY_NAME "WisteriaDV")
+set(UNIX_PACKAGE_NAME "wisteria-dataviz")
+# Estimated installed size (in KB) for the DEB control file
+set(INSTALLED_SIZE 32768)
+# Map the processor to AppImage, Debian, and RPM architecture names (x86_64 if not on Linux)
+set(UNIX_ARCHITECTURE "x86_64")
+if(UNIX AND NOT APPLE)
+    set(UNIX_ARCHITECTURE "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+if(UNIX_ARCHITECTURE STREQUAL "x86_64")
+    set(DEB_ARCHITECTURE "amd64")
+    set(RPM_ARCHITECTURE "x86_64")
+elseif(UNIX_ARCHITECTURE STREQUAL "aarch64")
+    set(DEB_ARCHITECTURE "arm64")
+    set(RPM_ARCHITECTURE "aarch64")
+elseif(UNIX_ARCHITECTURE STREQUAL "armv7l")
+    set(DEB_ARCHITECTURE "armhf")
+    set(RPM_ARCHITECTURE "armv7hl")
+else()
+    set(DEB_ARCHITECTURE "${UNIX_ARCHITECTURE}")
+    set(RPM_ARCHITECTURE "${UNIX_ARCHITECTURE}")
+endif()
+set(UNIX_INSTALLER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/installers/unix")
+set(DESKTOP_FILE_NAME "${PROGRAM_RDNS_IDENTIFIER}.desktop")
+set(METAINFO_FILE_NAME "${PROGRAM_RDNS_IDENTIFIER}.metainfo.xml")
+# The AppImage expects the desktop file and icon in the AppDir root
+configure_file("${UNIX_INSTALLER_DIR}/${DESKTOP_FILE_NAME}.in"
+               "${UNIX_INSTALLER_DIR}/AppDir/${DESKTOP_FILE_NAME}"
+               NEWLINE_STYLE UNIX)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/wisteria-dv.svg"
+               "${UNIX_INSTALLER_DIR}/AppDir/wisteria-dv.svg" COPYONLY)
+configure_file("${UNIX_INSTALLER_DIR}/${METAINFO_FILE_NAME}.in"
+               "${UNIX_INSTALLER_DIR}/AppDir/usr/share/metainfo/${METAINFO_FILE_NAME}"
+               NEWLINE_STYLE UNIX)
+foreach(PACKAGE_DIR IN ITEMS deb-stage rpm-stage)
+    set(PACKAGE_SHARE_DIR "${UNIX_INSTALLER_DIR}/${PACKAGE_DIR}/usr/share")
+    configure_file("${UNIX_INSTALLER_DIR}/${DESKTOP_FILE_NAME}.in"
+                   "${PACKAGE_SHARE_DIR}/applications/${DESKTOP_FILE_NAME}"
+                   NEWLINE_STYLE UNIX)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/wisteria-dv.svg"
+                   "${PACKAGE_SHARE_DIR}/icons/hicolor/scalable/apps/wisteria-dv.svg" COPYONLY)
+    configure_file("${UNIX_INSTALLER_DIR}/${METAINFO_FILE_NAME}.in"
+                   "${PACKAGE_SHARE_DIR}/metainfo/${METAINFO_FILE_NAME}"
+                   NEWLINE_STYLE UNIX)
+    # Package documentation
+    set(PACKAGE_DOC_DIR "${PACKAGE_SHARE_DIR}/doc/${UNIX_PACKAGE_NAME}")
+    configure_file("${UNIX_INSTALLER_DIR}/deb/changelog.in"
+                   "${PACKAGE_DOC_DIR}/changelog"
+                   NEWLINE_STYLE UNIX)
+    configure_file("${UNIX_INSTALLER_DIR}/deb/copyright.in"
+                   "${PACKAGE_DOC_DIR}/copyright"
+                   NEWLINE_STYLE UNIX)
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/LICENSE"
+                   "${PACKAGE_DOC_DIR}/LICENSE" COPYONLY)
+endforeach()
+
+# DEB control file and maintainer scripts (dpkg requires the scripts to be executable)
+set(DEB_CONTROL_DIR "${UNIX_INSTALLER_DIR}/deb-stage/DEBIAN")
+configure_file("${UNIX_INSTALLER_DIR}/deb/control.in"
+               "${DEB_CONTROL_DIR}/control"
+               NEWLINE_STYLE UNIX)
+foreach(DEB_SCRIPT IN ITEMS postinst postrm)
+    configure_file("${UNIX_INSTALLER_DIR}/deb/${DEB_SCRIPT}"
+                   "${DEB_CONTROL_DIR}/${DEB_SCRIPT}"
+                   COPYONLY
+                   FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                                    GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endforeach()
+
+# RPM spec file (build with: rpmbuild -bb --define "_rpm_staging_dir <rpm-stage path>")
+configure_file("${UNIX_INSTALLER_DIR}/rpm/${UNIX_PACKAGE_NAME}.spec.in"
+               "${UNIX_INSTALLER_DIR}/rpm/${UNIX_PACKAGE_NAME}.spec"
+               NEWLINE_STYLE UNIX)
 set(CITATION_FILES citations.bib citations.mla citations.apa)
 foreach(CITATION_FILE IN LISTS CITATION_FILES)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${CITATION_FILE}.in"
@@ -481,8 +566,8 @@ if(APPLE)
     set_target_properties(${DEMO_APP} PROPERTIES
         RESOURCE wisteria-dv.icns
         MACOSX_BUNDLE_ICON_FILE wisteria-dv.icns
-        MACOSX_BUNDLE_COPYRIGHT "Copyright Blake Madden"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "org.wisteria.demo")
+        MACOSX_BUNDLE_COPYRIGHT "${WISTERIA_COPYRIGHT_SINGLE_LINE}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "${PROGRAM_RDNS_IDENTIFIER}")
 endif()
 
 # Build the stand-alone application (experimental)
@@ -494,9 +579,9 @@ set(APP_SRC_FILES ${APP_WISTERIA_SRC}
     ${CMAKE_SOURCE_DIR}/src/app/wisteriadoc.cpp)
 
 if(WIN32)
-    # Include an RC file and HiDPI manifest for Windows (provided by wxWidgets)
+    # Include the app's RC file (which includes wxWidgets' RC file) and HiDPI manifest
     set(wxUSE_DPI_AWARE_MANIFEST 1)
-    list(APPEND APP_SRC_FILES "${wxWidgets_BASEDIR}/include/wx/msw/wx.rc")
+    list(APPEND APP_SRC_FILES "${CMAKE_SOURCE_DIR}/wisteria-dv.rc")
     list(APPEND APP_SRC_FILES "${wxWidgets_BASEDIR}/include/wx/msw/wx_dpi_aware.manifest")
 elseif(APPLE)
     # Add an icon for the apple .app file
@@ -531,62 +616,61 @@ endif()
 file(STRINGS "${CMAKE_SOURCE_DIR}/cmake/includes/resfiles.cmake" RES_FILE_LIST)
 list(TRANSFORM RES_FILE_LIST PREPEND "${CMAKE_SOURCE_DIR}/res/")
 
-set(RES_WAD_PATH "$<TARGET_FILE_DIR:${WISTERIA_APP}>/res.wad")
+if(APPLE)
+    set_target_properties(${WISTERIA_APP} PROPERTIES
+        RESOURCE wisteria-dv.icns
+        MACOSX_BUNDLE_ICON_FILE wisteria-dv.icns
+        MACOSX_BUNDLE_COPYRIGHT "${WISTERIA_COPYRIGHT_SINGLE_LINE}"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "${PROGRAM_RDNS_IDENTIFIER}")
+    set(APP_RESOURCE_DIR "$<TARGET_BUNDLE_CONTENT_DIR:${WISTERIA_APP}>/Resources")
+else()
+    set(APP_RESOURCE_DIR "$<TARGET_FILE_DIR:${WISTERIA_APP}>")
+endif()
+
+# Staging areas for the installers
+include(cmake/StageFiles.cmake)
+stage_setup(${WISTERIA_APP}
+    APP_DATA_NAME      "Wisteria-Dataviz"
+    TRANSLATION_DOMAIN wisteria
+    WINDOWS_DIR        installers/windows
+    MACOS_DIR          installers/macos/release
+    APPIMAGE_DIR       installers/unix/AppDir
+    DEB_DIR            installers/unix/deb-stage
+    RPM_DIR            installers/unix/rpm-stage)
+
+set(RES_WAD_PATH "${APP_RESOURCE_DIR}/res.wad")
 add_custom_command(TARGET ${WISTERIA_APP}
                    POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E make_directory "${APP_RESOURCE_DIR}"
                    COMMAND ${CMAKE_COMMAND} -E tar "cvf"
                        "${RES_WAD_PATH}"
                        --format=zip
                        --files-from="${CMAKE_SOURCE_DIR}/cmake/includes/resfiles.cmake"
                    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/res"
                    COMMENT "Building application resource bundle...")
+stage_file(${WISTERIA_APP} "${RES_WAD_PATH}")
 
-# Copy the (unbundled) dashboard files into res/dashboard next to the executable
-add_custom_command(TARGET ${WISTERIA_APP}
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E remove_directory
-                   $<TARGET_FILE_DIR:${WISTERIA_APP}>/res/dashboard
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_SOURCE_DIR}/dashboard
-                   $<TARGET_FILE_DIR:${WISTERIA_APP}>/res/dashboard
-                   COMMENT "Copying dashboard resources...")
+# The (unbundled) dashboard files
+stage_directory(${WISTERIA_APP} "dashboard" "res/dashboard" CLEAN)
 
-# Copy citation files into build folder
+# Citation files
 foreach(CITATION_FILE IN LISTS CITATION_FILES)
-    add_custom_command(TARGET ${WISTERIA_APP}
-                       POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                       "${CMAKE_BINARY_DIR}/${CITATION_FILE}"
-                       $<TARGET_FILE_DIR:${WISTERIA_APP}>/${CITATION_FILE})
+    stage_file(${WISTERIA_APP} "${CMAKE_BINARY_DIR}/${CITATION_FILE}")
 endforeach()
 
-# Copy the license file into build folder (shown in the About dialog)
-add_custom_command(TARGET ${WISTERIA_APP}
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                   "${CMAKE_SOURCE_DIR}/LICENSE"
-                   $<TARGET_FILE_DIR:${WISTERIA_APP}>/LICENSE)
+# License file (shown in the About dialog)
+stage_file(${WISTERIA_APP} "LICENSE")
 
-# Copy datasets into build folder
-add_custom_command(TARGET ${WISTERIA_APP}
-                   POST_BUILD
-                   COMMAND ${CMAKE_COMMAND} -E copy_directory
-                   ${CMAKE_SOURCE_DIR}/datasets $<TARGET_FILE_DIR:${WISTERIA_APP}>/datasets)
+# Datasets
+stage_directory(${WISTERIA_APP} "datasets" "datasets" CLEAN)
 
+# Menu bar resources (used on macOS)
 if(APPLE)
-    set_target_properties(${WISTERIA_APP} PROPERTIES
-        RESOURCE wisteria-dv.icns
-        MACOSX_BUNDLE_ICON_FILE wisteria-dv.icns
-        MACOSX_BUNDLE_COPYRIGHT "Copyright Blake Madden"
-        MACOSX_BUNDLE_GUI_IDENTIFIER "org.wisteria.app")
-
-    add_custom_command(TARGET ${WISTERIA_APP}
-                       POST_BUILD
-                       COMMAND ${CMAKE_COMMAND} -E make_directory
-                       "$<TARGET_BUNDLE_CONTENT_DIR:${WISTERIA_APP}>/Resources/menus"
-                       COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                       "${CMAKE_SOURCE_DIR}/res/menus/main-menubar.xrc"
-                       "${CMAKE_SOURCE_DIR}/res/menus/project-menubar.xrc"
-                       "$<TARGET_BUNDLE_CONTENT_DIR:${WISTERIA_APP}>/Resources/menus"
-                       COMMENT "Copying menu bar resources...")
+    stage_file(${WISTERIA_APP} "res/menus/main-menubar.xrc" "menus")
+    stage_file(${WISTERIA_APP} "res/menus/project-menubar.xrc" "menus")
 endif()
+
+stage_translations(${WISTERIA_APP} es)
+
+# This must come after all other staging, so the copied macOS bundle has every resource
+stage_binary(${WISTERIA_APP})

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>${PROGRAM_RDNS_IDENTIFIER}</id>
+	<metadata_license>CC0-1.0</metadata_license>
+	<project_license>${PROGRAM_LICENSE}</project_license>
+	<name>${PROGRAM_LONGNAME}</name>
+	<summary>${PROGRAM_COMMENTS}</summary>
+	<description>
+		<p>${PROGRAM_LONGNAME} is data visualization software for building graphs, tables, and reports from datasets.</p>
+	</description>
+	<developer_name>${PUBLISHER}</developer_name>
+	<developer id="${PUBLISHER_RDNS_ID}">
+		<name>${PUBLISHER}</name>
+	</developer>
+	<launchable type="desktop-id">${PROGRAM_RDNS_IDENTIFIER}.desktop</launchable>
+	<url type="homepage">${Wisteria_HOMEPAGE_URL}</url>
+	<url type="bugtracker">${ISSUE_PAGE}</url>
+	<releases>
+		<release version="${FULL_DISPLAY_VERSION}" date="${BUILD_DATE}" />
+	</releases>
+	<content_rating type="oars-1.1" />
+</component>

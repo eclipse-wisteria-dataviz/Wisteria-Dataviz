@@ -1,0 +1,5 @@
+${UNIX_PACKAGE_NAME} (${FULL_DISPLAY_VERSION}) stable; urgency=low
+
+  * Initial release.
+
+ -- ${PROGRAM_AUTHOR}  ${CHANGELOG_DATE_RFC}

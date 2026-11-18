@@ -1,0 +1,12 @@
+[Desktop Entry]
+X-AppImage-Arch=${UNIX_ARCHITECTURE}
+X-AppImage-Version=${FULL_VERSION}
+X-AppImage-Name=${Wisteria_DESCRIPTION}
+Name=${Wisteria_DESCRIPTION}
+Exec=${UNIX_BINARY_NAME}
+Icon=wisteria-dv
+Type=Application
+Terminal=false
+Categories=Science;DataVisualization;
+Comment=${PROGRAM_COMMENTS}
+Keywords=data visualization;charts;graphs;

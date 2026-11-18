@@ -1,0 +1,45 @@
+// Windows resources for the Wisteria-Dataviz application
+
+#include "resource.h"
+#include <windows.h>
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+// The application icon must sort before the wxWidgets icons, so that Windows uses it
+WXICON_AAA ICON "wisteria-dv.ico"
+
+// Standard wxWidgets resources (cursors, bitmaps, and the manifest)
+#include "wx/msw/wx.rc"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION WISTERIA_RC_VERSION
+ PRODUCTVERSION WISTERIA_RC_VERSION
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", WISTERIA_RC_PUBLISHER
+            VALUE "FileDescription", WISTERIA_RC_DESCRIPTION
+            VALUE "FileVersion", WISTERIA_RC_VERSION_STRING
+            VALUE "InternalName", WISTERIA_RC_DESCRIPTION
+            VALUE "LegalCopyright", WISTERIA_RC_COPYRIGHT
+            VALUE "OriginalFilename", WISTERIA_RC_BINARY_NAME
+            VALUE "ProductName", WISTERIA_RC_PRODUCT_NAME
+            VALUE "ProductVersion", WISTERIA_RC_VERSION_STRING
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

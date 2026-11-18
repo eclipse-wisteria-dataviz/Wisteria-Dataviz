@@ -1,0 +1,133 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 25,
+      "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "common",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "release",
+      "hidden": true,
+      "inherits": "common",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "debug",
+      "hidden": true,
+      "inherits": "common",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "msw_base",
+      "description": "Base configuration for MSW",
+      "hidden": true,
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "msw_release",
+      "inherits": [
+        "release",
+        "msw_base"
+      ],
+      "displayName": "Visual Studio Release"
+    },
+    {
+      "name": "msw_debug",
+      "inherits": [
+        "debug",
+        "msw_base"
+      ],
+      "displayName": "Visual Studio Debug"
+    },
+    {
+      "name": "macos_base",
+      "hidden": true,
+      "description": "Base configuration for macOS",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "macos_xcode_release",
+      "inherits": [
+        "release",
+        "macos_base"
+      ],
+      "displayName": "macOS Xcode Release",
+      "generator": "Xcode"
+    },
+    {
+      "name": "macos_xcode_debug",
+      "inherits": [
+        "debug",
+        "macos_base"
+      ],
+      "displayName": "macOS Xcode Debug",
+      "generator": "Xcode"
+    },
+    {
+      "name": "macos_make_release",
+      "inherits": [
+        "release",
+        "macos_base"
+      ],
+      "displayName": "macOS Make Release",
+      "generator": "Unix Makefiles"
+    },
+    {
+      "name": "macos_make_debug",
+      "inherits": [
+        "debug",
+        "macos_base"
+      ],
+      "displayName": "macOS Make Debug",
+      "generator": "Unix Makefiles"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "msw_release",
+      "displayName": "Visual Studio Release",
+      "configurePreset": "msw_release",
+      "configuration": "Release"
+    },
+    {
+      "name": "msw_debug",
+      "displayName": "Visual Studio Debug",
+      "configurePreset": "msw_debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos_xcode_release",
+      "displayName": "macOS Xcode Release",
+      "configurePreset": "macos_xcode_release",
+      "configuration": "Release"
+    },
+    {
+      "name": "macos_xcode_debug",
+      "displayName": "macOS Xcode Debug",
+      "configurePreset": "macos_xcode_debug",
+      "configuration": "Debug"
+    }
+  ]
+}

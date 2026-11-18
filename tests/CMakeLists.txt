@@ -50,7 +50,7 @@ include(../cmake/folders.cmake)
 # place Catch2 at the same folder level as this repo or somewhere above it
 find_directory("Catch2" CATCH_DIR)
 if(EXISTS ${CATCH_DIR})
-    add_subdirectory(${CATCH_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Catch2)
+    add_subdirectory(${CATCH_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Catch2 EXCLUDE_FROM_ALL)
 else()
     # ...otherwise, see if it is installed
     find_package(Catch2 3 REQUIRED)

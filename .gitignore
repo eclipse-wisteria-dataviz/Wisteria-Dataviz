@@ -4,9 +4,11 @@
 /tests/gui-tests/.vs/
 /tests/gui-tests/bin/
 /tests/gui-tests/out/
+/tests/gui-tests/build/
 /tests/.vs
 /tests/out
 /tests/bin
+/tests/build/
 /app/
 /build/
 /out/
@@ -23,6 +25,7 @@
 /docs/syntax-manual/.gitignore
 /docs/syntax-manual/site_libs
 /src/app/sbom.h
+/resource.h
 /src/xrc_menu_strings.cpp
 /docs/wisteria-dataviz-manual/docs-manual
 /docs/wisteria-dataviz-manual/docs-online
@@ -30,6 +33,17 @@
 /docs/wisteria-dataviz-manual/images/non-generated/cover.png
 /docs/_variables.yml
 /docs/es/
+
+# Installer staging folders
+/installers/windows/resources/
+/installers/windows/release/
+/installers/macos/release/
+/installers/unix/AppDir/usr/
+/installers/unix/AppDir/*.desktop
+/installers/unix/AppDir/*.svg
+/installers/unix/rpm/*.spec
+/installers/unix/deb-stage/
+/installers/unix/rpm-stage/
 
 # Compiler helper files
 CMakeSettings.json
