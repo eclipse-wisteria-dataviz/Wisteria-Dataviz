@@ -83,6 +83,10 @@ namespace Wisteria::UI
         // Set the locale (for number formatting, etc.) and load translation catalog locations.
         // (Note that constructing the wxLocale object is needed for
         //  localizing the C runtime functions.)
+        // DEB and RPM packages install the wxWidgets catalog into the app's data folder
+        // (rather than a shared system folder), so look there before the locale loads it
+        wxFileTranslationsLoader::AddCatalogLookupPathPrefix(
+            wxStandardPaths::Get().GetDataDir() + wxFILE_SEP_PATH + DONTTRANSLATE(L"locale"));
         m_locale = new wxLocale(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);
         wxUILocale::UseDefault();
 

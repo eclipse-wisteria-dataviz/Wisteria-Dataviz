@@ -251,6 +251,13 @@ bool WisteriaApp::OnInit()
         return false;
         }
 
+    // the locale loads the wxWidgets catalog, so just add the app's
+    if (wxTranslations* const translations{ wxTranslations::Get() };
+        translations != nullptr && !translations->AddCatalog(_DT(L"wisteria")))
+        {
+        wxLogDebug(L"Could not find application's translation catalog.");
+        }
+
     CreateAppSettings();
 
     // load settings from the user's app data folder
