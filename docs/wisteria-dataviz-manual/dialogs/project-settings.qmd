@@ -1,0 +1,99 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Project Settings {#sec-project-settings}
+
+The **Project Settings** dialog manages the settings for the current project.
+These settings are saved with the project.
+To open it, click the **File** tab and select **Settings**.
+
+## General {#sec-project-settings-general}
+
+The options on this page manage the project's general settings.
+
+### Project {-}
+
+**Project name**: Enter the name of the project.
+This is used as the title when the project is exported.
+
+**Subject**: Enter the subject of the project.
+
+**Author**: Enter the author of the project.
+
+**Keywords**: Enter keywords that describe the project.
+
+::: {.notesection data-latex=""}
+The name, subject, author, and keywords are also used as the document information when [exporting](#sec-exporting) the project.
+:::
+
+**Auto-refresh when data files change**: Check this option to have the project watch its datasets' files and reload them when they change.
+This can also be toggled with the `r keys("Auto Refresh")` button in the **Pages** section of the **Home** tab.
+
+::: {.notesection data-latex=""}
+Auto refresh is only available when all of a project's datasets are imported from local files.
+:::
+
+## Export & Printing {#sec-project-settings-printing}
+
+The options on this page control how the project is printed and exported.
+
+### Headers & Footers {-}
+
+**Headers & Footers...**: Click this button to open the [**Printer Headers & Footers**](#sec-printer-headers-footers) dialog.
+
+### Watermark {-}
+
+A watermark is a label drawn across each page when the project is printed or exported.
+It is not shown on the pages in the program.
+
+**Text**: Enter the text of the watermark.
+Leave this empty to not include a watermark.
+
+**Color**: Select the color of the watermark.
+
+\newpage
+
+## Printer Headers & Footers {#sec-printer-headers-footers}
+
+This dialog specifies the headers and footers that are included when the project is printed or exported.
+
+### Headers {-}
+
+**Left**: Enter the text to show in the upper-left corner of each page.
+
+**Center**: Enter the text to show in the top center of each page.
+
+**Right**: Enter the text to show in the upper-right corner of each page.
+
+### Footers {-}
+
+**Left**: Enter the text to show in the lower-left corner of each page.
+
+**Center**: Enter the text to show in the bottom center of each page.
+
+**Right**: Enter the text to show in the lower-right corner of each page.
+
+### Tags {-}
+
+Headers and footers can include the following tags, which are replaced when the pages are printed:
+
+- `@TITLE@`: The title of the printed document.
+- `@DATE@`: The date when it was printed.
+- `@TIME@`: The time when it was printed.
+- `@DATETIME@`: The date and time when it was printed.
+- `@PAGENUM@`: The current page number.
+- `@PAGESCNT@`: The number of printed pages.
+- `@USER@`: The user's name.
+
+For example, `Page @PAGENUM@ of @PAGESCNT@` would be shown as *Page 2 of 5* on the second page of a five-page printout.
+
+Each field's drop-down list includes these tags (and some common combinations of them) to select from.
+
+::: {.warningsection data-latex=""}
+Any other text enclosed in *@* symbols (e.g., `@PAGE@`) is not a valid tag.
+An error will be shown if an invalid tag is entered.
+:::

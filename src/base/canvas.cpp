@@ -289,7 +289,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Canvas, wxScrolledWindow)
         wxArrayString choices, descriptions;
         choices.Add(L"PNG");
         descriptions.Add(
-            openTag + _(L"Portable Network Graphic") + closeTag +
+            openTag + _(L"Portable Network Graphics") + closeTag +
             _(L"A lossless-compressed image format. "
               "The image can be compressed to a smaller size without any loss of quality."));
         choices.Add(L"JPG");

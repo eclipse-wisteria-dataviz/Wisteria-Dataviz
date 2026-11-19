@@ -1,0 +1,195 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Transforming Data {#sec-transforming-data}
+
+A project's datasets can be transformed into new datasets.
+These transformations are available in the **Transformations** section of the **Data** tab:
+
+- `r keys("Subset")`: Creates a subset of a dataset.
+- `r keys("Join")`: Joins two datasets.
+- `r keys("Pivot Wider")`: Pivots a dataset wider (i.e., unstacks it).
+- `r keys("Pivot Longer")`: Pivots a dataset longer (i.e., stacks it).
+
+The original dataset is not changed.
+Instead, the result is added to the project as a new dataset, which can then be used by analyses.
+
+Each of these dialogs includes the following:
+
+**Output name**: Enter the name of the new dataset.
+A name is suggested for you, but it must be unique within the project.
+
+**Preview**: Shows the new dataset as it will be created with the current settings.
+The preview is limited to the first 300 rows.
+
+## Subset Dataset {#sec-subset-dlg}
+
+This dialog creates a dataset from another dataset that matches a set of filters.
+
+**Dataset**: Select the dataset to subset.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Filter Type
+:::
+
+**Single**: Select this option to filter by a single column.
+
+**AND**: Select this option to filter by multiple columns, where all the filters must match a row for it to be included.
+
+**OR**: Select this option to filter by multiple columns, where a row is included if any of the filters match it.
+
+**Section**: Select this option to include a contiguous block of rows, based on start and end labels in a column.
+::::
+
+### Column Filters {-}
+
+These options are available when **Single**, **AND**, or **OR** is selected.
+
+Each filter consists of a column, a comparison operator, and the values to compare against:
+
+- **Column**: The column to compare.
+- **Operator**: How to compare the column's values against the provided values.
+  The available operators are `=` (equal), `!=` (not equal), `<` (less than), `<=` (less than or equal to), `>` (greater than), and `>=` (greater than or equal to).
+- **Values**: The values to compare against.
+  If multiple values are provided, then a row matches if its value matches any of them.
+
+**Add Filter**: Click this button to add another filter.
+
+**Remove Filter**: Click this button to remove the last filter.
+
+### Section Filter {-}
+
+These options are available when **Section** is selected.
+They create a subset which only includes the rows that match the start and end labels and all the rows in between.
+
+**Column**: Select the column to search for the start and end labels.
+
+**Start label**: Select or enter the label that begins the subset.
+
+**End label**: Select or enter the label that marks the end of the subset.
+
+**Include sentinel labels**: Check this option to include the rows with the start and end labels in the subset.
+Uncheck it to only include the rows between them.
+
+\newpage
+
+## Join Datasets {#sec-join-dlg}
+
+This dialog combines the columns of two datasets by matching rows on one or more key columns.
+
+**Left dataset**: Select the dataset to join with.
+
+**Right dataset**: Select the dataset being joined with the left one.
+All columns except for the key columns will be added to the output.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Join type
+:::
+
+**Left Join (Unique Last)**: All rows and columns from the left dataset are preserved.
+If a key in the left dataset matches multiple rows in the right dataset, then only the data from the last matching right row is used.
+This is useful for collapsing one-to-many relationships into a single row.
+
+**Left Join (Unique First)**: The same as **Left Join (Unique Last)**, except that only the data from the first matching right row is used.
+
+**Left Join**: A standard left join.
+If a key in the left dataset matches multiple rows in the right dataset, then the left row is duplicated for each matching right row.
+This means the output may have more rows than the left dataset.
+If a left row has no matching right rows, then it is still included, with missing data in the right dataset's columns.
+
+**Inner Join**: Only rows whose keys match in both datasets are included.
+If a key in the left dataset matches multiple rows in the right dataset, then the left row is duplicated for each matching right row.
+::::
+
+For the left join types, rows in the right dataset whose keys do not appear in the left dataset are ignored.
+
+### Join Columns {-}
+
+Each row in this section is a pair of columns to match on: a **Left Column** from the left dataset and a **Right Column** from the right dataset.
+These can be the datasets' ID columns or categorical columns.
+
+**Add Column Pair**: Click this button to add another pair of columns to match on.
+
+**Remove Column Pair**: Click this button to remove the last pair of columns.
+
+::: {.notesection data-latex=""}
+Categorical labels must match textually between the datasets.
+:::
+
+### Options {-}
+
+**Duplicate column suffix**: Enter the text to add to a column from the right dataset if the left dataset already has a column with the same name.
+This makes the column's name unique.
+The default is *.x*.
+
+\newpage
+
+## Pivot Wider {#sec-pivot-wider-dlg}
+
+Pivoting wider (also known as unstacking, spreading, or casting) creates a single row for each observation.
+A categorical column is split into new columns, which are filled with the values from the specified continuous columns.
+This is useful for breaking a grouping variable into new columns, so that each row is a unique observation.
+
+**Dataset**: Select the dataset to pivot.
+
+**Select Columns...**: Click this button to open the [**Select Variables**](#sec-select-variables-dlg) dialog and select the following columns:
+
+- **ID columns**: The columns that identify a unique observation.
+- **Names from**: The categorical column whose labels will each become a new column.
+- **Values from**: The continuous columns whose values will be copied into the new columns.
+  If multiple value columns are selected, then a new column is created for each label from every value column.
+  If no value columns are selected, then the frequency counts of each unique combination of ID labels are used as the values.
+
+### Options {-}
+
+**Names separator**: If multiple value columns are selected, then enter the separator that joins each label and value column's name.
+The default is *\_*.
+
+**Names prefix**: Enter text to prepend to the newly created columns' names.
+
+**Fill value**: If an observation is missing a label that other observations have, then an empty cell is added for that column.
+Enter the value to fill these cells with.
+The default is missing data (i.e., *NaN*).
+
+::: {.notesection data-latex=""}
+If multiple rows share the same ID and the same label, then their values are summed together.
+:::
+
+\newpage
+
+## Pivot Longer {#sec-pivot-longer-dlg}
+
+Pivoting longer (also known as stacking, gathering, or melting) combines multiple columns into a grouping column and a value column.
+This is useful for converting a dataset with one row for each observation into a dataset with grouping columns.
+
+**Dataset**: Select the dataset to pivot.
+
+**Select Columns...**: Click this button to open the [**Select Variables**](#sec-select-variables-dlg) dialog and select the following columns:
+
+- **Columns to keep**: The columns that are not pivoted.
+  These are copied to the new dataset, and their values are filled in for all the new rows created from their observation.
+  (These are usually the ID and grouping columns.)
+  The output is sorted by these columns.
+- **Columns to pivot**: The continuous columns to pivot into the longer format.
+
+### Target Columns {-}
+
+**Names to**: Enter the name of the new grouping column, which will use the original columns' names as its groups.
+To create multiple grouping columns (see **Names pattern**), enter their names separated by commas.
+The default is *variable*.
+
+**Values to**: Enter the name of the new column that the values are moved into.
+This column will contain the values from the pivoted columns, stacked on top of each other.
+The default is *value*.
+
+**Names pattern**: To split the pivoted columns' names into multiple grouping columns, enter a regular expression here.
+It should contain capture groups, where each group will become the value of a new grouping column.
+Leave this blank to use the full names of the pivoted columns as the labels.
+
+For example, if the columns to pivot are *math_2023* and *reading_2024*, then a pattern of `(.*)_(.*)` with **Names to** set to *subject, year* would create a *subject* column and a *year* column.

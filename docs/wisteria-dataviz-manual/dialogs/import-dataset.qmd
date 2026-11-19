@@ -1,0 +1,85 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Importing Data {#sec-import-dataset-dlg}
+
+The **Import Dataset** dialog controls how a data file is read into a project.
+To open it, click the `r keys("Add")` button in the **Datasets** section of the **Data** tab.
+
+To change how an existing dataset is imported, select the dataset and click the `r keys("Edit Import")` button in the same section.
+This opens the same dialog (titled **Edit Import Settings**) with the dataset's current settings.
+
+The dialog shows a preview of the data that updates as you change its options.
+
+## File {-}
+
+**Filepath**: Shows the path of the file being imported.
+
+**Change File...**: Click this button to import a different data file.
+
+**Refresh from file**: Click this button to re-read the columns from the file.
+(Your current settings are kept.)
+This is useful if the file has changed since the dialog was opened.
+
+## Options {-}
+
+**Worksheet**: Select the worksheet to import.
+This option is only shown for *Excel* (`.xlsx`) and *OpenDocument* (`.ods`) spreadsheets.
+
+**Skip rows**: Enter the number of rows to skip before reading the data.
+This is useful for files that have notes or titles above the column headers.
+
+**Max discrete value**: Enter the largest integer that a column can contain and still be seen as discrete (i.e., categorical).
+When the program deduces a column's data type, a column with an integer larger than this value is classified as continuous.
+For example, a column of survey responses coded 1–5 would be seen as categorical, while a column of ages would be seen as continuous.
+The default value is 7.
+
+**Leading zeros as text**: Check this option to import numeric columns with leading zeros as text.
+This is useful for fixed-width numeric IDs (e.g., *00451*) that are labels, rather than continuous values.
+
+**Years as text**: Check this option to import columns of four-digit numbers as text.
+These numbers are assumed to be years.
+
+**Sort column names (grouped by type)**: Check this option to sort the column names alphabetically after importing.
+The columns are grouped by their data type.
+
+**Missing data codes (comma separated)**: Enter the values that should be treated as missing data, separated by commas (e.g., *NA, N/A, NULL*).
+Empty cells are always treated as missing data.
+
+**ID column**: Select the column that identifies each row (e.g., a student or employee ID).
+Select **(None)** if the data does not have an ID column.
+
+## Column Data Types {-}
+
+**Column data type**: Select a column in the preview grid, then select its data type from this list.
+The program deduces each column's type when the file is read, but you can override it here.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Data types
+:::
+
+**Text**: The column is imported as categorical text.
+
+**Categorical**: The column is imported as integer codes that represent categories (e.g., *1* = *Agree*).
+
+**Numeric**: The column is imported as continuous values (i.e., floating-point numbers or a wide range of integers).
+
+**Date**: The column is imported as dates.
+
+**Do not import**: The column is left out of the dataset.
+::::
+
+## Preview {-}
+
+The preview grid shows the data as it will be imported with the current settings.
+Columns that will not be imported are shown in a different style.
+
+::: {.notesection data-latex=""}
+The preview only shows the first 300 rows of the file.
+All rows are imported when you click `r keys("OK")`.
+:::

@@ -5,4 +5,4 @@
 source('../R/appdown.r')
 ```
 
-# {{< var PROGRAM_NAME >}} {#sec-program}
+# Wisteria-Dataviz {#sec-program}

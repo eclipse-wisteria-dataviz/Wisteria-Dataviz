@@ -1,0 +1,180 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Business Graphs {#sec-graphs-business}
+
+The graphs in this chapter are available from the `r keys("Business")` button in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Gantt Chart {#sec-gantt-dlg}
+
+A Gantt chart lays out a project's tasks along a timeline.
+It shows when each task starts and ends, who it is assigned to, and how far along it is.
+The dataset should have one row per task, with its name and its start and end dates.
+
+### Variables {-}
+
+**Task**: The name of each task.
+
+**Start date**: When the task begins.
+If missing, then the task begins at the earliest date on the bottom axis.
+
+**End date**: When the task ends.
+If missing, then the task is drawn as an arrow stretching to the end of the bottom axis.
+
+**Resource** (optional): Who or what the task is assigned to.
+
+**Description** (optional): A note describing the task.
+
+**Completion** (optional): How much of the task is done, as a percentage from 0 to 100.
+A missing value is treated as zero.
+
+**Grouping** (optional): Collects related tasks together (e.g., by project phase).
+
+### Options {-}
+
+**Date interval**: Select the interval shown along the timeline (**Daily**, **Fiscal quarterly**, **Monthly**, or **Weekly**).
+
+**Fiscal year type**: Select the fiscal year used for fiscal quarters:
+
+- **Education**: K–12 and college fiscal years (July 1^st^ to June 30^th^).
+- **US Business**: U.S. business fiscal years (April 1^st^ to March 31^st^).
+
+**Task label display**: Select what is shown on each task's bar (e.g., **Resource**, **Description**, **Days**, combinations of these, or **No display**).
+
+### Bar Shapes, Showcasing, & Decals {-}
+
+**Same shape for all bars**, **Custom per-bar shapes**, **Ghost opacity**, **Hide labels on non-showcased bars**, **Showcase bars**, and **Bar block decals**.
+(These are the same as the [**Bar Chart**](#sec-bar-chart-dlg) options.)
+
+\newpage
+
+## Candlestick Plot {#sec-candlestick-dlg}
+
+A candlestick plot shows how a price moved each day, with one candle per day spanning its open and close and a wick reaching to its high and low.
+The dataset should have one row per day, holding the date and the opening, high, low, and closing prices.
+
+### Variables {-}
+
+**Date**: The day that each set of prices applies to.
+
+**Open**: The price at the start of the day.
+
+**High**: The highest price reached during the day.
+
+**Low**: The lowest price reached during the day.
+
+**Close**: The price at the end of the day.
+
+A row with any missing value is left out of the plot.
+
+### Options {-}
+
+**Plot type**: Select how each day is drawn:
+
+- **Candlestick**: A candle spanning the open and close, with a wick reaching to the high and low.
+- **OHLC**: A vertical line from the low to the high, with ticks marking the open and close.
+
+**Gain color**: Select the color for days where the price went up.
+
+**Loss color**: Select the color for days where the price went down.
+
+## Bullet Chart {#sec-bullet-chart-dlg}
+
+A bullet chart compares what was achieved against a target for each of several measures (e.g., KPIs).
+The dataset should have one row per measure, holding its name, the actual value, and the target value.
+
+### Variables {-}
+
+**Label**: The name of each measure.
+Each row is drawn as its own bullet.
+
+**Actual**: The value that was achieved, drawn as the bar.
+If missing, then no bar is drawn, but the target is still shown.
+
+**Target**: The value that was aimed for, drawn as a tick mark.
+If missing, then no tick is drawn.
+
+### Options {-}
+
+**Value format**: Select whether values are shown as a **Value** or **Percentage**.
+(**Percentage** only adds a *%* to the labels; the values themselves are not changed.)
+
+**Show value callouts**: Check this option to show *Actual* and *Target* callouts with leader lines.
+
+**Show range labels**: Check this option to label the qualitative ranges along the axis.
+
+### Range Colors {-}
+
+Select how the qualitative ranges (e.g., *Poor*, *Satisfactory*, *Good*) are colored:
+
+- **Met/did not meet goal**: Each row's ranges are shades of a single color.
+  The **Met goal color** is used if the actual value met the target; the **Did not meet goal color**, otherwise, is used.
+- **Two-tone gradient**: Every row's ranges blend from the **Range start color** to the **Range end color**, from worst to best.
+
+### Ranges {-}
+
+This list defines the qualitative ranges, from worst to best.
+Each range has a **Label** and an **End value**.
+Use the `r keys("Add")`, `r keys("Edit")`, and `r keys("Remove")` buttons to change the list.
+
+\newpage
+
+## Waterfall Chart {#sec-waterfall-dlg}
+
+A waterfall chart shows how a starting value is increased and decreased by a series of steps, with optional totals along the way.
+The dataset should have one row per step, in order, holding the step's name, its amount, and optionally whether the row is a total.
+
+### Variables {-}
+
+**Step label**: The name of each step, in the order that the steps should appear.
+
+**Amount**: The amount that each step adds (positive) or subtracts (negative) from the running total.
+
+**Total flag** (optional): Marks the rows that are subtotals or totals (*1* is a total, *0* is a change).
+A total is drawn as a bar from zero to the running sum, so its amount can be left blank.
+
+### Options {-}
+
+**Orientation**: Select whether the bars are drawn **Vertical** or **Horizontal**.
+
+**Value format**: Select how values are shown (**Value**, **Currency**, **Percentage**, or **Simple value**).
+
+**Show bar values**: Check this option to label each bar with its value.
+
+**Show values on blocks**: Check this option to show the values on the bars' blocks.
+
+**Increase color**: Select the color of the steps that increase the total.
+
+**Decrease color**: Select the color of the steps that decrease the total.
+
+**Total color**: Select the color of the totals.
+
+## Funnel Chart {#sec-funnel-dlg}
+
+A funnel chart shows how a quantity narrows through a series of stages (e.g., applicants moving through an admissions process), optionally against a target.
+The dataset should have one row per stage, in order, holding the stage's name, its actual value, and optionally its target value.
+
+### Variables {-}
+
+**Stage**: The name of each stage, in the order that the stages should appear.
+
+**Value**: The actual value at each stage (e.g., the number of people who reached it).
+A missing value is treated as 0, so the stage collapses to a line.
+
+**Target** (optional): The value that each stage was expected to reach.
+It is drawn as a ghost behind the actual value.
+
+### Options {-}
+
+**Funnel style**: Select whether the funnel is drawn **Glassy** or **Standard** (a flat, solid fill).
+
+**Target ghost opacity**: Enter the opacity of the target overlay, from 0 (transparent) to 255 (opaque).
+
+**Show explanations**: Check this option to show *Actual* and *Target* explanations pointing at the top segment's edges.
+
+**Show conversion labels**: Check this option to show the conversion rates between stages.
