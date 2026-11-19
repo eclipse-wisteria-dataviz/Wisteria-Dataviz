@@ -6,7 +6,7 @@
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // The application icon must sort before the wxWidgets icons, so that Windows uses it
-WXICON_AAA ICON "wisteria-dv.ico"
+AAAA_APP_ICON ICON "wisteria-dv.ico"
 
 // Standard wxWidgets resources (cursors, bitmaps, and the manifest)
 #include "wx/msw/wx.rc"
