@@ -75,6 +75,8 @@ format:
       - Extension=.ttf
       - UprightFont=Inter-VariableFontopszwghtt
       - ItalicFont=Inter-ItalicVariableFontopszwght
+      - BoldFont=Inter-18pt-Bold
+      - BoldItalicFont=Inter-18pt-BoldItalic
     monofont: Inconsolata
     monofontoptions:
       - Path=./fonts/Inconsolata/
