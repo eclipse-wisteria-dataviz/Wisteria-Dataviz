@@ -1,0 +1,140 @@
+;Installer for ${PROGRAM_LONGNAME}
+[Setup]
+#include "setup.isl"
+MergeDuplicateFiles=true
+Compression=lzma
+SolidCompression=true
+UserInfoPage=true
+ChangesAssociations=true
+PrivilegesRequired=admin
+LicenseFile=..\..\LICENSE
+ShowLanguageDialog=yes
+LanguageDetectionMethod=locale
+AppendDefaultDirName=no
+ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64
+; Don't use MinVersion because some customized Windows systems
+; have their OS version messed up and InnoSetup can't determine the version.
+
+[Files]
+; program files
+Source: release\${WISTERIA_RC_BINARY_NAME}; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion restartreplace
+; resource files (required part of programs)
+Source: resources\res.wad; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion restartreplace
+Source: resources\res\dashboard\*; DestDir: {app}\res\dashboard; Components: ProgramFiles; Flags: replacesameversion restartreplace recursesubdirs
+Source: resources\LICENSE; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion
+Source: resources\citations.bib; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion
+Source: resources\citations.mla; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion
+Source: resources\citations.apa; DestDir: {app}; Components: ProgramFiles; Flags: replacesameversion
+; help files
+Source: resources\wisteria-dataviz-manual\*; DestDir: {app}\wisteria-dataviz-manual; Components: HelpFiles; Excludes: "thumbs.db,*.tex,*.log,README.md,\.git"; Flags: replacesameversion restartreplace recursesubdirs
+; examples
+Source: resources\datasets\*; DestDir: {app}\datasets; Components: Examples; Excludes: "thumbs.db,README.md,\.git"; Flags: replacesameversion restartreplace recursesubdirs
+; translations
+Source: resources\es\*.mo; DestDir: {app}\es; Components: Translations; Flags: replacesameversion restartreplace
+
+[Languages]
+#include "lang.isl"
+
+[Icons]
+#include "icons.isl"
+
+[Registry]
+; Make is so that you can run the program from the command line
+Root: HKLM; Subkey: SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\${WISTERIA_RC_BINARY_NAME}; ValueType: string; ValueName: ; ValueData: {app}\${WISTERIA_RC_BINARY_NAME}; Flags: uninsdeletekey
+; Set file association (project)
+Root: HKCR; Subkey: .wdv; ValueType: string; ValueData: WisteriaDataVizProject; Flags: uninsdeletekey
+Root: HKCR; Subkey: WisteriaDataVizProject; ValueType: string; ValueName: ; ValueData: ${Wisteria_DESCRIPTION} Project; Flags: uninsdeletekey
+Root: HKCR; Subkey: WisteriaDataVizProject\DefaultIcon; ValueType: string; ValueData: {app}\${WISTERIA_RC_BINARY_NAME},0; Flags: uninsdeletekey
+Root: HKCR; Subkey: WisteriaDataVizProject\shell\open\command; ValueType: string; ValueData: """{app}\${WISTERIA_RC_BINARY_NAME}"" ""%1"""; Flags: uninsdeletekey
+
+[Components]
+Name: ProgramFiles; Description: {cm:ProgramFiles}; Flags: fixed; Types: Typical Custom
+Name: HelpFiles; Description: {cm:HelpFiles}; Types: Typical Custom
+Name: Examples; Description: {cm:Examples}; Types: Typical Custom
+Name: Translations; Description: {cm:Translations}; Types: Typical Custom
+
+[Types]
+Name: Typical; Description: {cm:Typical}
+Name: Custom; Description: {cm:Custom}; Flags: iscustom
+
+[InstallDelete]
+; Delete any old start menu icons
+Type: filesandordirs ; Name:"{commonprograms}\${Wisteria_DESCRIPTION}"
+
+[UninstallDelete]
+Name: {app}\res; Type: dirifempty
+Name: {app}; Type: dirifempty
+
+[Code]
+
+var
+  Upgrade: Boolean;
+
+function InitializeSetup(): Boolean;
+var
+  userName: String;
+begin
+  // next, see if this is an upgrade installation
+  if RegQueryStringValue(HKLM,
+    'Software\Microsoft\Windows\CurrentVersion\Uninstall\${INNOSETUP_GUID}_is1',
+    'Inno Setup: User Info: Name', userName) then
+    begin
+      Upgrade := true
+    end
+  // no user info, so prompt for it later
+  else
+    Upgrade := false;
+
+  Result := true
+end;
+
+// see if certain dialogs should be skipped if we are in upgrade mode
+function ShouldSkipPage(PageID: Integer): Boolean;
+var
+   iconGroup: String;
+   installDir: String;
+begin
+  if (PageID = wpUserInfo) then
+    Result := Upgrade
+  else if (PageID = wpLicense) then
+    Result := Upgrade
+  else if (PageID = wpReady) then
+    Result := Upgrade
+  // install directory dialog
+  else if (PageID = wpSelectDir) then
+    begin
+      if (Upgrade = true) then
+        begin
+          // first, see if there is an installation folder already
+          if RegQueryStringValue(HKLM,
+              'Software\Microsoft\Windows\CurrentVersion\Uninstall\${INNOSETUP_GUID}_is1',
+              'Inno Setup: App Path', installDir) then
+            Result := true
+          // no path found, so prompt for it
+          else
+            Result := false
+        end
+      else
+        Result := false
+    end
+  // menu group dialog
+  else if (PageID = wpSelectProgramGroup) then
+    begin
+      if (Upgrade = true) then
+        begin
+          // first, see if there is a menu group already
+          if RegQueryStringValue(HKLM,
+              'Software\Microsoft\Windows\CurrentVersion\Uninstall\${INNOSETUP_GUID}_is1',
+              'Inno Setup: Icon Group', iconGroup) then
+            Result := true
+          // no menu group found, so prompt for it
+          else
+            Result := false
+        end
+      else
+        Result := false
+    end
+  else
+    Result := false
+end;

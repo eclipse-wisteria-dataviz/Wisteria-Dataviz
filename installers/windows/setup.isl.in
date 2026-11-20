@@ -1,0 +1,14 @@
+AppName=${Wisteria_DESCRIPTION}
+AppVerName=${Wisteria_DESCRIPTION} ${Wisteria_VERSION_MAJOR}.${Wisteria_VERSION_MINOR}
+AppPublisher=${PUBLISHER}
+AppPublisherURL=${Wisteria_HOMEPAGE_URL}
+AppComments=${PROGRAM_COMMENTS}
+AppVersion=${FULL_VERSION}
+VersionInfoVersion=${FULL_VERSION}
+VersionInfoCopyright=${FULL_VERSION}
+OutputBaseFilename=${UNIX_PACKAGE_NAME}-setup
+AppCopyright=Copyright © ${BUILD_YEAR} ${PUBLISHER}
+DefaultDirName={commonpf}\${Wisteria_DESCRIPTION}
+DefaultGroupName=${Wisteria_DESCRIPTION}
+UninstallDisplayIcon={app}\${WISTERIA_RC_BINARY_NAME}
+AppID={${INNOSETUP_GUID}

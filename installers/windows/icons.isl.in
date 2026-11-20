@@ -1,0 +1,1 @@
+Name: {group}\${Wisteria_DESCRIPTION} ${Wisteria_VERSION_MAJOR}; Filename: {app}\${WISTERIA_RC_BINARY_NAME}; IconIndex: 0

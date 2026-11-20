@@ -104,7 +104,7 @@ set(REMOTE_VERSION_FILE "${Wisteria_HOMEPAGE_URL}")
 string(APPEND REMOTE_VERSION_FILE "/download/current-version.txt")
 set(DOWNLOAD_PAGE "${Wisteria_HOMEPAGE_URL}")
 string(APPEND DOWNLOAD_PAGE "/download")
-set(INNOSETUP_GUID "")
+set(INNOSETUP_GUID "{7D4EFA67-2CBD-49A2-97D1-BA6B6CC24E46}")
 set(PROGRAM_LICENSE "Apache-2.0")
 
 set(FULL_VERSION ${Wisteria_VERSION_MAJOR}.${Wisteria_VERSION_MINOR}.${Wisteria_VERSION_PATCH}.${Wisteria_VERSION_TWEAK})
@@ -320,6 +320,15 @@ endforeach()
 configure_file("${UNIX_INSTALLER_DIR}/rpm/${UNIX_PACKAGE_NAME}.spec.in"
                "${UNIX_INSTALLER_DIR}/rpm/${UNIX_PACKAGE_NAME}.spec"
                NEWLINE_STYLE UNIX)
+
+# Inno Setup installer script
+if(WIN32)
+    set(WINDOWS_INSTALLER_DIR "${CMAKE_CURRENT_SOURCE_DIR}/installers/windows")
+    configure_file("${WINDOWS_INSTALLER_DIR}/setup.isl.in" "${WINDOWS_INSTALLER_DIR}/setup.isl")
+    configure_file("${WINDOWS_INSTALLER_DIR}/icons.isl.in" "${WINDOWS_INSTALLER_DIR}/icons.isl")
+    configure_file("${WINDOWS_INSTALLER_DIR}/${UNIX_PACKAGE_NAME}.iss.in"
+                   "${WINDOWS_INSTALLER_DIR}/${UNIX_PACKAGE_NAME}.iss")
+endif()
 set(CITATION_FILES citations.bib citations.mla citations.apa)
 foreach(CITATION_FILE IN LISTS CITATION_FILES)
     configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${CITATION_FILE}.in"

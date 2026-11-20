@@ -39,6 +39,10 @@
 # Installer staging folders
 /installers/windows/resources/
 /installers/windows/release/
+/installers/windows/Output/
+/installers/windows/setup.isl
+/installers/windows/icons.isl
+/installers/windows/wisteria-dataviz.iss
 /installers/macos/release/
 /installers/unix/AppDir/usr/
 /installers/unix/AppDir/*.desktop
