@@ -1,0 +1,356 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Exporting {#sec-exporting}
+
+A project's pages can be exported to several formats.
+To export a project, click the **File** tab and select **Export**.
+From here, select the export format and click its export button.
+
+The following formats are available:
+
+- **HTML Dashboard**: An interactive dashboard that opens in any web browser.
+- **PDF**: A document that is easy to share and print.
+- **PowerPoint**: A *PowerPoint* (`.pptx`) presentation.
+- **OpenDocument Presentation**: An *OpenDocument* (`.odp`) presentation, which opens in *LibreOffice Impress* and other presentation software.
+- **SVG**: A single SVG file containing all the pages.
+
+Each format has its own options dialog, which is described below.
+Your selections in these dialogs are saved with the project.
+
+## Pages to Export {#sec-export-page-selection}
+
+If a project has more than one page, then a list of its pages is shown before the export options.
+Check the pages to include in the export.
+
+**Select All**: Click this button to check every page.
+
+**Select None**: Click this button to uncheck every page.
+
+::: {.notesection data-latex=""}
+At least one page must be checked to continue.
+The pages that you leave unchecked are remembered for the next export to the same format.
+:::
+
+\newpage
+
+## HTML Export Options {#sec-export-html}
+
+The options in this dialog customize the exported HTML dashboard.
+
+### Document Information {-}
+
+**Title**: Enter the title of the dashboard.
+If this is left empty, then the label of the first page is used.
+
+**Subject**: Enter the subject of the dashboard.
+This is written as the web page's description.
+
+**Author**: Enter the author of the dashboard.
+
+**Keywords**: Enter keywords that describe the dashboard.
+
+::: {.notesection data-latex=""}
+The title, subject, author, and keywords are shared with the project's [settings](#sec-project-settings).
+Changing them here will also update the project.
+:::
+
+**Logo**: Select an image to show in the dashboard's title bar.
+Leave this empty to not show a logo.
+
+**Theme**: Select the theme to style the dashboard with.
+
+### Page Size {-}
+
+**Page width**: Enter the width (in pixels) that every page is rendered at.
+
+**Page height**: Enter the height (in pixels) that every page is rendered at.
+
+### Display {-}
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Initial View
+:::
+
+Select how the pages are presented when the dashboard is first opened:
+
+**Gallery**: Small page cards are shown across the top, with the selected page shown below them.
+
+**Slideshow**: Full-height pages are shown in a scrolling column.
+::::
+
+**Include color mode toggle**: Check this option to include a toggle that switches the dashboard between **Auto**, **Light**, and **Dark** modes.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Initial Color Mode
+:::
+
+Select the light or dark mode that the dashboard opens in:
+
+**Auto**: Follows the operating system's setting.
+
+**Light**: Always opens in light mode.
+
+**Dark**: Always opens in dark mode.
+::::
+
+**Count up large numbers**: Check this option to have large numbers count up when a page is revealed.
+
+**Include dual layout orientations**: Check this option to also render each page with its width and height swapped.
+The browser will then show whichever orientation best fits its window.
+
+### Buttons {-}
+
+**Include Save button**: Check this option to include a **Save** button in the dashboard.
+
+**Include Print button**: Check this option to include a **Print** button in the dashboard.
+
+**Include Copy button**: Check this option to include a **Copy** button in the dashboard.
+
+### Filtering {-}
+
+**Include group visibility toggles**: Check this option to include checkboxes that hide or show a graph's groups.
+
+::: {.notesection data-latex=""}
+The choices for filterable graphs are always included, regardless of this option.
+:::
+
+**Remember filter choices and group visibility in browser**: Check this option to have the browser remember the filter choices and hidden groups between visits.
+
+**Filter Defaults**: If the project contains filterable graphs, then this section lists each dataset and column that the graphs are filtered by.
+Select the choice that each filter should open on.
+
+\newpage
+
+## PDF Export Options {#sec-export-pdf}
+
+The options in this dialog customize the exported PDF document.
+
+### Page {-}
+
+**Page Setup...**: Click this button to select the paper size and orientation.
+
+**Paper type**: Shows the selected paper size.
+
+**Orientation**: Shows the selected paper orientation (i.e., portrait or landscape).
+
+### Document Information {-}
+
+**Title**: Enter the title of the document.
+
+**Author**: Enter the author of the document.
+
+**Subject**: Enter the subject of the document.
+
+**Keywords**: Enter keywords that describe the document.
+
+::: {.notesection data-latex=""}
+The title, subject, author, and keywords are shared with the project's [settings](#sec-project-settings).
+Changing them here will also update the project.
+:::
+
+**Compress content**: Check this option to compress the PDF's content, which will make the file smaller.
+
+\newpage
+
+## PowerPoint Export Options {#sec-export-pptx}
+
+The options in this dialog customize the exported *PowerPoint* presentation.
+
+### Slide Size {-}
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Preset
+:::
+
+**Widescreen (16:9)**: Creates slides that are 13.333 × 7.5 inches.
+
+**Standard (4:3)**: Creates slides that are 10 × 7.5 inches.
+
+**Custom**: Creates slides with the width and height entered below.
+::::
+
+**Width (inches)**: Enter the width of the slides.
+This is only available when **Custom** is selected.
+
+**Height (inches)**: Enter the height of the slides.
+This is only available when **Custom** is selected.
+
+::: {.notesection data-latex=""}
+A slide's width and height cannot be larger than 56 inches.
+:::
+
+### Document Information {-}
+
+**Title**: Enter the title of the presentation.
+
+**Author**: Enter the author of the presentation.
+
+**Subject**: Enter the subject of the presentation.
+
+**Keywords**: Enter keywords that describe the presentation.
+
+**Publisher**: Enter the publisher of the presentation.
+
+**Include a title slide**: Check this option to add a title slide before the project's pages.
+The title slide shows the presentation's title, with the author beneath it.
+If a publisher is entered, then it is shown at the bottom of the slide.
+
+**Theme**: Select a color scheme for the title slide.
+When a color scheme is selected, the title slide will have a gradient background, an accent bar, a decorative accent circle, and themed text colors.
+Select **None** to use a plain title slide.
+
+### Transitions {-}
+
+**Effect**: Select the transition effect used between slides.
+The available effects are **None**, **Fade**, **Push**, **Wipe**, **Split**, **Cut**, and **Morph**.
+
+**Speed**: Select how quickly the transition plays (**Slow**, **Medium**, or **Fast**).
+
+**Advance on mouse click**: Check this option to advance to the next slide when the mouse is clicked.
+
+**Advance automatically after [5] seconds**: Check this option to advance to the next slide automatically.
+Enter the number of seconds that each slide is shown.
+
+**Loop continuously until Esc**: Check this option to have the slideshow start over after its last slide.
+The slideshow will continue until `r keys("Esc")` is pressed.
+
+### Notes {-}
+
+**Add chart descriptions as speaker notes**: Check this option to add descriptions of each slide's charts as speaker notes.
+These descriptions come from the page's titles and the accessibility descriptions of its objects.
+
+## ODP Export Options {#sec-export-odp}
+
+The options in this dialog customize the exported *OpenDocument* presentation.
+These options are the same as the [**PowerPoint Export Options**](#sec-export-pptx), except for the following:
+
+- **Advance on mouse click** is not available.
+- **Loop continuously until Esc** is not available.
+
+\newpage
+
+## SVG Export Options {#sec-export-svg}
+
+The options in this dialog customize the exported SVG file.
+
+### Page Size {-}
+
+**Use page setup**: Select this option to size the pages from a paper size and orientation.
+
+**Page Setup...**: Click this button to select the paper size and orientation.
+
+**Paper type**: Shows the selected paper size.
+
+**Orientation**: Shows the selected paper orientation (i.e., portrait or landscape).
+
+**Custom size**: Select this option to enter the page size yourself.
+
+**Width**: Enter the width (in pixels) of the pages.
+This is only available when **Custom size** is selected.
+
+**Height**: Enter the height (in pixels) of the pages.
+This is only available when **Custom size** is selected.
+
+A preview of the page's shape (i.e., its aspect ratio) is shown next to these options.
+
+### Interactive Features {-}
+
+**Layout options**: Check this option to include a floating toggle that switches between the page layouts.
+A spinner for adjusting the gap between pages is also included.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Default Page Layout
+:::
+
+Select how the pages are laid out when the file is opened.
+This is only available when **Layout options** is checked.
+
+**Single**: The pages are shown in a single column.
+
+**Duplex**: The pages are shown side by side.
+
+**Stacked**: The pages are stacked on top of each other, each one offset to the lower right.
+::::
+
+**Dark mode toggle**: Check this option to include a floating toggle that switches between light and dark mode.
+
+**Slideshow navigation**: Check this option to include slideshow navigation.
+This adds previous and next buttons, and lets the arrow keys move between pages.
+
+**Transitions**: Check this option to have pages slide smoothly when moving between them.
+
+**Page shadow**: Check this option to draw a subtle shadow under each page.
+
+**Layer controls**: Check this option to include checkboxes that hide or show the pages in each layer.
+These are only included if a page is assigned to a layer.
+
+**Hover highlighting**: Check this option to highlight objects when the mouse moves over them.
+
+**Theme**: Select the theme that the colors of the buttons and effects come from.
+
+\newpage
+
+## Image Export Options {#sec-export-image}
+
+When you save a page as an image, you will first be asked to select an image format.
+The following formats are available:
+
+- **PNG** (Portable Network Graphics): A lossless-compressed format.
+  The image can be compressed to a smaller size without any loss of quality.
+- **JPG** (Joint Photographic Experts Group): A lossy-compressed format.
+  Some image quality may be lost, compared to formats such as PNG.
+- **BMP** (Bitmap): An uncompressed raster (i.e., pixel based) format.
+- **TIFF** (Tagged Image File Format): A format that can be compressed or uncompressed.
+  It offers both lossy and lossless compression and is generally preferred for desktop publishing.
+- **TARGA** (Truevision Advanced Raster Graphics Adapter): A raster (i.e., pixel based) format.
+- **GIF** (Graphics Interchange Format): A raster (i.e., pixel based) format.
+  This format is limited to 256 colors.
+- **SVG** (Scalable Vector Graphics): A format that uses vector (rather than raster) drawing.
+  Vector-based images can be scaled to much larger sizes, without the loss of quality that raster images would experience.
+- **WebP** (Web Picture): A replacement for JPEG, PNG, and GIF which supports both lossy and lossless compression.
+- **PDF** (Portable Document Format): A vector-based document format that preserves text and graphics at any scale.
+
+After selecting a format, the **Image Export Options** dialog is shown.
+(If you selected **PDF**, then the [**PDF Export Options**](#sec-export-pdf) dialog is shown instead.)
+
+### Image Size {-}
+
+**Width**: Enter the width (in pixels) of the image.
+
+**Height**: Enter the height (in pixels) of the image.
+
+The width and height are linked, so changing one will adjust the other to keep the image's aspect ratio.
+Both can range from 128 to 10000 pixels.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Color Mode
+:::
+
+**RGB (Color)**: Select this option to save the image in color.
+
+**Grayscale**: Select this option to save the image in shades of gray.
+
+These options are not available for SVG.
+::::
+
+### TIFF Options {-}
+
+**Compression**: Select the compression method for the image.
+The available methods are **None**, **Lempel-Ziv & Welch**, **JPEG**, and **Deflate**.
+
+This option is only available for TIFF.
+
+### Preview {-}
+
+A preview of the image is shown on the right side of the dialog.
+It updates as you change the color mode.

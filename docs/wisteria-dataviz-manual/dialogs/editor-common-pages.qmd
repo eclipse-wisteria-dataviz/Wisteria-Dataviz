@@ -1,0 +1,436 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Inserting & Editing Items {#sec-editor-common}
+
+Graphs and other objects are added to a page from the ribbon:
+
+- **Analyses** tab: The **Graphs** section groups the graphs into categories (`r keys("Basic")`, `r keys("Business")`, `r keys("Statistical")`, `r keys("SPC")`, `r keys("Survey")`, `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")`).
+  Click a category and select a graph from its menu.
+- **Objects** tab: The **Objects** section inserts labels, KPI cards, images, shapes, axes, spacers, and dividers.
+
+Each of these opens an editor dialog.
+To edit an existing item, select it and click the `r keys("Edit")` button in the **Objects** section of the **Objects** tab.
+
+An editor dialog has a list of pages along its left side.
+The first pages are specific to the item being inserted, and are described in the following chapters.
+The remaining pages are shared by most editors and are described below.
+
+## Data Guide {#sec-editor-data-guide}
+
+Graph editors begin with a **Data Guide** page.
+This page explains what the graph shows and how its dataset should be laid out.
+It includes:
+
+- The variables that the graph uses, which ones are required, and what each one represents.
+- A small sample dataset, showing an example of the expected layout.
+- How missing data is handled.
+
+## Selecting a Dataset & Variables {#sec-editor-variables}
+
+Most graph editors have the following options on their first page:
+
+**Dataset**: Select the dataset that the graph will use.
+
+**Variables**: Shows the columns that are currently selected for the graph.
+Click the `r keys("Select...")` button to open the [**Select Variables**](#sec-select-variables-dlg) dialog and choose them.
+Variables marked **(optional)** can be left empty.
+
+\newpage
+
+## General {#sec-editor-graph-general}
+
+The options on this page are shared by all graphs.
+
+**ID**: Enter the graph's ID number.
+Each graph in a project should have a unique ID.
+
+### Titles {-}
+
+**Title**: The title shown above the graph.
+Click `r keys("Edit...")` to edit its text and formatting.
+
+**Subtitle**: The subtitle shown beneath the title.
+Click `r keys("Edit...")` to edit its text and formatting.
+
+**Caption**: The caption shown beneath the graph.
+Click `r keys("Edit...")` to edit its text and formatting.
+
+### Background {-}
+
+**Background color**: Select the background color of the plot area.
+
+#### Background Image {-}
+
+**Image**: The image drawn within the plotting area.
+Click `r keys("Edit...")` to select the image.
+
+**Opacity**: Sets the transparency of the image.
+A value of 0 is fully transparent, whereas 255 is fully opaque.
+
+**Fit**: Select how the image fits inside the plot area:
+
+- **Crop and center**: Crops the image to the plot area, with the center of the image as the origin.
+- **Shrink**: Shrinks the image to fit within the plot area, maintaining its aspect ratio.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Colors
+:::
+
+**Color scheme**: Select this option to color the graph's groups from a predefined color scheme.
+
+**Custom color list**: Select this option to enter your own list of colors.
+
+Some graphs (e.g., the **Dueling Pie Chart**) use two sets of colors.
+In this case, **Color Scheme 1** and **Color Scheme 2** sections are shown.
+::::
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Point Shapes
+:::
+
+This section is only shown for graphs that draw points (e.g., the **Line Plot**).
+
+**Shape scheme**: Select this option to draw the groups' points with a predefined set of shapes.
+
+- **Standard Shapes**: A set of common shapes (e.g., circles, squares, and triangles).
+- **Semesters**: Shapes representing the fall, spring, and summer semesters (a leaf, a flower, and a sun).
+
+**Custom shape list**: Select this option to enter your own list of shapes.
+::::
+
+\newpage
+
+## Annotations & References {#sec-editor-annotations}
+
+The options on this page add notes and reference markers to the graph's plot area.
+
+### Annotations {-}
+
+An annotation is a label drawn on top of the plot, such as a sticky note.
+It can optionally have lines drawn from it to points of interest on the plot (e.g., a data point).
+
+When adding or editing an annotation, the following options are available:
+
+**Label**: The annotation's text.
+Click `r keys("Edit...")` to edit its text and formatting.
+
+**Anchoring**: Select which part of the label is placed at the anchor point (**Center**, **Top-left corner**, **Top-right corner**, **Bottom-left corner**, or **Bottom-right corner**).
+
+**x-axis**: Enter the anchor point's position along the x axis.
+
+**y-axis**: Enter the anchor point's position along the y axis.
+
+These positions are relative to the plot's axes, not physical positions on the page.
+
+**Interest Points**: Add the points on the plot that lines should be drawn to from the annotation.
+Like the anchor point, each point's **x-axis** and **y-axis** positions are relative to the plot's axes.
+
+### Reference Lines {-}
+
+A reference line is drawn across the graph, showing a reference value on its axis (e.g., a goal or a national average).
+
+**Axis**: Select the axis that the reference value is on (**Bottom X**, **Top X**, **Left Y**, or **Right Y**).
+The line is drawn across the full length of the opposite axis.
+
+**Position**: Enter the line's position along the axis.
+
+**Label**: Enter the line's label.
+
+**Color**: Select the line's color.
+
+**Label placement**: Select where to show the line's label:
+
+- **Legend**: Shows the label on the graph's legend.
+- **Opposite axis**: Shows the label on the opposite axis.
+
+### Reference Areas {-}
+
+A reference area is a shaded range drawn across the graph (e.g., a recession on a time series).
+
+**Axis**: Select the axis that the range is on (**Bottom X**, **Top X**, **Left Y**, or **Right Y**).
+
+**Start**: Enter the start of the range.
+
+**End**: Enter the end of the range.
+
+**Label**: Enter the area's label.
+
+**Color**: Select the area's color.
+
+**Style**: Select how the area is drawn:
+
+- **Solid**: The area is filled solidly and has reference lines on each side.
+- **Fade from left to right**: The area is filled with a gradient of the color to transparent, going from left to right (or bottom to top).
+  Only the starting side has a reference line.
+  This is useful for showing an area with a vague ending point.
+- **Fade from right to left**: The area is filled with a gradient of the color to transparent, going from right to left (or top to bottom).
+  Only the ending side has a reference line.
+  This is useful for showing an area with a vague starting point.
+
+::: {.notesection data-latex=""}
+Duplicate reference areas (i.e., ones with the same label and color) are combined into one item on the legend.
+This is useful for related events on a plot (e.g., multiple recessions).
+:::
+
+\newpage
+
+## Axes {#sec-editor-axes}
+
+The options on this page customize the graph's axes.
+
+**Edit axis**: Select the axis to edit (**Bottom X**, **Top X**, **Left Y**, or **Right Y**).
+The remaining options apply to the selected axis.
+
+### Title / Header / Footer {-}
+
+**Title**: The title shown alongside the axis.
+
+**Header**: The label shown at the start of the axis.
+
+**Footer**: The label shown at the end of the axis.
+
+Click `r keys("Edit...")` next to any of these to edit its text and formatting.
+
+### Axis Line {-}
+
+**Color**: Select the color of the axis line.
+
+**Width**: Enter the width of the axis line.
+
+**Style**: Select the axis line's style (**None**, **Solid**, **Dot**, **Long dash**, **Short dash**, or **Dot dash**).
+
+**Cap**: Select what is drawn at the end of the axis line (the right end for horizontal axes, the top for vertical axes):
+
+- **No cap**: Nothing is drawn.
+- **Arrow**: An arrow is drawn.
+
+**Reverse**: Check this option to flip the axis.
+The range remains the same, but the values and labels are drawn in reverse order along the axis.
+
+### Gridlines {-}
+
+**Color**: Select the color of the gridlines.
+
+**Width**: Enter the width of the gridlines.
+
+**Style**: Select the gridlines' style (**None**, **Solid**, **Dot**, **Long dash**, **Short dash**, or **Dot dash**).
+
+### Tickmarks {-}
+
+**Display**: Select how the tickmarks are drawn:
+
+- **Inner**: The tickmarks are inside the plot.
+- **Outer**: The tickmarks are outside the plot.
+- **Crossed**: The tickmarks are both inside and outside the plot.
+- **No display**: Tickmarks are not shown.
+
+### Labels {-}
+
+**Display**: Select how the axis labels are shown:
+
+- **Custom labels or values**: Shows the custom label (if available) or the numeric value.
+- **Only custom labels**: Only shows custom labels.
+  Nothing is shown at positions without a custom label.
+- **Custom labels and values**: Shows both the numeric value and the custom label.
+- **No display**: Labels are not shown.
+- **Values**: Only shows the numeric values.
+
+**Number format**: Select how numeric labels are formatted:
+
+- **Value**: Shows the number as-is, with thousands separators.
+- **Percentage**: Shows the number as a percentage.
+- **Currency**: Shows the number as currency (using your system's settings).
+- **Value (simple)**: Shows the number as-is, without thousands separators.
+
+**Orientation**: Select whether the labels are drawn **Parallel** or **Perpendicular** to the axis.
+
+**Perpendicular alignment**: Select how perpendicular labels are aligned:
+
+- **Align with axis line**: The labels are flush against the axis line.
+  For example, labels on a left y axis will be flush right (ragged left).
+- **Align with boundary**: The labels are aligned against the outer edge of the axis area.
+  For example, labels on a left y axis will be flush left (ragged right).
+- **Center on axis line**: The labels are centered on the axis line.
+
+**Precision**: Enter the number of decimal places shown for numeric labels.
+
+**Label line length**: Enter the suggested length of each line of a label.
+Labels with lines longer than this will be split into multiple lines.
+
+**Double-sided labels**: Check this option to draw the labels on both sides of the axis line.
+
+**Show outer labels**: Check this option to show the first and last labels on the axis (i.e., at the outer edges of the plot).
+
+**Stack labels**: Check this option to stack the labels, where every other label is drawn below the previous one.
+This is useful when the labels are long and would otherwise overlap each other.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Range
+:::
+
+**Auto**: Select this option to have the axis range calculated from the data.
+
+**User-defined**: Select this option to enter the range yourself.
+
+For numeric axes, the following options are available:
+
+- **Start**: The first value on the axis.
+- **End**: The last value on the axis.
+- **Interval**: The distance between each tickmark.
+- **Display interval**: How often a label is shown on the tickmarks.
+  For example, 2 means that every other tickmark will have a label.
+
+For date axes, the following options are available:
+
+- **Start**: The first date on the axis.
+- **End**: The last date on the axis.
+- **Interval**: The interval between labels (**Fiscal quarterly**, **Monthly**, **Weekly**, or **Daily**).
+::::
+
+### Brackets {-}
+
+Brackets are drawn alongside an axis to group a range of its values under a label (e.g., a fiscal year spanning several months).
+
+When adding or editing a bracket, the following options are available:
+
+- **Label**: The bracket's label.
+- **Start**: The start of the bracket's range along the axis.
+- **End**: The end of the bracket's range along the axis.
+- **Color**: The color of the bracket's lines.
+- **Width**: The width of the bracket's lines.
+- **Style**: How the bracket is connected to the axis:
+  - **Lines**: Regular lines.
+  - **Arrow**: An arrow pointing at the axis.
+  - **Reverse arrow**: An arrow pointing at the bracket's label.
+  - **No connection lines**: Only the bracket itself is drawn.
+  - **Curly braces**: The bracket is drawn as a curly brace.
+
+**Add from dataset...**: Click this button to create brackets from a dataset.
+Select the **Dataset**, the **Label column** containing the brackets' labels, and the **Value column** containing the positions they span.
+The bracket **Style**, **Color**, and **Width** can also be selected here.
+
+Check **Simplify brackets** to shorten repeated date-range labels.
+For example, if the brackets contain labels like *1979-80* or *FY1979-1980*, then the first one is kept as-is, but the remaining ones are shortened to *'79-80*.
+(This is only applied if all dates are in the same century.)
+
+### Mirroring {-}
+
+**Mirror X axis**: Check this option to show a copy of the bottom x axis on the top of the graph.
+
+**Mirror Y axis**: Check this option to show a copy of the left y axis on the right side of the graph.
+
+\newpage
+
+## Legend {#sec-editor-legend}
+
+The options on this page customize the graph's legend.
+
+**Placement**: Select where the legend is placed relative to the graph (**Right**, **Left**, **Top**, or **Bottom**).
+Select **(None)** to not include a legend.
+
+**Include header**: Check this option to show a header on top of the legend.
+This is usually the name of the grouping variable.
+
+**Custom title**: Enter a title to use for the legend's header, instead of the default.
+
+**Ring**: For pie-like charts with two rings, select which ring the legend describes (**Outer** or **Inner**).
+
+\newpage
+
+## Placement {#sec-editor-placement}
+
+The options on this page control where the item is placed on the page and how it fits within its cell.
+
+### Grid {-}
+
+A page is laid out as a grid of cells, with one item per cell.
+
+**Rows**: Enter the number of rows in the page's grid.
+
+**Columns**: Enter the number of columns in the page's grid.
+
+**Select the cell where the item will be placed**: Click the cell to place the item in.
+Cells that already contain an item show its name; empty cells are labeled *[Empty]*.
+If you select a cell that already has an item, then you will be asked whether to replace it.
+
+### Alignment & Scaling {-}
+
+**Horizontal alignment**: Select how the item's content is positioned horizontally within its cell (**Left**, **Centered**, or **Right**).
+
+**Vertical alignment**: Select how the item's content is positioned vertically within its cell (**Top**, **Centered**, or **Bottom**).
+
+::: {.notesection data-latex=""}
+The alignment options only apply to tables and labels (including legends).
+:::
+
+**Scaling**: Enter the item's scaling, from 0.1 to 10.
+This affects the thickness of the item's outline.
+For items with a center point (e.g., images and labels), it also affects the size of the item.
+
+**Lock scaling**: Check this option to keep a label's scaling from being adjusted to fit its cell.
+Its text will still grow and shrink as the page is zoomed.
+This option only affects labels.
+
+### Padding {-}
+
+**Top**, **Right**, **Bottom**, **Left**: Enter the space between the item's content and its outline.
+This only affects labels and axes.
+
+### Sizing {-}
+
+**Fit row to content**: Check this option to make the item's row only as tall as the item needs.
+By default, rows are stretched equally to fill the page's height.
+If two items in the same row have this checked, then the row will be the height of the taller item.
+
+**Fixed width**: Check this option to give the item only the width it needs within its row.
+By default, items in a row are stretched equally to fill the page's width.
+This is usually used for legends placed next to a graph.
+
+### Outline {-}
+
+**Color**: Select the color of the item's outline.
+
+**Width**: Enter the width of the outline.
+
+**Style**: Select the outline's style (**Solid**, **Dot**, **Long dash**, **Short dash**, or **Dot dash**).
+
+**Top**, **Right**, **Bottom**, **Left**: Check which sides of the item have an outline.
+
+### Canvas Margins {-}
+
+**Top**, **Right**, **Bottom**, **Left**: Enter the margins around the item within its cell.
+These only take effect when the item is the only one in its cell.
+
+\newpage
+
+## Accessibility {#sec-editor-accessibility}
+
+The options on this page control the accessibility attributes written for the item when it is exported to SVG (or an HTML dashboard).
+These attributes describe the item to screen readers.
+
+**Automatically manage accessibility**: Check this option to have the program generate the item's accessibility attributes.
+For graphs, this includes a description of the graph's data and presentation.
+
+### Manual Settings {-}
+
+These options are only available when **Automatically manage accessibility** is unchecked.
+
+**ARIA Label**: Enter the text that screen readers will read for the item.
+
+**Role**: Select the item's role:
+
+- **(default)**: Uses the default role for the item.
+- **figure**: The item is a figure (e.g., a graph with its title and caption).
+- **img**: The item is an image.
+- **presentation**: The item is decorative and has no meaning to convey.
+
+**ARIA Hidden**: Check this option to hide the item from screen readers.
+This is useful for purely decorative items.

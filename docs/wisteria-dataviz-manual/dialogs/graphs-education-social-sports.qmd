@@ -82,6 +82,8 @@ Each one is drawn as its own line.
 
 **Showcase lines**: Add the observations to highlight, while the others are shown faded.
 
+\newpage
+
 ## Linear Regression Roadmap {#sec-lr-roadmap-dlg}
 
 *Social Sciences*

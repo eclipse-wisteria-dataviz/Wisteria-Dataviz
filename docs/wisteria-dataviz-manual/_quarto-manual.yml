@@ -11,3 +11,20 @@ book:
     - part: "Options"
       chapters:
       - program-options.qmd
+      - dialogs/project-settings.qmd
+    - part: "Dialogs"
+      chapters:
+      - dialogs/import-dataset.qmd
+      - dialogs/transformations.qmd
+      - dialogs/exporting.qmd
+      - dialogs/common-dialogs.qmd
+    - part: "Pages, Graphs, & Objects"
+      chapters:
+      - dialogs/editor-common-pages.qmd
+      - dialogs/objects.qmd
+      - dialogs/graphs-basic.qmd
+      - dialogs/graphs-business.qmd
+      - dialogs/graphs-statistical.qmd
+      - dialogs/graphs-spc.qmd
+      - dialogs/graphs-survey.qmd
+      - dialogs/graphs-education-social-sports.qmd

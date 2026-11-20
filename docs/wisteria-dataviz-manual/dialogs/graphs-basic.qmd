@@ -1,0 +1,624 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Basic Graphs {#sec-graphs-basic}
+
+The graphs in this chapter are available from the `r keys("Basic")` button in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Bar Chart {#sec-bar-chart-dlg}
+
+A bar chart compares categories with one bar each.
+Each bar is sized by either how many rows fall into the category or by the total of a measurement.
+Bars can optionally be split into blocks.
+The dataset should have one row per observation, holding its category and (optionally) a measurement to add up and the group that it belongs to.
+
+### Variables {-}
+
+**Category**: The categories to compare.
+Each unique value becomes one bar.
+
+**Weight** (optional): A measurement to add up for each category.
+Without it, the bars show how many rows fall into each category.
+
+**Group** (optional): Splits each bar into blocks, one per unique value (e.g., the portion of each bar contributed by each gender).
+
+### Options {-}
+
+**Orientation**: Select whether the bars are drawn **Horizontal** or **Vertical**.
+
+**Bar labels**: Select the label shown on each bar (**Value**, **Percentage**, **Value and Percentage**, **No Display**, **Name**, **Name and Value**, or **Name and Percentage**).
+
+**Apply color scheme to ungrouped bars**: Check this option to color each bar from the color scheme when no group is used.
+Otherwise, all bars use the same color.
+
+**Constrain axis to bar lengths**: Check this option to force the scaling axis to the length of the longest bar.
+This is only recommended when the scaling axis is not shown and the bars are being used for artistic purposes.
+
+**Include spaces between bars**: Check this option to draw a space between each bar.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Fold over-long bars
+:::
+
+Select how bars that are vastly longer than the others are drawn:
+
+**None**: No bars are folded.
+
+**Serpentine**: A long bar is folded back and forth through blank rows that are inserted beneath it.
+
+**Aggressive serpentine**: A long bar is folded, with its last fold packed into the free space of a row that already holds a shorter bar.
+Blank rows are only added when no row has room.
+::::
+
+**Fold threshold**: Enter how many times longer than the other bars a bar must be to be folded.
+A bar is folded when its length is at least this many times the length of the longest bar that is not folded.
+The default is 3.
+
+**Show fold direction arrows**: Check this option to draw arrows showing the direction that a folded bar continues in.
+
+::: {.notesection data-latex=""}
+Folding requires at least two bars and a scaling axis that is not reversed.
+A bar can only be folded if it is a single block and is not part of a bar group.
+Effects such as images, stipples, and gradients are not applied to folded bars.
+:::
+
+**Bar label suffix**: Enter text to add to the end of each bar's label (e.g., *%* or *units*).
+
+**Bar effect**: Select how the bars are drawn.
+These are the same effects as the [**Box Plot**](#sec-box-plot-dlg)'s **Box effect** option.
+
+### Bar Shapes {-}
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Shape
+:::
+
+**Same shape for all bars**: Select the shape used for every bar:
+
+- **Rectangle**: A rectangle (the default).
+- **Arrow**: An arrow pointing to the right (horizontal bars) or up (vertical bars).
+- **Reverse Arrow**: An arrow pointing to the left (horizontal bars) or down (vertical bars).
+
+**Custom per-bar shapes**: Add bars that should use a different shape than the others.
+::::
+
+**Bar block decals**: Add text to write on a bar's block.
+Select the **Bar** and **Block**, then enter the **Text**.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Bar Sorting
+:::
+
+**No custom sort**: Select this option to keep the bars in their default order.
+
+**Sort by**: Select this option to sort the bars by their **Bar length** or their **Bar label**, in either **Ascending** or **Descending** order.
+
+**Custom order**: Select this option to arrange the bars in your own order.
+::::
+
+### Bar Groups {-}
+
+A bar group wraps a curly brace around a contiguous series of bars.
+On the other side of the brace, a bar is drawn showing the combined length of the bars within the group.
+This is useful for drawing attention to a block of smaller bars that may be eclipsed by a larger bar.
+
+When adding a bar group, the following options are available:
+
+- **Start bar**: The first bar in the group.
+- **End bar**: The last bar in the group.
+- **Label**: The label drawn on the group's bar.
+- **Color**: The color of the group's bar.
+  Check **Custom** to select your own color, otherwise the color scheme is used.
+
+### Showcasing {-}
+
+**Ghost opacity**: Enter the opacity of the bars that are not showcased.
+A value of 0 is fully transparent, whereas 255 is fully opaque.
+
+**Hide labels on non-showcased bars**: Check this option to remove the labels from the ghosted bars.
+
+**Showcase bars**: Add the bars to showcase.
+These bars are drawn fully opaque, and all others are drawn with the ghost opacity.
+
+\newpage
+
+## Pie Chart {#sec-pie-chart-dlg}
+
+A pie chart shows how a total is divided among groups, as slices of a pie.
+Subgroups can be added as an inner ring.
+The dataset should have a column of groups, either with one row per observation (which are counted) or one row per group with a column of values to add up.
+
+### Variables {-}
+
+**Group (outer)**: The groups that become the slices of the pie.
+
+**Weight** (optional): The value to add up for each group.
+If omitted, then the rows of each group are counted.
+
+**Subgroup (inner)** (optional): Splits each slice into subgroups, which are drawn as an inner ring lined up against their parent slices.
+
+### Options {-}
+
+**Style**: Select a decorative style for the pie (e.g., *Clockface*, *Cheese pizza*, *Chocolate chip cookie*, or *Pumpkin pie*).
+Select **None** for a standard pie chart.
+
+### Labels {-}
+
+**Outer midpoint**: Select the label shown in the middle of the outer slices (**Value**, **Percentage**, **Value & percentage**, **No labels**, **Name**, **Name & value**, or **Name & percentage**).
+
+**Outer**: Select the label shown outside of the outer slices.
+
+**Inner midpoint**: Select the label shown in the middle of the inner slices.
+
+**Placement**: Select where the outer labels are placed:
+
+- **Next to slice**: The labels are next to their slices.
+- **Flush**: The labels are flush with the left and right sides of the plot area.
+
+**Show outer pie labels**: Check this option to show the outer slices' labels.
+
+**Show inner pie labels**: Check this option to show the inner slices' labels.
+
+**Color-matched labels**: Check this option to have the outer labels' font colors match their slices.
+
+### Donut Hole {-}
+
+**Include donut hole**: Check this option to draw a hole in the middle of the pie.
+
+**Background color**: Select the color of the donut hole.
+
+**Hole proportion**: Enter the size of the hole, as a proportion of the pie.
+
+**Edit Label...**: Click this button to edit the label shown inside the donut hole.
+
+### Showcasing {-}
+
+**Ghost opacity**: Enter the opacity of the slices that are not showcased.
+
+**Mode**: Select which slices to showcase:
+
+- **None**: No slices are showcased.
+- **Explicit list of outer slices**: Showcases the slices listed in **Slices to showcase**.
+- **Largest outer slice(s)** / **Smallest outer slice(s)**: Showcases the largest (or smallest) outer slices.
+- **Largest inner slice(s)** / **Smallest inner slice(s)**: Showcases the largest (or smallest) inner slices.
+
+**Ring labels shown**: Select which ring's labels are shown while showcasing (**Inner** or **Outer**).
+
+**Group by outer slice**: Check this option to find the largest (or smallest) inner slices within each outer slice, rather than across the whole pie.
+
+**Show outer pie midpoint labels while showcasing**: Check this option to keep the outer slices' midpoint labels.
+
+**Slices to showcase**: Add the outer slices to showcase.
+
+### Slice Images {-}
+
+**Effect**: Select whether the slices are drawn with a **Solid** color or an **Image**.
+
+**Images (blank rows use the brush)**: Select an image for each slice.
+Slices with a blank row will use the regular color.
+
+\newpage
+
+## Line Plot {#sec-line-plot-dlg}
+
+A line plot shows how a measurement changes across a series (e.g., weeks or years), with an optional separate line for each group.
+The dataset should have one row per point, holding the measurement, its position along the x axis, and optionally the group that the point belongs to.
+
+### Variables {-}
+
+**Values**: The measurement being plotted on the y axis (e.g., an average grade).
+
+**Series**: The position of each point along the x axis (e.g., a week or a year).
+
+**Grouping** (optional): Draws a separate line for each unique value (e.g., one line per gender).
+Without it, a single line is drawn.
+
+::: {.notesection data-latex=""}
+Row order matters.
+Each line is drawn through its points in the order that they appear in the dataset, not sorted by the x axis.
+A missing value breaks the line at that row, and the next valid row starts the line again.
+:::
+
+### Options {-}
+
+**Auto spline**: Check this option to draw a line as a spline when it zigzags (i.e., goes back and forth along the x axis).
+This is useful for lines that show a downward spiral.
+
+### Showcasing {-}
+
+**Ghost opacity**: Enter the opacity of the lines that are not showcased.
+
+**Showcase lines**: Add the lines (by group) to showcase.
+
+\newpage
+
+## Multi-Series Line Plot {#sec-multi-series-line-plot-dlg}
+
+A multi-series line plot compares several measurements across the same x axis, with a separate line for each measurement column.
+The dataset should have one row per position along the x axis, with a column for the x value and a column for each measurement to plot.
+
+### Variables {-}
+
+**Y (series)**: The measurements to plot.
+Each column you select is drawn as its own line.
+
+**X (axis)**: The position of each point along the x axis (e.g., a quarter or a year).
+All the lines share it.
+
+### Options {-}
+
+**Auto spline**: The same as the [**Line Plot**](#sec-line-plot-dlg) option.
+
+\newpage
+
+## Table {#sec-table-dlg}
+
+A table shows the values of a dataset as a formatted grid.
+
+**Dataset**: Select the dataset to show.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Columns Selection
+:::
+
+**All columns**: Select this option to include every column.
+
+**Custom selection**: Select this option to choose the columns.
+Click `r keys("Variables...")` to select them.
+::::
+
+### Header & Layout {-}
+
+**Transpose**: Check this option to swap the table's rows and columns.
+
+**Bold header row**: Check this option to make the first row bold.
+
+**Center header row**: Check this option to center the first row.
+
+**Bold first column**: Check this option to make the first column bold.
+
+### Appearance {-}
+
+**Alternate row colors**: Check this option to shade every other row.
+
+**Clear trailing row formatting**: Check this option to hide the formatting (e.g., borders and alternating row colors) for any rows beyond the data.
+This is only relevant if the table is larger than its data.
+
+### Sizing {-}
+
+**Minimum width (%)**: Enter the minimum percentage of its area's width that the table should consume.
+By default, the table fits its content.
+
+**Minimum height (%)**: Enter the minimum percentage of its area's height that the table should consume.
+
+### Footnotes {-}
+
+A footnote adds a citation number after a value in the table, with the footnote shown in the caption.
+
+- **Value**: The value (as displayed) to look for in the table.
+- **Footnote**: The footnote's text.
+
+Up to twenty footnotes are supported.
+If the value is not found in the table, then the footnote is not added.
+
+### Aggregates {-}
+
+An aggregate is a row or column of calculated values (e.g., a total).
+
+- **Name**: The label for the aggregate.
+- **Type**: Whether to add a **Column** or **Row**.
+- **Aggregate Type**:
+  - **Total**: Sums a series of values.
+  - **Change %**: The change from one value to another, as a percentage.
+  - **Ratio**: The ratio between two values.
+  - **Change**: The change (i.e., difference) from one value to another.
+- **Start** and **End**: The first and last rows or columns to calculate from.
+  These can be positions or names.
+- **Start Offset** and **End Offset**: The number of rows or columns to shift the start and end positions by.
+- **Use adjacent cell color**: Check this option to use the color of the neighboring cells.
+- **Background Color**: The background color of the aggregate's cells.
+  This is ignored if **Use adjacent cell color** is checked.
+
+### Cell Annotations {-}
+
+A cell annotation highlights one or more cells and adds a note pointing to them.
+
+- **Annotation text**: The note's text.
+- **Side**: Whether the note is placed to the **Left** or **Right** of the table.
+- **Background color**: The color used to highlight the cells.
+- **Cell selection**: Which cells to highlight:
+  - **Column outliers**: The outliers in a column (select the **Column name**).
+  - **Column top-N**: The largest values in a column (select the **Column name** and enter the **N (top count)**).
+  - **Cell range**: A range of cells (enter the **Start cell** and **End cell**).
+
+::: {.notesection data-latex=""}
+If the table's minimum width is set to fill the entire width, then it will be turned off when annotations are added, so that there is room for the notes.
+:::
+
+\newpage
+
+## Sankey Diagram {#sec-sankey-dlg}
+
+A Sankey diagram shows how a set of starting groups flows into a set of ending groups, with the width of each flow showing its size.
+The dataset should have a column of starting groups and a column of ending groups.
+Each row is either one observation, or a group with its totals if weight columns are supplied.
+
+### Variables {-}
+
+**From**: The starting groups, shown on the left side of the diagram.
+
+**To**: The ending groups, shown on the right side of the diagram.
+
+**From weight** (optional): The size of each starting group.
+If omitted, then the rows of each group are counted.
+
+**To weight** (optional): The size of each ending group.
+If omitted, then the rows of each group are counted.
+
+::: {.notesection data-latex=""}
+**From weight** and **To weight** must be used together.
+:::
+
+**From group** (optional): Sorts the starting groups into larger groups (e.g., schools by county), which are labeled with brackets on the left.
+
+### Options {-}
+
+**Flow shape**: Select whether the flows are drawn **Curvy** or **Jagged**.
+
+**Group labels**: Select the label shown on each group (**Name**, **Value**, **Percentage**, **Name & Value**, **Name & Percentage**, **Value & Percentage**, or **No Display**).
+
+**Column headers**: Select whether the column labels are shown **As Header** or **As Footer**, or select **No Display** to hide them.
+Enter the labels for each column in the **Column Labels** list.
+
+### Showcasing {-}
+
+**Ghost opacity**: Enter the opacity of the streams that are not showcased.
+
+**Also ghost "To" labels**: Check this option to also ghost the labels of the ending groups that are not showcased.
+
+**"To" labels to showcase**: Add the ending groups whose streams should be showcased.
+
+\newpage
+
+## Waffle Chart {#sec-waffle-dlg}
+
+A waffle chart arranges repeated shapes into a square-like grid.
+Rather than using a dataset, it is built from a list of shapes, each with the number of times it should repeat.
+
+**Shapes**: The list of shapes to draw across the grid.
+Click the new button to add a shape, and double-click a shape to edit it.
+
+### Grid Rounding {-}
+
+**Round grid to a fixed cell count**: Check this option to make sure that a specific number of cells are drawn.
+If the shapes' total repeat count is less than this, then extra cells are added to a shape.
+If the total is more, then cells are removed from that shape.
+This is useful when each cell represents a percentage and the cells do not add up to 100 because of rounding.
+
+**Cell count**: Enter the number of cells for the grid.
+
+**Shape index**: Enter which shape (by its position in the list) to add or remove cells from.
+
+### Row Count {-}
+
+**Specify row count**: Check this option to set the number of rows that the shapes are split into.
+By default, the grid has an equal number of rows and columns.
+
+**Rows**: Enter the number of rows.
+
+\newpage
+
+## Race Track Chart {#sec-race-track-dlg}
+
+A race track chart compares amounts as concentric circular track lanes, each one extending around the circle in proportion to its value.
+The dataset should have one row per lane, holding its name and its value.
+The first row is the outermost lane.
+
+### Variables {-}
+
+**Value**: The amount for each lane.
+The longest lane goes almost all the way around, and the others are drawn in proportion.
+
+**Label**: The name of each lane.
+
+### Options {-}
+
+**Tracks**: Select how many concentric tracks to spread the lanes across (**Automatic**, **One**, or **Two**).
+**Automatic** decides based on how narrow the smallest lane would be.
+
+**Start angle (degrees)**: Enter the angle that the lanes start at.
+
+**Track proportion**: Enter the proportion of the plot area used for the track (versus the hole in the middle).
+
+**Show track lane labels**: Check this option to label each lane.
+
+\newpage
+
+## Nightingale Rose Chart {#sec-nightingale-rose-dlg}
+
+A Nightingale rose chart shows values by category as wedges around a circle, where the radius of each wedge represents its amount.
+It can include a series within each slice.
+The dataset should have one row per observation, holding its category and (optionally) an amount to add up and the series that it belongs to.
+
+### Variables {-}
+
+**Category**: The categories that become the slices around the circle (e.g., the months of a year).
+
+**Aggregate** (optional): A measurement to add up for each slice.
+Without it, the wedges show how many rows fall into each category.
+
+**Series** (optional): Splits each slice into a wedge for each unique value (e.g., the cause of each death).
+
+### Options {-}
+
+**Radial scaling**: Select how a wedge's value maps to its radius:
+
+- **Area proportional**: The wedge's area is proportional to its value.
+- **Radius proportional**: The wedge's radius is proportional to its value.
+
+**Series display**: Select how the series are drawn:
+
+- **Overlaid**: All wedges start at the center, with larger ones behind smaller ones.
+- **Stacked**: Each series is a band on top of the previous one.
+
+**Start angle (degrees)**: Enter the angle that the first slice starts at.
+
+**Show category labels**: Check this option to label each slice.
+
+### Ghosting {-}
+
+**Ghost opacity**: Enter the opacity of the ghosted wedges.
+
+**Wedges to ghost (series / category)**: Add the wedges to ghost.
+Leave the category blank to ghost the series in every slice.
+
+\newpage
+
+## Du Bois Spiral Chart {#sec-du-bois-spiral-dlg}
+
+A Du Bois spiral chart draws values as segments of one long path that zigzags down and then winds into a spiral.
+The first segment is drawn horizontally across the top, the middle segments zigzag diagonally downward, and the last segment winds inward as a spiral.
+This suits data where the last value is far larger than the others, as the spiral can absorb a very long length in a compact area.
+The dataset should have one row per segment, in the order that the segments should be drawn, holding its name and its value.
+
+The layout follows W. E. B. Du Bois's *City and Rural Population. 1890* [@battle-baptiste-rusert], one of the hand-drawn plates that he and his students at Atlanta University prepared for the 1900 Paris Exposition.
+
+### Variables {-}
+
+**Label**: The name of each segment.
+
+**Value**: The amount for each segment.
+The length of the segment is proportional to it.
+
+::: {.notesection data-latex=""}
+Row order matters.
+The first row is drawn across the top, and the last row is drawn as the innermost part of the spiral.
+Rows with a missing, zero, or negative value are skipped.
+Each segment is colored from the color scheme, based on its position along the path.
+:::
+
+### Options {-}
+
+**Value display**: Select how the segments' values are formatted in their labels:
+
+- **Value**: The value as-is (e.g., *1,204*).
+  Whole numbers are shown without decimals.
+- **Percentage**: The value as a percentage.
+  The values should be proportions, as they are multiplied by 100 (e.g., *0.25* is shown as *25%*).
+- **Currency**: The value as currency, using your system's currency symbol.
+  Cents are only shown if the value has them.
+
+**Zigzag angle (degrees)**: Enter the angle (below horizontal) that the middle segments zigzag downward at.
+Smaller angles make flatter, wider zigzags, whereas larger angles make steeper, narrower ones.
+This can range from 10 to 80, and the default is 40.
+
+**Spiral radius (%)**: Enter the outer radius of the spiral, as a percentage of the plot's smaller dimension (i.e., its width or height).
+This can range from 15 to 48, and the default is 36.
+
+**Line thickness (%)**: Enter the thickness of the path, as a percentage of the plot's smaller dimension.
+This can range from 0.5 to 8, and the default is 2.5.
+
+**Show labels**: Check this option to label each segment with its value and name (e.g., *1,204: Under 2,500*).
+
+\newpage
+
+## Dueling Pie Chart {#sec-dueling-pie-dlg}
+
+A dueling pie chart compares how two groups divide a whole, with a pie for each group using the same categories for the slices.
+The dataset should have one row per category per group, holding the category, the group, and the value.
+
+### Variables {-}
+
+**Category**: The categories that become the slices in each pie (e.g., activities).
+
+**Group**: The group that each value belongs to.
+Each group gets its own pie, and there must be exactly two groups.
+
+**Value**: The amount for each category within each group (e.g., hours).
+
+### Options {-}
+
+**Slice labels**: Select the label shown on each slice (**Percentage**, **Value**, or **Value and percentage**).
+
+\newpage
+
+## Pictograph {#sec-pictograph-dlg}
+
+A pictograph compares amounts using a row of icons, where the size of each icon reflects its value.
+The dataset should have one row per icon, holding its label and its value.
+No more than 10 rows can be shown.
+
+### Variables {-}
+
+**Label**: The name of each observation.
+Each row is drawn as its own icon.
+
+**Value**: The amount for each observation.
+The area of its icon is proportional to it.
+
+### Options {-}
+
+**Icon Shape**: Select the shape used for the icons.
+
+**Orientation**: Select whether the icons are arranged **Vertical** or **Horizontal**.
+
+**Value display**: Select how values are shown (**Value**, **Percentage**, or **Currency**).
+
+**Fill color**: Select the color of the icons.
+
+**Outline color**: Select the color of the icons' outlines.
+
+\newpage
+
+## Choropleth Map {#sec-choropleth-dlg}
+
+A choropleth map shades the regions of a map (e.g., states or counties) by a measurement or by the group that each region belongs to.
+The region shapes come from a KML or GeoJSON file.
+A dataset is optional, and holds one or more rows per region with the region's name and its values.
+
+### Regions {-}
+
+**Regions (KML or GeoJSON file)**: Select the file that holds the region shapes.
+
+**Region key field**: Select the field in the file that holds the regions' names.
+This is used to match the regions against the dataset's key column.
+
+**Background layer (optional)**: Select a second KML or GeoJSON file to draw beneath the regions as a backdrop (e.g., a state outline or the neighboring regions).
+This keeps a map with gaps from floating on the page.
+
+### Data to Map {-}
+
+**Dataset**: Select the dataset holding the regions' values, or **(none)** to only draw the regions.
+
+Click `r keys("Select columns...")` to select the following columns:
+
+- **Key column**: The name of the region that each row belongs to (e.g., a state).
+  It is matched against the region key field of the map file.
+- **Value column**: The measurement that each region is shaded by (e.g., a population).
+  When a group column is also used, it sets the opacity of each group's color instead.
+- **Group column**: Colors each region by the group that it belongs to (e.g., a sales territory).
+- **Symbol size column**: A second measurement, shown as a circle at the center of each region with its area proportional to the value.
+
+**Combine rows per region**: If the dataset has several rows for a region, then select how they are combined into one number (sum, mean, minimum, maximum, or count).
+
+**Value format**: Select how values are shown (**Value**, **Currency**, or **Simple value**).
+
+### Other Options {-}
+
+**Proportional symbols**: **Symbol color** selects the color of the proportional symbol circles.
+
+**Regions with no data**: Select how regions without a value are filled (**Solid color** or one of the hatch patterns).
+
+**Show latitude and longitude grid**: Check this option to draw a faint latitude and longitude grid over the map.
+Each grid line is labeled with its coordinate.
+
+**Show only regions that have a value**: Check this option to only draw the regions that have a mapped value.

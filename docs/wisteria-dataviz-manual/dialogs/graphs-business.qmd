@@ -83,6 +83,8 @@ A row with any missing value is left out of the plot.
 
 **Loss color**: Select the color for days where the price went down.
 
+\newpage
+
 ## Bullet Chart {#sec-bullet-chart-dlg}
 
 A bullet chart compares what was achieved against a target for each of several measures (e.g., KPIs).
@@ -153,6 +155,8 @@ A total is drawn as a bar from zero to the running sum, so its amount can be lef
 **Decrease color**: Select the color of the steps that decrease the total.
 
 **Total color**: Select the color of the totals.
+
+\newpage
 
 ## Funnel Chart {#sec-funnel-dlg}
 

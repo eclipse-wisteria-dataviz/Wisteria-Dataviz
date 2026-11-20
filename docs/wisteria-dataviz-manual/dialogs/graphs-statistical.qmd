@@ -159,6 +159,8 @@ Each one is split into a stem and a leaf.
 **Grouping** (optional): Compares two groups side by side on a shared stem.
 This column must have exactly two unique values.
 
+\newpage
+
 ## Heat Map {#sec-heat-map-dlg}
 
 A heat map shows a measurement as a grid of colored cells, so that high and low values stand out.
@@ -214,6 +216,8 @@ The dataset should have one row per observation, holding its X value, its Y valu
 ::: {.notesection data-latex=""}
 If either the X or Y value is missing, then the point is left out of both the plot and the regression calculation.
 :::
+
+\newpage
 
 ## Bubble Plot {#sec-bubble-plot-dlg}
 
