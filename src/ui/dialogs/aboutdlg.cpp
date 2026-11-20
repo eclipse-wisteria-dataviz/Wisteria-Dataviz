@@ -458,7 +458,5 @@ namespace Wisteria::UI
         mainSizer->Add(CreateSeparatedButtonSizer(wxCLOSE), wxSizerFlags{}.Expand().Border());
 
         SetSizerAndFit(mainSizer);
-        const wxSize fittedSize{ GetSize() };
-        SetSize(wxSize{ fittedSize.GetWidth() * 5 / 4, fittedSize.GetHeight() });
         }
     } // namespace Wisteria::UI
