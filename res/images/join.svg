@@ -1,145 +1,32 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   viewBox="0 0 256 256"
-   width="256"
-   height="256"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="join.svg"
-   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs8" />
-  <sodipodi:namedview
-     id="namedview8"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="4.5585938"
-     inkscape:cx="128.21936"
-     inkscape:cy="107.59897"
-     inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg8" />
-  <!-- Pivot Longer: wide table (few rows, many cols) → tall table (many rows, few cols) -->
-  <!-- Source: wide table (top-left) -->
-  <!-- Column dividers on source -->
-  <!-- Arrow curving down-right -->
-  <!-- Result: tall table (bottom-right) -->
-  <!-- Column divider on result -->
-  <g
-     id="g2"
-     transform="translate(18.051414,76)">
-    <rect
-       x="16"
-       y="24"
-       width="108"
-       height="16"
-       rx="2"
-       fill="#2e86de"
-       opacity="0.95"
-       id="rect1" />
-    <rect
-       x="16"
-       y="44"
-       width="108"
-       height="16"
-       rx="2"
-       fill="#27ae60"
-       opacity="0.85"
-       id="rect2" />
-    <rect
-       x="16"
-       y="64"
-       width="108"
-       height="16"
-       rx="2"
-       fill="#27ae60"
-       opacity="0.85"
-       id="rect3" />
-    <line
-       x1="52"
-       y1="24"
-       x2="52"
-       y2="80"
-       stroke="#ffffff"
-       stroke-width="1.5"
-       id="line3" />
-    <line
-       x1="88"
-       y1="24"
-       x2="88"
-       y2="80"
-       stroke="#ffffff"
-       stroke-width="1.5"
-       id="line4" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Join: two tables matched on a key column (yellow) -->
+  <g>
+    <rect x="12" y="24" width="108" height="150" fill="#FFFFFF" />
+    <rect x="12" y="54" width="36" height="120" fill="#D9E6F6" />
+    <rect x="48" y="54" width="36" height="120" fill="#FBDF6B" />
+    <rect x="12" y="24" width="108" height="30" fill="#3F72B8" />
+    <line x1="12" y1="84" x2="120" y2="84" stroke="#93A9C7" stroke-width="3" />
+    <line x1="12" y1="114" x2="120" y2="114" stroke="#93A9C7" stroke-width="3" />
+    <line x1="12" y1="144" x2="120" y2="144" stroke="#93A9C7" stroke-width="3" />
+    <line x1="48" y1="54" x2="48" y2="174" stroke="#93A9C7" stroke-width="3" />
+    <line x1="48" y1="24" x2="48" y2="54" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="84" y1="54" x2="84" y2="174" stroke="#93A9C7" stroke-width="3" />
+    <line x1="84" y1="24" x2="84" y2="54" stroke="#FFFFFF" stroke-width="3" />
+    <rect x="12" y="24" width="108" height="150" fill="none" stroke="#4F5F75" stroke-width="4" />
   </g>
-  <rect
-     x="157.94859"
-     y="80"
-     width="64"
-     height="16"
-     rx="2"
-     fill="#2e86de"
-     opacity="0.95"
-     id="rect4" />
-  <rect
-     x="157.94859"
-     y="100"
-     width="64"
-     height="16"
-     rx="2"
-     fill="#f0a68c"
-     opacity="0.9"
-     id="rect5"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <rect
-     x="157.94859"
-     y="120"
-     width="64"
-     height="16"
-     rx="2"
-     fill="#f0a68c"
-     opacity="0.9"
-     id="rect6"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <rect
-     x="157.94859"
-     y="140"
-     width="64"
-     height="16"
-     rx="2"
-     fill="#f0a68c"
-     opacity="0.9"
-     id="rect7"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <rect
-     x="157.94859"
-     y="160"
-     width="64"
-     height="16"
-     rx="2"
-     fill="#f0a68c"
-     opacity="0.9"
-     id="rect8"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <line
-     x1="189.94859"
-     y1="80"
-     x2="189.94859"
-     y2="176"
-     stroke="#ffffff"
-     stroke-width="1.5"
-     id="line8" />
-  <!-- Label -->
+  <g>
+    <rect x="140" y="92" width="108" height="150" fill="#FFFFFF" />
+    <rect x="140" y="122" width="36" height="120" fill="#D9E6F6" />
+    <rect x="176" y="122" width="36" height="120" fill="#FBDF6B" />
+    <rect x="140" y="92" width="108" height="30" fill="#3F72B8" />
+    <line x1="140" y1="152" x2="248" y2="152" stroke="#93A9C7" stroke-width="3" />
+    <line x1="140" y1="182" x2="248" y2="182" stroke="#93A9C7" stroke-width="3" />
+    <line x1="140" y1="212" x2="248" y2="212" stroke="#93A9C7" stroke-width="3" />
+    <line x1="176" y1="122" x2="176" y2="242" stroke="#93A9C7" stroke-width="3" />
+    <line x1="176" y1="92" x2="176" y2="122" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="212" y1="122" x2="212" y2="242" stroke="#93A9C7" stroke-width="3" />
+    <line x1="212" y1="92" x2="212" y2="122" stroke="#FFFFFF" stroke-width="3" />
+    <rect x="140" y="92" width="108" height="150" fill="none" stroke="#4F5F75" stroke-width="4" />
+  </g>
 </svg>

@@ -1,129 +1,38 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   viewBox="0 0 256 256"
-   width="256"
-   height="256"
-   version="1.1"
-   id="svg8"
-   sodipodi:docname="subset.svg"
-   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs8" />
-  <sodipodi:namedview
-     id="namedview8"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="3.2234126"
-     inkscape:cx="29.626986"
-     inkscape:cy="41.725965"
-     inkscape:window-width="2560"
-     inkscape:window-height="1369"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg8" />
-  <!-- Pivot Longer: wide table (few rows, many cols) → tall table (many rows, few cols) -->
-  <!-- Source: wide table (top-left) -->
-  <rect
-     x="16"
-     y="24"
-     width="108"
-     height="16"
-     rx="2"
-     fill="#2E86DE"
-     opacity="0.95"
-     id="rect1" />
-  <rect
-     x="16"
-     y="44"
-     width="108"
-     height="16"
-     rx="2"
-     fill="#27AE60"
-     opacity="0.85"
-     id="rect2" />
-  <rect
-     x="16"
-     y="64"
-     width="108"
-     height="16"
-     rx="2"
-     fill="#27AE60"
-     opacity="0.85"
-     id="rect3" />
-  <!-- Column dividers on source -->
-  <line
-     x1="52"
-     y1="24"
-     x2="52"
-     y2="80"
-     stroke="white"
-     stroke-width="1.5"
-     id="line3" />
-  <line
-     x1="88"
-     y1="24"
-     x2="88"
-     y2="80"
-     stroke="white"
-     stroke-width="1.5"
-     id="line4" />
-  <rect
-     x="102.86118"
-     y="132.515"
-     width="108"
-     height="16"
-     rx="2"
-     fill="#2e86de"
-     opacity="0.95"
-     id="rect1-8" />
-  <rect
-     x="102.86118"
-     y="152.515"
-     width="108"
-     height="16"
-     rx="2"
-     fill="#27ae60"
-     opacity="0.85"
-     id="rect2-2" />
-  <line
-     x1="138.86118"
-     y1="132.515"
-     x2="138.86118"
-     y2="168.5527"
-     stroke="#ffffff"
-     stroke-width="1.2033"
-     id="line3-4" />
-  <line
-     x1="174.86118"
-     y1="132.515"
-     x2="174.86118"
-     y2="168.5527"
-     stroke="#ffffff"
-     stroke-width="1.20331"
-     id="line4-5" />
-  <!-- Arrow curving down-right -->
-  <path
-     d="M 128 52 C 148 52, 156 72, 156 92 L 156 120"
-     fill="none"
-     stroke="#808080"
-     stroke-width="3"
-     stroke-linecap="round"
-     id="path4" />
-  <polygon
-     points="156,126 150,116 162,116"
-     fill="#808080"
-     id="polygon4" />
-  <!-- Result: tall table (bottom-right) -->
-  <!-- Column divider on result -->
-  <!-- Label -->
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <!-- Subset: selected rows (yellow) copied into a smaller table -->
+  <g>
+    <rect x="12" y="12" width="128" height="120" fill="#FFFFFF" />
+    <rect x="12" y="36" width="32" height="96" fill="#D9E6F6" />
+    <rect x="44" y="60" width="96" height="24" fill="#FBDF6B" />
+    <rect x="44" y="108" width="96" height="24" fill="#FBDF6B" />
+    <rect x="12" y="12" width="128" height="24" fill="#3F72B8" />
+    <line x1="12" y1="60" x2="140" y2="60" stroke="#93A9C7" stroke-width="3" />
+    <line x1="12" y1="84" x2="140" y2="84" stroke="#93A9C7" stroke-width="3" />
+    <line x1="12" y1="108" x2="140" y2="108" stroke="#93A9C7" stroke-width="3" />
+    <line x1="44" y1="36" x2="44" y2="132" stroke="#93A9C7" stroke-width="3" />
+    <line x1="44" y1="12" x2="44" y2="36" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="76" y1="36" x2="76" y2="132" stroke="#93A9C7" stroke-width="3" />
+    <line x1="76" y1="12" x2="76" y2="36" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="108" y1="36" x2="108" y2="132" stroke="#93A9C7" stroke-width="3" />
+    <line x1="108" y1="12" x2="108" y2="36" stroke="#FFFFFF" stroke-width="3" />
+    <rect x="12" y="12" width="128" height="120" fill="none" stroke="#4F5F75" stroke-width="4" />
+  </g>
+  <path d="M 144 72 C 176 72, 192 88, 192 126" fill="none" stroke="#6B7C93" stroke-width="8" stroke-linecap="round" />
+  <polygon points="178,126 206,126 192,142" fill="#6B7C93" />
+  <g>
+    <rect x="112" y="160" width="128" height="72" fill="#FFFFFF" />
+    <rect x="112" y="184" width="32" height="48" fill="#D9E6F6" />
+    <rect x="144" y="184" width="96" height="24" fill="#FBDF6B" />
+    <rect x="144" y="208" width="96" height="24" fill="#FBDF6B" />
+    <rect x="112" y="160" width="128" height="24" fill="#3F72B8" />
+    <line x1="112" y1="208" x2="240" y2="208" stroke="#93A9C7" stroke-width="3" />
+    <line x1="144" y1="184" x2="144" y2="232" stroke="#93A9C7" stroke-width="3" />
+    <line x1="144" y1="160" x2="144" y2="184" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="176" y1="184" x2="176" y2="232" stroke="#93A9C7" stroke-width="3" />
+    <line x1="176" y1="160" x2="176" y2="184" stroke="#FFFFFF" stroke-width="3" />
+    <line x1="208" y1="184" x2="208" y2="232" stroke="#93A9C7" stroke-width="3" />
+    <line x1="208" y1="160" x2="208" y2="184" stroke="#FFFFFF" stroke-width="3" />
+    <rect x="112" y="160" width="128" height="72" fill="none" stroke="#4F5F75" stroke-width="4" />
+  </g>
 </svg>

@@ -31,149 +31,22 @@
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg15" />
-  <!-- Colorful data table icon, pivot-longer style -->
-  <!-- Header row -->
-  <rect
-     x="28"
-     y="28"
-     width="200"
-     height="24"
-     rx="3"
-     fill="#2E86DE"
-     opacity="0.95"
-     id="rect1" />
-  <!-- Data rows -->
-  <rect
-     x="28"
-     y="56"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#27AE60"
-     opacity="0.85"
-     id="rect2" />
-  <rect
-     x="28"
-     y="84"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#F0A68C"
-     opacity="0.9"
-     id="rect3"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <rect
-     x="28"
-     y="112"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#27AE60"
-     opacity="0.85"
-     id="rect4" />
-  <rect
-     x="28"
-     y="140"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#F0A68C"
-     opacity="0.9"
-     id="rect5"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <rect
-     x="28"
-     y="168"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#27AE60"
-     opacity="0.85"
-     id="rect6" />
-  <rect
-     x="28"
-     y="196"
-     width="200"
-     height="24"
-     rx="2"
-     fill="#F0A68C"
-     opacity="0.9"
-     id="rect7"
-     style="fill:#ff69b4;fill-opacity:1" />
-  <!-- Column dividers (white) -->
-  <line
-     x1="78"
-     y1="28"
-     x2="78"
-     y2="220"
-     stroke="white"
-     stroke-width="2"
-     id="line7" />
-  <line
-     x1="128"
-     y1="28"
-     x2="128"
-     y2="220"
-     stroke="white"
-     stroke-width="2"
-     id="line8" />
-  <line
-     x1="178"
-     y1="28"
-     x2="178"
-     y2="220"
-     stroke="white"
-     stroke-width="2"
-     id="line9" />
-  <!-- Row dividers (white, between data rows) -->
-  <line
-     x1="28"
-     y1="56"
-     x2="228"
-     y2="56"
-     stroke="white"
-     stroke-width="1.5"
-     id="line10" />
-  <line
-     x1="28"
-     y1="84"
-     x2="228"
-     y2="84"
-     stroke="white"
-     stroke-width="1.5"
-     id="line11" />
-  <line
-     x1="28"
-     y1="112"
-     x2="228"
-     y2="112"
-     stroke="white"
-     stroke-width="1.5"
-     id="line12" />
-  <line
-     x1="28"
-     y1="140"
-     x2="228"
-     y2="140"
-     stroke="white"
-     stroke-width="1.5"
-     id="line13" />
-  <line
-     x1="28"
-     y1="168"
-     x2="228"
-     y2="168"
-     stroke="white"
-     stroke-width="1.5"
-     id="line14" />
-  <line
-     x1="28"
-     y1="196"
-     x2="228"
-     y2="196"
-     stroke="white"
-     stroke-width="1.5"
-     id="line15" />
+  <!-- Data table -->
+  <g>
+    <rect x="28" y="28" width="200" height="192" fill="#FFFFFF" />
+    <rect x="28" y="66.4" width="50" height="153.6" fill="#D9E6F6" />
+    <rect x="28" y="28" width="200" height="38.4" fill="#3F72B8" />
+    <line x1="28" y1="104.8" x2="228" y2="104.8" stroke="#93A9C7" stroke-width="5" />
+    <line x1="28" y1="143.2" x2="228" y2="143.2" stroke="#93A9C7" stroke-width="5" />
+    <line x1="28" y1="181.6" x2="228" y2="181.6" stroke="#93A9C7" stroke-width="5" />
+    <line x1="78" y1="66.4" x2="78" y2="220" stroke="#93A9C7" stroke-width="5" />
+    <line x1="78" y1="28" x2="78" y2="66.4" stroke="#FFFFFF" stroke-width="5" />
+    <line x1="128" y1="66.4" x2="128" y2="220" stroke="#93A9C7" stroke-width="5" />
+    <line x1="128" y1="28" x2="128" y2="66.4" stroke="#FFFFFF" stroke-width="5" />
+    <line x1="178" y1="66.4" x2="178" y2="220" stroke="#93A9C7" stroke-width="5" />
+    <line x1="178" y1="28" x2="178" y2="66.4" stroke="#FFFFFF" stroke-width="5" />
+    <rect x="28" y="28" width="200" height="192" fill="none" stroke="#4F5F75" stroke-width="6" />
+  </g>
   <g
      id="g2"
      transform="translate(5.0599912,-5.9717255)">
