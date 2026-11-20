@@ -235,16 +235,21 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::WaterfallChart, Wisteria::Graphs::Ba
                         wxNumberFormatter::Style::Style_Currency |
                         wxNumberFormatter::Style::Style_CurrencySymbol);
             case NumberDisplay::ValueSimple:
-                return wxNumberFormatter::ToString(value, 2, wxNumberFormatter::Style::Style_None);
+                return wxNumberFormatter::ToString(
+                    value, 2, wxNumberFormatter::Style::Style_NoTrailingZeroes);
             case NumberDisplay::Percentage:
-                return wxString::Format(
-                    _DT(L"%s%%"), wxNumberFormatter::ToString(
-                                      value, 2, wxNumberFormatter::Style::Style_NoTrailingZeroes));
+                return wxString::Format(_DT(L"%s%%"),
+                                        wxNumberFormatter::ToString(
+                                            value, 2,
+                                            wxNumberFormatter::Style::Style_WithThousandsSep |
+                                                wxNumberFormatter::Style::Style_NoTrailingZeroes));
             case NumberDisplay::Value:
                 [[fallthrough]];
             default:
                 return wxNumberFormatter::ToString(
-                    value, 2, wxNumberFormatter::Style::Style_NoTrailingZeroes);
+                    value, 2,
+                    wxNumberFormatter::Style::Style_WithThousandsSep |
+                        wxNumberFormatter::Style::Style_NoTrailingZeroes);
                 }
         };
 
