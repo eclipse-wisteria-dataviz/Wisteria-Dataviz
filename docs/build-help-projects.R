@@ -60,6 +60,7 @@ thumbnailWidth <- "256"
 
 # delete previous builds
 unlink(glue("{manualFolder}/docs-manual"), recursive=T)
+unlink(glue("{docFolder}/release-notes/docs"), recursive=T)
 
 # delete intermediate files from the PDF build
 clearFolders <- function()
@@ -79,9 +80,41 @@ clearFolders <- function()
   unlink(glue("{manualFolder}/wisteria-dataviz-manual.run.xml"))
   unlink(glue("{manualFolder}/index.ptc"))
   unlink(glue("{manualFolder}/ding.mp3"))
+
+  unlink(glue("{docFolder}/release-notes/fonts"), recursive=T)
   }
 
 clearFolders()
+
+# Release Notes
+###############
+
+# Note that this document has its own LaTeX files (i.e., does not copy them from wisteria-dataviz-manual).
+# This document doesn't have any front or back matter, so its preamble TeX file doesn't include that.
+setwd(glue("{docFolder}/release-notes/"))
+file_copy(glue("{docFolder}/_variables.yml"),
+          glue("{docFolder}/release-notes/_variables.yml"),
+          TRUE)
+file_copy(glue("{manualFolder}/_quarto-release-notes.yml"),
+          glue("{docFolder}/release-notes/_quarto.yml"),
+          TRUE)
+file_copy(glue("{manualFolder}/overviews/new-features.qmd"),
+          glue("{docFolder}/release-notes/index.qmd"),
+          TRUE)
+dir_copy(glue("{manualFolder}/fonts"),
+         glue("{docFolder}/release-notes/fonts"),
+         TRUE)
+
+quarto::quarto_render(output_format="pdf", as_job=F)
+# create a thumbnail for the website
+thumbNail <- image_convert(image_read_pdf(glue("{docFolder}/release-notes/docs/release-notes.pdf"), 1),
+                           format="png") %>%
+  image_scale(thumbnailWidth)
+image_write(thumbNail, glue("{docFolder}/release-notes/docs/release-notes-thumb.png"))
+
+unlink(glue("{docFolder}/release-notes/_quarto.yml"))
+unlink(glue("{docFolder}/release-notes/_variables.yml"))
+unlink(glue("{docFolder}/release-notes/index.qmd"))
 
 # User Manual
 #############

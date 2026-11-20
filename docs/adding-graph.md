@@ -225,7 +225,7 @@ Documentation
 =============================
 
 - `docs/syntax-manual/graphs.qmd`: Add a section for the JSON node (its properties and an example), following the existing graphs.
-- `release.md`: Add a line to the current release's list.
+- `docs/wisteria-dataviz-manual/overviews/new-features.qmd`: Add a line to the current release's list.
 - `README.md` and `docs/gallery.md`: Add an entry with a rendered image from `docs/images/`.
 
 Summary of Files to Modify
@@ -247,4 +247,4 @@ Summary of Files to Modify
 14. `res/menus/project-menubar.xrc` - macOS menu bar item (and category menu if needed)
 15. `res/images/` - Icons
 16. `tests/gui-tests/ishikawadiagramrendertests.cpp` - Tests
-17. `docs/syntax-manual/graphs.qmd`, `release.md`, `README.md`, `docs/gallery.md` - Documentation
+17. `docs/syntax-manual/graphs.qmd`, `docs/wisteria-dataviz-manual/overviews/new-features.qmd`, `README.md`, `docs/gallery.md` - Documentation

@@ -1,76 +1,81 @@
-# Releases
+# New Features and Enhancements {#sec-new-features}
 
-## 1.2.3
+## {{< var PROGRAM_NAME >}} 1.2.3 {-}
+***
 
-- Added KPI Card.
-- Choropleth now supports median.
+- Added KPI Card
+- Choropleth now supports median
 
-## 1.2.2
+## {{< var PROGRAM_NAME >}} 1.2.2 {-}
+***
 
-- Added Run Chart.
-- Added Ishikawa Diagram.
-- Added Dueling Pie Chart.
-- Added Pictograph.
-- Added Du Bois Spiral Chart.
-- Added Funnel Chart.
-- Added Waterfall Chart.
-- Added Bullet Chart.
-- Added Nightingale Rose Chart.
-- Added Choropleth.
-- Added Race Track Chart.
-- Added Wilmarth Bridge Plot.
-- Added "Serpentine" features to bar charts.
-- Added PowerPoint exporting.
-- Added showcasing support to Sankey diagrams.
-- Added word balloon styles to labels.
+- Added Run Chart
+- Added Ishikawa Diagram
+- Added Dueling Pie Chart
+- Added Pictograph
+- Added Du Bois Spiral Chart
+- Added Funnel Chart
+- Added Waterfall Chart
+- Added Bullet Chart
+- Added Nightingale Rose Chart
+- Added Choropleth
+- Added Race Track Chart
+- Added Wilmarth Bridge Plot
+- Added "Serpentine" features to bar charts
+- Added *PowerPoint* exporting
+- Added showcasing support to Sankey diagrams
+- Added word balloon styles to labels
 - Added new shapes:
-    - Prohibited sign
-    - Pumpkin pie
+  - Prohibited sign
+  - Pumpkin pie
 - Added styling options to pie charts to make them look like:
-    - Bagels
-    - Pumpkin pies
-- Added basic Lua interpreter.
+  - Bagels
+  - Pumpkin pies
+- Added basic Lua interpreter
 
-## 1.2.1
+## {{< var PROGRAM_NAME >}} 1.2.1 {-}
+***
 
 - Major improvements to stand-alone application
 - Added styling option to pie charts to make them look like:
-    - Glazed donuts
+  - Glazed donuts
 
-## 1.2.0
+## {{< var PROGRAM_NAME >}} 1.2.0 {-}
+***
 
 - Alpha release of stand-alone application (`WisteriaDV` target)
-- New graph type: Chernoff Faces Plot
-- New graph type: Stem & Leaf Plot
+- Added Chernoff Faces Plot
+- Added Stem & Leaf Plot
 - Added PDF export (using *wxPdfDocument*)
 - Added basic CSS markup support to labels
-- Added OpenDocument Spreadsheet importer
+- Added *OpenDocument* Spreadsheet importer
 - Added new shapes:
-    - Tractor
-    - Butterfly
-    - Star
+  - Tractor
+  - Butterfly
+  - Star
 - Improved *Excel* importer performance
 - Likert chart now implicitly uses default response labels on legend (if none are found in dataset)
 - Fixed group-label display in heatmaps when data are not sorted by groups
 - Added new dataset join operations (inner join and new left joins)
 - Added SVG accessibility support
 
-## 1.1.0
+## {{< var PROGRAM_NAME >}} 1.1.0 {-}
+***
 
-- New graph type: Scatter Plot
-- New graph type: Bubble Plot
+- Added Scatter Plot
+- Added Bubble Plot
 - Added new shapes:
-    - Cheese pizza
-    - Pepperoni pizza
-    - Hawaiian pizza
-    - Chocolate chip cookie
-    - Coffee shop cup
-    - Pill
+  - Cheese pizza
+  - Pepperoni pizza
+  - Hawaiian pizza
+  - Chocolate chip cookie
+  - Coffee shop cup
+  - Pill
 - Added styling options to pie charts to make them look like:
-    - Hawaiian pizzas
-    - Mars symbols (♂)
-    - Venus symbols (♀)
-    - Chocolate chip cookies
+  - Hawaiian pizzas
+  - Mars symbols
+  - Venus symbols
+  - Chocolate chip cookies
 - Added marker effect to bar charts and box plots
 - Added pencil effect to bar charts and box plots
 - Add pencil style for axis and grid lines
@@ -81,25 +86,29 @@
 - Improved layout of watermarks and tilted labels
 - Improved the appearance of pie chart's coffee stain style
 
-## 1.0.7
+## {{< var PROGRAM_NAME >}} 1.0.7 {-}
+***
 
 - Added styling options to pie charts to make them look like:
-    - Clock faces
-    - Cheese pizzas
-    - Pepperoni pizzas
-    - Coffee rings
+  - Clock faces
+  - Cheese pizzas
+  - Pepperoni pizzas
+  - Coffee rings
 - Fixed pie chart `UseColorLabels()` function
 - Added feature to waffle chart to override the number of rows in the waffle
-- Compatibility change: `IconShape::Dollar` has been renamed to `IconShape::HundredDollarBill`
+- Compatibility change: `IconShape::Dollar` has been renamed to \
+  `IconShape::HundredDollarBill`
 - Fixed **Save** option not working in canvas context menu
 
-## 1.0.6
+## {{< var PROGRAM_NAME >}} 1.0.6 {-}
+***
 
 - Improved image scaling when loaded via JSON file
 
-## 1.0.5
+## {{< var PROGRAM_NAME >}} 1.0.5 {-}
+***
 
-- New graph type: Waffle Chart
+- Added Waffle Chart
 - Added new shapes:
   - Curvy road
   - Pumpkin
@@ -108,7 +117,8 @@
   - `ADD`
   - `MEDIAN`
 
-## 1.0.4
+## {{< var PROGRAM_NAME >}} 1.0.4 {-}
+***
 
 - Added support for tied games to Win/Loss Sparkline
 - Made legend for Win/Loss Sparkline more dynamic
@@ -118,9 +128,10 @@
 - Expanded JSON syntax manual
 - JSON syntax manual will now be automatically build via *CMake* (if *Quarto* is installed)
 
-## 1.0.3
+## {{< var PROGRAM_NAME >}} 1.0.3 {-}
+***
 
-- New graph type: Win/Loss Sparkline
+- Added Win/Loss Sparkline
 - Expanded W-Curve plot to handle 12 levels
 - Reference lines can now show their labels on the axes
 - Shapes can now be added above a label
@@ -131,12 +142,12 @@
 - Exposed more functionality to JSON syntax
 - Expanded and improved the documentation
 
-## 1.0.2
+## {{< var PROGRAM_NAME >}} 1.0.2 {-}
+***
 
-- New graph type: Multi-series Line Plot
+- Added Multi-series Line Plot
   (this allows for plotting multiple data series on a line plot)
 - Added sword and Immaculate Heart with sword shapes
-- Added Chapel Blue as predefined color
 - Likert Charts
   - Now uses guillemets instead of Unicode arrows
     (this fixes display issues where some fonts don't support those characters)
@@ -151,12 +162,11 @@
 - Added `Tint()` function
 - Optimizations for bar sorting (bar charts)
 
-## 1.0.1
+## {{< var PROGRAM_NAME >}} 1.0.1 {-}
+***
 
-**NOTE**: wxWidgets 3.3.1 is required now
-
-- New graph type: Scale Chart
-- New graph type: INFLESZ Scale
+- Added Scale Chart
+- Added INFLESZ Scale
 - Added WebP image support
 - DPI resolution for saving images is now customizable
 - Added support for adding PNG description when exporting images
@@ -197,25 +207,21 @@
 - Added `Wisteria::GetLibraryVersionInfo()`
 - Fixed doxygen not being included in `ALL` *CMake* build
 
-## 1.0
+## {{< var PROGRAM_NAME >}} 1.0 {-}
+***
 
 - Added JSON syntax for building multi-page reports
 - Added numerous vector-based shapes to use as stipples and icons
 - Various improvements
 
-## 0.9.1
+## {{< var PROGRAM_NAME >}} 0.9.1 {-}
+***
 
-**WARNING**: icon classes and schemes have been moved into @c Wisteria::Icons and @c Wisteria::Icons::Schemes
-  namespaces, respectively
-
-**WARNING**: the common axis functions have been renamed to @c Wisteria::CommonAxisBuilder::BuildYAxis and
-  @c Wisteria::CommonAxisBuilder::BuildXAxis
-
-- New graph type: Linear Regression Roadmap
-- New graph type: Pros \& Cons Roadmap
-- New graph type: Table (i.e., presentation of tabular data, with aggregation and annotation support)
+- Added Linear Regression Roadmap
+- Added Pros & Cons Roadmap
+- Added Table (i.e., presentation of tabular data, with aggregation and annotation support)
 - Added ability to stretch content to fit the entire page when printing
-- Simplified layout of canvas rows when they are fitting their content (see @c Wisteria::Canvas::CalcRowDimensions())
+- Simplified layout of canvas rows when they are fitting their content (see `Wisteria::Canvas::CalcRowDimensions()`)
 - Added common axis builder helper class
 - Line plots can now use categorical or continuous columns for x-axis values
 - Added support for aligning pie chart labels flush left or right against the plotting area
@@ -224,6 +230,7 @@
   resulting in a banner appearance
 - Improved layout of legends appearing above or below a graph
 
-## 0.9
+## {{< var PROGRAM_NAME >}} 0.9 {-}
+***
 
-Initial public release.
+- Initial public release.

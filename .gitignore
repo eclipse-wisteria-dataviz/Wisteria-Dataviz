@@ -27,11 +27,13 @@
 /src/app/sbom.h
 /resource.h
 /src/xrc_menu_strings.cpp
-/docs/wisteria-dataviz-manual/docs-manual
-/docs/wisteria-dataviz-manual/docs-online
 /docs/wisteria-dataviz-manual/_quarto.yml
 /docs/wisteria-dataviz-manual/images/non-generated/cover.png
 /docs/_variables.yml
+# Eventually include these...
+/docs/release-notes/docs
+/docs/wisteria-dataviz-manual/docs-manual
+/docs/wisteria-dataviz-manual/docs-online
 /docs/es/
 
 # Installer staging folders
@@ -94,5 +96,3 @@ cpp.hint
 *.out
 *.app
 *.manifest
-
-/docs/release-notes/docs

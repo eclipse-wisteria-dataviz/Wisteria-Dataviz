@@ -124,6 +124,14 @@ class MainFrame final : public Wisteria::UI::BaseMainFrame
     /// @param path The file to open.
     void OpenFileNew(const wxString& path) override;
 
+    /// @brief Opens the HTML help in the default browser.
+    /// @param event The help event.
+    void OnHelpContents([[maybe_unused]] wxCommandEvent& event) final;
+
+    /// @brief Opens the PDF manual in the default viewer.
+    /// @param event The ribbon event.
+    void OnHelpManual([[maybe_unused]] wxRibbonButtonBarEvent& event);
+
     friend class WisteriaApp;
 
   private:
@@ -566,6 +574,10 @@ constexpr wxWindowID ID_SCRIPT_GOTO_LINE{ wxID_HIGHEST + 273 };
 constexpr wxWindowID ID_SCRIPT_TOGGLE_DEBUG{ wxID_HIGHEST + 274 };
 constexpr wxWindowID ID_SCRIPT_CLEAR_DEBUG{ wxID_HIGHEST + 275 };
 constexpr wxWindowID ID_SCRIPT_WINDOW{ wxID_HIGHEST + 276 };
+
+// Help tab ribbon buttons
+constexpr wxWindowID ID_HELP_MANUAL{ wxID_HIGHEST + 277 };
+constexpr wxWindowID ID_RELEASE_NOTES{ wxID_HIGHEST + 278 };
 
 wxDECLARE_APP(WisteriaApp);
 

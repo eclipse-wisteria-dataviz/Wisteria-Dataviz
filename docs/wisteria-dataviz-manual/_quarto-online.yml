@@ -9,6 +9,7 @@ book:
       chapters:
       - overviews/intro.qmd
       - overviews/program.qmd
+      - overviews/new-features.qmd
     - part: "Options"
       chapters:
       - program-options.qmd

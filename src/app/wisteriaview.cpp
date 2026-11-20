@@ -207,7 +207,8 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame = new wxDocChildFrame(doc, this, wxGetApp().GetMainFrame(), wxID_ANY, title,
                                   wxDefaultPosition, windowSize, wxDEFAULT_FRAME_STYLE);
 
-    const std::array<wxAcceleratorEntry, 6> entries = {
+    const std::array<wxAcceleratorEntry, 7> entries = {
+        wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_HELP),
         wxAcceleratorEntry(wxACCEL_CTRL, L'O', wxID_OPEN),
         wxAcceleratorEntry(wxACCEL_CTRL, L'S', ID_SAVE_PROJECT),
         wxAcceleratorEntry(wxACCEL_CTRL, L'P', wxID_PRINT),
@@ -568,6 +569,35 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         [this]([[maybe_unused]]
                wxCommandEvent& event) { wxGetApp().ShowAboutDialog(m_frame); },
         wxID_ABOUT);
+
+    // help buttons, which are handled by the main frame
+    const auto showHelp = []([[maybe_unused]]
+                             wxCommandEvent&)
+    {
+        wxCommandEvent event;
+        wxGetApp().GetMainFrameEx()->OnHelpContents(event);
+    };
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, showHelp, wxID_HELP);
+    m_frame->Bind(wxEVT_MENU, showHelp, wxID_HELP);
+
+    const auto showManual = []([[maybe_unused]]
+                               wxCommandEvent&)
+    {
+        wxRibbonButtonBarEvent event;
+        wxGetApp().GetMainFrameEx()->OnHelpManual(event);
+    };
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, showManual, ID_HELP_MANUAL);
+    m_frame->Bind(wxEVT_MENU, showManual, ID_HELP_MANUAL);
+
+    const auto showReleaseNotes = []([[maybe_unused]]
+                                     wxCommandEvent&)
+    {
+        const wxString manualPath{ wxGetApp().GetMainFrame()->GetHelpDirectory() +
+                                   wxFileName::GetPathSeparator() + _DT(L"release-notes.pdf") };
+        wxLaunchDefaultApplication(manualPath);
+    };
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, showReleaseNotes, ID_RELEASE_NOTES);
+    m_frame->Bind(wxEVT_MENU, showReleaseNotes, ID_RELEASE_NOTES);
 
     // bind DELETE key to delete selected item
     m_frame->Bind(wxEVT_CHAR_HOOK,

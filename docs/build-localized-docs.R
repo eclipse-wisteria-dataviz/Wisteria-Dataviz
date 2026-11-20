@@ -63,6 +63,11 @@ build_translated_docs <- function(docFolder, lang, exclude_pattern = NULL,
     output_dir = glue::glue("{docFolder}/{lang}/wisteria-dataviz-manual"),
     po = glue::glue("{out_dir}/{lang}.po"),
     exclude_pattern = exclude_pattern)
+  po2qmd_folder(
+    input_dir = glue::glue("{docFolder}/release-notes"),
+    output_dir = glue::glue("{docFolder}/{lang}/release-notes"),
+    po = glue::glue("{out_dir}/{lang}.po"),
+    exclude_pattern = exclude_pattern)
 
   # --- Step 3: Build it
   child_env <- new.env(parent = environment())

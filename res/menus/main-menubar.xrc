@@ -53,6 +53,16 @@
         </object>
         <object class="wxMenu" name="main_help_menu">
             <label>Help</label>
+            <object class="wxMenuItem" name="wxID_HELP">
+                <label>Electronic Help</label>
+            </object>
+            <object class="wxMenuItem" name="ID_HELP_MANUAL">
+                <label>Manual</label>
+            </object>
+            <object class="wxMenuItem" name="ID_RELEASE_NOTES">
+                <label>Release Notes</label>
+            </object>
+            <object class="separator"/>
             <object class="wxMenuItem" name="wxID_ABOUT">
                 <label>About Wisteria Dataviz</label>
             </object>

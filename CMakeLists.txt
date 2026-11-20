@@ -670,6 +670,12 @@ if(APPLE)
     stage_file(${WISTERIA_APP} "res/menus/project-menubar.xrc" "menus")
 endif()
 
+# Documentation
+# Clean the manual folder once here, since the following calls merge into it
+stage_directory(${WISTERIA_APP} "docs/wisteria-dataviz-manual/docs-manual" "wisteria-dataviz-manual" CLEAN)
+stage_directory(${WISTERIA_APP} "docs/wisteria-dataviz-manual/docs-online" "wisteria-dataviz-manual/online")
+stage_directory(${WISTERIA_APP} "docs/release-notes/docs" "wisteria-dataviz-manual")
+
 stage_translations(${WISTERIA_APP} es)
 
 # This must come after all other staging, so the copied macOS bundle has every resource

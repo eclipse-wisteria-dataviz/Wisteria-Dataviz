@@ -81,7 +81,9 @@ WisteriaArtProvider::WisteriaArtProvider()
                     { L"ID_CLEAR", L"images/clear.svg" },
                     { L"ID_REFRESH", L"images/reload.svg" },
                     { L"ID_REALTIME_UPDATE", L"images/realtime.svg" },
-                    { wxART_EDIT, L"images/edit.svg" } };
+                    { wxART_EDIT, L"images/edit.svg" },
+                    { wxART_HELP_BOOK, L"images/help.svg" },
+                    { L"ID_WHATS_NEW", L"images/outreach.svg" } };
     }
 
 //-------------------------------------------
@@ -112,6 +114,8 @@ void WisteriaApp::RegisterMenuBarItemIds()
     seedId("ID_LOG_TAB_REFRESH", ID_LOG_TAB_REFRESH);
     seedId("ID_LOG_TAB_REALTIME_UPDATE", ID_LOG_TAB_REALTIME_UPDATE);
     seedId("ID_LOG_TAB_VERBOSE", ID_LOG_TAB_VERBOSE);
+    seedId("ID_HELP_MANUAL", ID_HELP_MANUAL);
+    seedId("ID_RELEASE_NOTES", ID_RELEASE_NOTES);
 
     // project frames
     seedId("ID_SAVE_PROJECT", ID_SAVE_PROJECT);
@@ -619,6 +623,10 @@ void WisteriaApp::LoadInterface()
                                wxPoint{ 0, 0 }, GetAppSettings()->GetAppWindowSize(),
                                wxDEFAULT_FRAME_STYLE));
 
+    // set the help
+    GetMainFrame()->SetHelpDirectory(FindResourceDirectory(_DT(L"wisteria-dataviz-manual")));
+    wxLogMessage(L"Documentation Location: %s", GetMainFrame()->GetHelpDirectory());
+
     GetMainFrame()->InitControls(CreateRibbon(GetMainFrame()->GetPanel()));
 
 #if defined(__WXOSX__)
@@ -656,7 +664,8 @@ void WisteriaApp::LoadInterface()
         GetMainFrame()->GetMenuBar()->Check(ID_LOG_TAB_VERBOSE, wxLog::GetVerbose());
         }
 
-    const std::array<wxAcceleratorEntry, 8> entries = {
+    const std::array<wxAcceleratorEntry, 9> entries = {
+        wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_HELP),
         wxAcceleratorEntry(wxACCEL_CTRL, L'O', wxID_OPEN),
         wxAcceleratorEntry(wxACCEL_CTRL, L'F', ID_SCRIPT_FIND),
         wxAcceleratorEntry(wxACCEL_CTRL, L'H', ID_SCRIPT_REPLACE),
@@ -680,6 +689,10 @@ void WisteriaApp::LoadInterface()
                            _(L"Create a New Project"));
     m_startPage->AddButton(wxArtProvider::GetBitmapBundle(wxART_FILE_OPEN, wxART_BUTTON),
                            _(L"Open a Project"));
+    m_startPage->AddButton(wxArtProvider::GetBitmapBundle(wxART_HELP_BOOK, wxART_BUTTON),
+                           _(L"Read the Manual"));
+    m_startPage->AddButton(wxArtProvider::GetBitmapBundle(L"ID_WHATS_NEW", wxART_BUTTON),
+                           _(L"What's New"));
     GetMainFrame()->GetPanel()->GetSizer()->Add(m_startPage, wxSizerFlags{ 1 }.Expand());
 
     GetMainFrame()->Bind(wxEVT_STARTPAGE_CLICKED,
@@ -695,6 +708,18 @@ void WisteriaApp::LoadInterface()
                                      {
                                      wxCommandEvent openEvent(wxEVT_MENU, wxID_OPEN);
                                      GetMainFrame()->ProcessWindowEvent(openEvent);
+                                     }
+                                 else if (event.GetId() == m_startPage->GetButtonID(2))
+                                     {
+                                     wxRibbonButtonBarEvent manualEvent;
+                                     GetMainFrameEx()->OnHelpManual(manualEvent);
+                                     }
+                                 else if (event.GetId() == m_startPage->GetButtonID(3))
+                                     {
+                                     const wxString manualPath{ GetMainFrame()->GetHelpDirectory() +
+                                                                wxFileName::GetPathSeparator() +
+                                                                _DT(L"release-notes.pdf") };
+                                     wxLaunchDefaultApplication(manualPath);
                                      }
                                  }
                              else if (wxStartPage::IsFileId(event.GetId()))
@@ -772,6 +797,27 @@ void WisteriaApp::LoadInterface()
         [this]([[maybe_unused]]
                wxCommandEvent& event) { ShowAboutDialog(GetMainFrame()); },
         wxID_ABOUT);
+
+    GetMainFrame()->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &MainFrame::OnHelpManual, GetMainFrameEx(),
+                         ID_HELP_MANUAL);
+    GetMainFrame()->Bind(
+        wxEVT_MENU,
+        [this]([[maybe_unused]] wxCommandEvent&)
+        {
+            wxRibbonButtonBarEvent event;
+            GetMainFrameEx()->OnHelpManual(event);
+        },
+        ID_HELP_MANUAL);
+
+    const auto showReleaseNotes = [this]([[maybe_unused]]
+                                         wxCommandEvent&)
+    {
+        const wxString manualPath{ GetMainFrame()->GetHelpDirectory() +
+                                   wxFileName::GetPathSeparator() + _DT(L"release-notes.pdf") };
+        wxLaunchDefaultApplication(manualPath);
+    };
+    GetMainFrame()->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, showReleaseNotes, ID_RELEASE_NOTES);
+    GetMainFrame()->Bind(wxEVT_MENU, showReleaseNotes, ID_RELEASE_NOTES);
 
     GetMainFrame()->Bind(
         wxEVT_RIBBONBUTTONBAR_CLICKED,
@@ -1065,6 +1111,20 @@ void MainFrame::OpenFileNew(const wxString& path)
         {
         BaseMainFrame::OpenFileNew(path);
         }
+    }
+
+//-------------------------------------------
+void MainFrame::OnHelpContents([[maybe_unused]] wxCommandEvent& event)
+    {
+    DisplayHelp(_DT(L"online/index.html"));
+    }
+
+//-------------------------------------------
+void MainFrame::OnHelpManual([[maybe_unused]] wxRibbonButtonBarEvent& event)
+    {
+    const wxString manualPath{ GetHelpDirectory() + wxFileName::GetPathSeparator() +
+                               _DT(L"wisteria-dataviz-manual.pdf") };
+    wxLaunchDefaultApplication(manualPath);
     }
 
 //-------------------------------------------
@@ -1762,6 +1822,22 @@ wxRibbonBar* WisteriaApp::CreateRibbon(wxWindow* parent, const wxDocument* doc)
 
     ribbon->SetToggleButtonKeyTip(_DT(L"M"));
     ribbon->SetHelpButtonKeyTip(_DT(L"K"));
+
+    auto* helpPanel =
+        new wxRibbonPanel(helpPage, wxID_ANY, _(L"Documentation"), wxNullBitmap, wxDefaultPosition,
+                          wxDefaultSize, wxRIBBON_PANEL_NO_AUTO_MINIMISE);
+    helpPanel->SetKeyTip(_DT(L"DC"));
+    auto* helpButtonBar = new wxRibbonButtonBar(helpPanel, wxID_ANY);
+    helpButtonBar->AddButton(wxID_HELP, _(L"Electronic Help"),
+                             ReadSvgIcon(L"images/electronic-help.svg"),
+                             _(L"Read the documentation in a browser."));
+    helpButtonBar->AddButton(ID_HELP_MANUAL, _(L"Manual"), ReadSvgIcon(L"images/help.svg"),
+                             _(L"Read the manual."));
+    helpButtonBar->AddButton(ID_RELEASE_NOTES, _(L"Release Notes"),
+                             ReadSvgIcon(L"images/paper-notes.svg"), _(L"Read the release notes."));
+    helpButtonBar->SetKeyTip(wxID_HELP, _DT(L"EH"));
+    helpButtonBar->SetKeyTip(ID_HELP_MANUAL, _DT(L"MA"));
+    helpButtonBar->SetKeyTip(ID_RELEASE_NOTES, _DT(L"RN"));
 
     auto* aboutPanel = new wxRibbonPanel(helpPage, wxID_ANY, _(L"About"));
     aboutPanel->SetKeyTip(_DT(L"O"));

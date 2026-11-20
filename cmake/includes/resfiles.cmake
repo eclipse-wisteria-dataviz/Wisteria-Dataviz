@@ -51,6 +51,7 @@ images/dubois-spiral.svg
 images/dueling-pie.svg
 images/duplicate-files.svg
 images/edit.svg
+images/electronic-help.svg
 images/equals.svg
 images/file-open.svg
 images/file-save.svg
@@ -64,6 +65,7 @@ images/go-to-line.svg
 images/group.svg
 images/heatmap-grouped.svg
 images/heatmap.svg
+images/help.svg
 images/histogram.svg
 images/home-dark-mode.svg
 images/home.svg
@@ -83,12 +85,14 @@ images/lua.svg
 images/multiplot-common-axis.svg
 images/multiplot.svg
 images/odp.svg
+images/outreach.svg
 images/page-add.svg
 images/page-delete.svg
 images/page-edit.svg
 images/page-landscape.svg
 images/page-portrait.svg
 images/page.svg
+images/paper-notes.svg
 images/paper-size.svg
 images/paste.svg
 images/pdf.svg

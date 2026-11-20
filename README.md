@@ -252,10 +252,6 @@ Sports
 
 See more in the [graphs gallery](docs/gallery.md).
 
-Release Notes
-=============================
-Release information is available [here](release.md).
-
 Building
 =============================
 
