@@ -492,7 +492,10 @@ namespace Wisteria
         /// @brief Show as currency (using the current locale).
         Currency,
         /// @brief Display the number as-is, no thousands separators.
-        ValueSimple
+        ValueSimple,
+        /// @brief Show as currency (using the current locale),
+        ///     with negative values in parentheses.
+        Accounting
         };
 
     /// @brief How the segments between the points on a line are connected.

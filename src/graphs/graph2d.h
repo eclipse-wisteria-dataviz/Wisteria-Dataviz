@@ -1141,7 +1141,7 @@ namespace Wisteria::Graphs
                 For example, Table uses it to scale itself down so that it doesn't consume
                 more space than needed.*/
         void SetBoundingBox(const wxRect& rect, [[maybe_unused]] wxDC& dc,
-                            [[maybe_unused]] const double parentScaling) noexcept override
+                            [[maybe_unused]] const double parentScaling) override
             {
             m_rect = rect;
             }

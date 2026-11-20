@@ -411,25 +411,29 @@ TEST_CASE("GeoDataset::CopyContinuousColumnFrom", "[kml][geodataset]")
             RowInfo().Id(L"3900003").Continuous({ std::numeric_limits<double>::quiet_NaN() }));
 
         REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Sum",
-                                                  GeoColumnAggregation::Sum));
+                                                  ColumnAggregation::Sum));
         CHECK_THAT(geoData->GetContinuousColumn(L"Sum")->GetValue(0), WithinAbs(450.0, 1e-9));
         CHECK(std::isnan(geoData->GetContinuousColumn(L"Sum")->GetValue(2)));
 
         REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Mean",
-                                                  GeoColumnAggregation::Mean));
+                                                  ColumnAggregation::Mean));
         CHECK_THAT(geoData->GetContinuousColumn(L"Mean")->GetValue(0), WithinAbs(150.0, 1e-9));
 
         REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Min",
-                                                  GeoColumnAggregation::Min));
+                                                  ColumnAggregation::Min));
         CHECK_THAT(geoData->GetContinuousColumn(L"Min")->GetValue(0), WithinAbs(50.0, 1e-9));
 
         REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Max",
-                                                  GeoColumnAggregation::Max));
+                                                  ColumnAggregation::Max));
         CHECK_THAT(geoData->GetContinuousColumn(L"Max")->GetValue(0), WithinAbs(300.0, 1e-9));
 
         REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Count",
-                                                  GeoColumnAggregation::Count));
+                                                  ColumnAggregation::Count));
         CHECK_THAT(geoData->GetContinuousColumn(L"Count")->GetValue(0), WithinAbs(3.0, 1e-9));
+
+        REQUIRE(geoData->CopyContinuousColumnFrom(enrollment, L"county_id", L"students", L"Median",
+                                                  ColumnAggregation::Median));
+        CHECK_THAT(geoData->GetContinuousColumn(L"Median")->GetValue(0), WithinAbs(100.0, 1e-9));
         }
     }
 

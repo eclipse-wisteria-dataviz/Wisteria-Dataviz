@@ -15,6 +15,27 @@
 namespace Wisteria::Data
     {
     //----------------------------------------------
+    wxString GetColumnAggregationName(const ColumnAggregation aggregation)
+        {
+        switch (aggregation)
+            {
+        case ColumnAggregation::Mean:
+            return _(L"Mean");
+        case ColumnAggregation::Min:
+            return _(L"Minimum");
+        case ColumnAggregation::Max:
+            return _(L"Maximum");
+        case ColumnAggregation::Count:
+            return _(L"Count");
+        case ColumnAggregation::Median:
+            return _(L"Median");
+        case ColumnAggregation::Sum:
+            break;
+            }
+        return _(L"Sum");
+        }
+
+    //----------------------------------------------
     void ColumnWithStringTable::RemoveUnusedStringTableEntries()
         {
         if (!Data::ColumnWithStringTable::HasLabels(GetStringTable()) || GetValues().empty())

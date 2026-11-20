@@ -1667,7 +1667,7 @@ namespace Wisteria
         wxString categoryColumn;
         wxString symbolColumn;
         const Data::Dataset* groupSource{ nullptr };
-        auto dataAggregation = Data::GeoColumnAggregation::Sum;
+        auto dataAggregation = Data::ColumnAggregation::Sum;
         if (const auto dataSourceNode = graphNode->GetProperty(_DT(L"data-source"));
             dataSourceNode->IsOk())
             {
@@ -1676,7 +1676,7 @@ namespace Wisteria
             valueColumn = dataSourceNode->GetProperty(_DT(L"value-column"))->AsString();
             categoryColumn = dataSourceNode->GetProperty(_DT(L"category-column"))->AsString();
             symbolColumn = dataSourceNode->GetProperty(_DT(L"symbol-column"))->AsString();
-            if (const auto aggregation = ReportEnumConvert::ConvertGeoColumnAggregation(
+            if (const auto aggregation = ReportEnumConvert::ConvertColumnAggregation(
                     dataSourceNode->GetProperty(_DT(L"aggregation"))->AsString());
                 aggregation.has_value())
                 {

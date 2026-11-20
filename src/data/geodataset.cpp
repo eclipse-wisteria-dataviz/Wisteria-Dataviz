@@ -8,6 +8,7 @@
 
 #include "geodataset.h"
 #include "../math/safe_math.h"
+#include "../math/statistics.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -19,25 +20,6 @@
 
 namespace Wisteria::Data
     {
-    //---------------------------------------------------
-    wxString GetGeoColumnAggregationName(const GeoColumnAggregation aggregation)
-        {
-        switch (aggregation)
-            {
-        case GeoColumnAggregation::Mean:
-            return _(L"Mean");
-        case GeoColumnAggregation::Min:
-            return _(L"Minimum");
-        case GeoColumnAggregation::Max:
-            return _(L"Maximum");
-        case GeoColumnAggregation::Count:
-            return _(L"Count");
-        case GeoColumnAggregation::Sum:
-            break;
-            }
-        return _(L"Sum");
-        }
-
     //---------------------------------------------------
     bool GeoDataset::IsGeoJsonFile(const wxString& filePath)
         {
@@ -348,7 +330,7 @@ namespace Wisteria::Data
                                               const wxString& sourceKeyColumn,
                                               const wxString& sourceValueColumn,
                                               const wxString& targetColumnName,
-                                              const GeoColumnAggregation aggregation)
+                                              const ColumnAggregation aggregation)
         {
         m_lastError.clear();
 
@@ -395,15 +377,17 @@ namespace Wisteria::Data
             const double total = std::accumulate(values.cbegin(), values.cend(), 0.0);
             switch (aggregation)
                 {
-            case GeoColumnAggregation::Mean:
+            case ColumnAggregation::Mean:
                 return safe_divide<double>(total, values.size());
-            case GeoColumnAggregation::Min:
+            case ColumnAggregation::Min:
                 return *std::ranges::min_element(values);
-            case GeoColumnAggregation::Max:
+            case ColumnAggregation::Max:
                 return *std::ranges::max_element(values);
-            case GeoColumnAggregation::Count:
+            case ColumnAggregation::Count:
                 return static_cast<double>(values.size());
-            case GeoColumnAggregation::Sum:
+            case ColumnAggregation::Median:
+                return statistics::median(values);
+            case ColumnAggregation::Sum:
                 break;
                 }
             return total;

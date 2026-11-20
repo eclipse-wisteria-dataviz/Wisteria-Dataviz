@@ -222,7 +222,7 @@ namespace Wisteria::Graphs
          The shading value usually comes from a project dataset merged onto the regions
          with Data::GeoDataset::CopyContinuousColumnFrom(). When that dataset has more
          than one row for a region, the matching values are reduced to one number with
-         Data::GeoColumnAggregation (sum, mean, min, max, or count). SetDataAggregation()
+         Data::ColumnAggregation (e.g., sum, mean, or median). SetDataAggregation()
          records the choice so the map round-trips.
 
         @par Missing Data:
@@ -398,14 +398,14 @@ namespace Wisteria::Graphs
             @details This does not perform the merge. The merge runs before SetData().
                 This only stores the choice so that saving the project, or re-opening
                 the editor, can recreate the same map.*/
-        void SetDataAggregation(const Data::GeoColumnAggregation aggregation) noexcept
+        void SetDataAggregation(const Data::ColumnAggregation aggregation) noexcept
             {
             m_dataAggregation = aggregation;
             }
 
         /// @returns How rows that share a region key were combined into one value.
         [[nodiscard]]
-        Data::GeoColumnAggregation GetDataAggregation() const noexcept
+        Data::ColumnAggregation GetDataAggregation() const noexcept
             {
             return m_dataAggregation;
             }
@@ -738,7 +738,7 @@ namespace Wisteria::Graphs
         wxString m_regionIdField;
         wxString m_dataSourceName;
         wxString m_dataSourceKeyColumn;
-        Data::GeoColumnAggregation m_dataAggregation{ Data::GeoColumnAggregation::Sum };
+        Data::ColumnAggregation m_dataAggregation{ Data::ColumnAggregation::Sum };
         NumberDisplay m_valueDisplay{ NumberDisplay::Value };
 
         // optional backdrop drawn under the data regions, filled with a tint of the color scheme

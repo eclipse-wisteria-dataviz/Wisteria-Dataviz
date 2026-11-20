@@ -117,6 +117,22 @@ namespace Wisteria::Data
         None
         };
 
+    /// @brief How a set of continuous values is combined into a single value.
+    enum class ColumnAggregation
+        {
+        Sum,   /*!< The total of the values. */
+        Mean,  /*!< The average of the values. */
+        Min,   /*!< The smallest value. */
+        Max,   /*!< The largest value. */
+        Count, /*!< The number of values. */
+        Median /*!< The median of the values. */
+        };
+
+    /// @param aggregation The aggregation method.
+    /// @returns The translated name of the method (e.g., "Sum").
+    [[nodiscard]]
+    wxString GetColumnAggregationName(ColumnAggregation aggregation);
+
     /// @brief A column of data.
     template<typename T>
     class Column

@@ -957,7 +957,8 @@ namespace Wisteria
                 { L"percentage", NumberDisplay::Percentage },
                 { L"value", NumberDisplay::Value },
                 { L"currency", NumberDisplay::Currency },
-                { L"value-simple", NumberDisplay::ValueSimple }
+                { L"value-simple", NumberDisplay::ValueSimple },
+                { L"accounting", NumberDisplay::Accounting }
             };
 
             const auto foundValue = bDisplayValues.find(value.Lower().ToStdWstring());
@@ -1109,34 +1110,36 @@ namespace Wisteria
 
         //---------------------------------------------------
         [[nodiscard]]
-        static std::optional<Data::GeoColumnAggregation>
-        ConvertGeoColumnAggregation(const wxString& value)
+        static std::optional<Data::ColumnAggregation>
+        ConvertColumnAggregation(const wxString& value)
             {
-            static const std::map<std::wstring, Data::GeoColumnAggregation> aggregationValues = {
-                { L"sum", Data::GeoColumnAggregation::Sum },
-                { L"mean", Data::GeoColumnAggregation::Mean },
-                { L"min", Data::GeoColumnAggregation::Min },
-                { L"max", Data::GeoColumnAggregation::Max },
-                { L"count", Data::GeoColumnAggregation::Count }
+            static const std::map<std::wstring, Data::ColumnAggregation> aggregationValues = {
+                { L"sum", Data::ColumnAggregation::Sum },
+                { L"mean", Data::ColumnAggregation::Mean },
+                { L"min", Data::ColumnAggregation::Min },
+                { L"max", Data::ColumnAggregation::Max },
+                { L"count", Data::ColumnAggregation::Count },
+                { L"median", Data::ColumnAggregation::Median }
             };
 
             const auto foundValue = aggregationValues.find(value.Lower().ToStdWstring());
             return ((foundValue != aggregationValues.cend()) ?
-                        std::optional<Data::GeoColumnAggregation>(foundValue->second) :
+                        std::optional<Data::ColumnAggregation>(foundValue->second) :
                         std::nullopt);
             }
 
         //---------------------------------------------------
         [[nodiscard]]
         static std::optional<wxString>
-        ConvertGeoColumnAggregationToString(Data::GeoColumnAggregation value)
+        ConvertColumnAggregationToString(Data::ColumnAggregation value)
             {
-            static const std::map<Data::GeoColumnAggregation, wxString> values = {
-                { Data::GeoColumnAggregation::Sum, L"sum" },
-                { Data::GeoColumnAggregation::Mean, L"mean" },
-                { Data::GeoColumnAggregation::Min, L"min" },
-                { Data::GeoColumnAggregation::Max, L"max" },
-                { Data::GeoColumnAggregation::Count, L"count" }
+            static const std::map<Data::ColumnAggregation, wxString> values = {
+                { Data::ColumnAggregation::Sum, L"sum" },
+                { Data::ColumnAggregation::Mean, L"mean" },
+                { Data::ColumnAggregation::Min, L"min" },
+                { Data::ColumnAggregation::Max, L"max" },
+                { Data::ColumnAggregation::Count, L"count" },
+                { Data::ColumnAggregation::Median, L"median" }
             };
 
             const auto foundValue = values.find(value);
@@ -1863,7 +1866,8 @@ namespace Wisteria
                 { NumberDisplay::Percentage, L"percentage" },
                 { NumberDisplay::Value, L"value" },
                 { NumberDisplay::Currency, L"currency" },
-                { NumberDisplay::ValueSimple, L"value-simple" }
+                { NumberDisplay::ValueSimple, L"value-simple" },
+                { NumberDisplay::Accounting, L"accounting" }
             };
 
             const auto foundValue = values.find(value);

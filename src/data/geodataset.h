@@ -22,25 +22,6 @@
 
 namespace Wisteria::Data
     {
-    /// @brief How CopyContinuousColumnFrom() combines multiple source rows that
-    ///     share one key value into a single value for the region.
-    /// @details A dataset often has several rows per region (one per school,
-    ///     precinct, or month). The matching rows' values are reduced to one
-    ///     number with the chosen method before the region is shaded.
-    enum class GeoColumnAggregation
-        {
-        Sum,  /*!< Add the matching rows' values together. */
-        Mean, /*!< The average of the matching rows' values. */
-        Min,  /*!< The smallest of the matching rows' values. */
-        Max,  /*!< The largest of the matching rows' values. */
-        Count /*!< How many source rows matched the region key. */
-        };
-
-    /// @param aggregation The aggregation method.
-    /// @returns The translated name of the method (e.g., "Sum").
-    [[nodiscard]]
-    wxString GetGeoColumnAggregationName(GeoColumnAggregation aggregation);
-
     /// @brief Options controlling how a KML file is turned into a GeoDataset.
     /// @sa GeoDataset::ImportKML().
     class GeoImportInfo
@@ -313,7 +294,7 @@ namespace Wisteria::Data
         bool CopyContinuousColumnFrom(const Dataset& source, const wxString& sourceKeyColumn,
                                       const wxString& sourceValueColumn,
                                       const wxString& targetColumnName = wxString{},
-                                      GeoColumnAggregation aggregation = GeoColumnAggregation::Sum);
+                                      ColumnAggregation aggregation = ColumnAggregation::Sum);
 
         /** @brief Copies a categorical column from another dataset, matched on this
                 dataset's ID column.

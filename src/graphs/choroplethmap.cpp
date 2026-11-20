@@ -11,6 +11,7 @@
 #include "../base/points.h"
 #include "../base/polygon.h"
 #include "../math/mathematics.h"
+#include "../math/statistics.h"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -661,15 +662,17 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::ChoroplethMap, Wisteria::Graphs::Gra
             const double total = std::accumulate(values.cbegin(), values.cend(), 0.0);
             switch (m_dataAggregation)
                 {
-            case Data::GeoColumnAggregation::Mean:
+            case Data::ColumnAggregation::Mean:
                 return total / static_cast<double>(values.size());
-            case Data::GeoColumnAggregation::Min:
+            case Data::ColumnAggregation::Min:
                 return *std::ranges::min_element(values);
-            case Data::GeoColumnAggregation::Max:
+            case Data::ColumnAggregation::Max:
                 return *std::ranges::max_element(values);
-            case Data::GeoColumnAggregation::Count:
+            case Data::ColumnAggregation::Count:
                 return static_cast<double>(values.size());
-            case Data::GeoColumnAggregation::Sum:
+            case Data::ColumnAggregation::Median:
+                return statistics::median(values);
+            case Data::ColumnAggregation::Sum:
                 break;
                 }
             return total;
@@ -764,7 +767,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::ChoroplethMap, Wisteria::Graphs::Gra
 
         /* TRANSLATORS: aggregation (e.g., Sum) and the name of the column it is applied to. */
         return wxString::Format(_(L"(%s of '%s')"),
-                                Data::GetGeoColumnAggregationName(m_dataAggregation),
+                                Data::GetColumnAggregationName(m_dataAggregation),
                                 m_groupValueColumnName);
         }
 
