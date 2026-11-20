@@ -214,6 +214,92 @@ namespace Wisteria
 
     //---------------------------------------------------
     std::shared_ptr<Graphs::Graph2D>
+    ReportBuilder::LoadKpiCard(const wxSimpleJSON::Ptr_t& graphNode, Canvas* canvas,
+                               size_t& currentRow, size_t& currentColumn)
+        {
+        const wxString dsName = graphNode->GetProperty(L"dataset")->AsString();
+        const auto foundPos = m_datasets.find(dsName);
+        if (foundPos == m_datasets.cend() || foundPos->second == nullptr)
+            {
+            throw std::runtime_error(
+                wxString::Format(_(L"%s: dataset not found for KPI card."), dsName).ToUTF8());
+            }
+
+        const auto variablesNode = graphNode->GetProperty(L"variables");
+        if (!variablesNode->IsOk())
+            {
+            throw std::runtime_error(_(L"Variables not defined for KPI card.").ToUTF8());
+            }
+
+        const auto valueVarNameRaw = variablesNode->GetProperty(L"value")->AsString();
+        const auto valueVarName = ExpandConstants(valueVarNameRaw);
+        if (valueVarName.empty())
+            {
+            throw std::runtime_error(
+                wxString::Format(_(L"%s: value variable must be specified for KPI card."), dsName)
+                    .ToUTF8());
+            }
+
+        const wxString aggregateRaw = graphNode->GetProperty(L"aggregate")->AsString();
+        const auto aggregate = ReportEnumConvert::ConvertColumnAggregation(aggregateRaw)
+                                   .value_or(Data::ColumnAggregation::Sum);
+
+        auto kpiCard = std::make_shared<Graphs::KpiCard>(canvas);
+        kpiCard->SetPropertyTemplate(L"dataset", dsName);
+        kpiCard->SetPropertyTemplate(L"variables.value", valueVarNameRaw);
+
+        if (const auto formatNode = graphNode->GetProperty(L"number-format"); formatNode->IsOk())
+            {
+            if (const auto numberDisplay = ReportEnumConvert::ConvertNumberDisplay(
+                    formatNode->GetProperty(L"style")->AsString());
+                numberDisplay.has_value())
+                {
+                kpiCard->SetNumberDisplay(numberDisplay.value());
+                }
+            if (formatNode->HasProperty(L"precision"))
+                {
+                kpiCard->SetPrecision(static_cast<uint8_t>(
+                    std::clamp(formatNode->GetProperty(L"precision")->AsDouble(0), 0.0,
+                               static_cast<double>(Graphs::KpiCard::MAX_PRECISION))));
+                }
+            if (const auto abbreviation = ReportEnumConvert::ConvertKpiNumberAbbreviation(
+                    formatNode->GetProperty(L"abbreviation")->AsString());
+                abbreviation.has_value())
+                {
+                kpiCard->SetAbbreviation(abbreviation.value());
+                }
+            if (formatNode->HasProperty(L"show-plus-sign"))
+                {
+                kpiCard->ShowPlusSign(formatNode->GetProperty(L"show-plus-sign")->AsBool(false));
+                }
+            if (formatNode->HasProperty(L"suffix"))
+                {
+                kpiCard->SetSuffix(ExpandAndCache(kpiCard.get(), L"number-format.suffix",
+                                                  formatNode->GetProperty(L"suffix")->AsString()));
+                }
+            if (formatNode->HasProperty(L"missing-value-text"))
+                {
+                kpiCard->SetMissingValueText(
+                    ExpandAndCache(kpiCard.get(), L"number-format.missing-value-text",
+                                   formatNode->GetProperty(L"missing-value-text")->AsString()));
+                }
+            }
+
+        // the label's text is the card's body
+        if (const auto cardLabel = LoadLabel(graphNode->GetProperty(L"label"), kpiCard->GetLabel());
+            cardLabel != nullptr)
+            {
+            kpiCard->GetLabel() = *cardLabel;
+            }
+
+        kpiCard->SetData(foundPos->second, valueVarName, aggregate);
+
+        LoadGraph(graphNode, canvas, currentRow, currentColumn, kpiCard);
+        return kpiCard;
+        }
+
+    //---------------------------------------------------
+    std::shared_ptr<Graphs::Graph2D>
     ReportBuilder::LoadIshikawaDiagram(const wxSimpleJSON::Ptr_t& graphNode, Canvas* canvas,
                                        size_t& currentRow, size_t& currentColumn)
         {

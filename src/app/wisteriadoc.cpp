@@ -885,7 +885,8 @@ void WisteriaDoc::SaveItem(wxSimpleJSON::Ptr_t& itemNode,
     }
 
 //-------------------------------------------
-wxString WisteriaDoc::BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderInfo& header) const
+wxString WisteriaDoc::BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderInfo& header,
+                                             const bool includeDefaults) const
     {
     if (!header.IsEnabled())
         {
@@ -893,17 +894,19 @@ wxString WisteriaDoc::BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderI
         }
     const auto defaultGuiFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     wxString hdr = L"{";
-    if (header.GetFont().GetWeight() >= wxFONTWEIGHT_BOLD)
+    const bool isBold{ header.GetFont().GetWeight() >= wxFONTWEIGHT_BOLD };
+    if (isBold || includeDefaults)
         {
-        hdr += L"\"bold\": true";
+        hdr += isBold ? L"\"bold\": true" : L"\"bold\": false";
         }
-    if (header.GetFont().GetStyle() == wxFONTSTYLE_ITALIC)
+    const bool isItalic{ header.GetFont().GetStyle() == wxFONTSTYLE_ITALIC };
+    if (isItalic || includeDefaults)
         {
         if (hdr.Last() != L'{')
             {
             hdr += L", ";
             }
-        hdr += L"\"italic\": true";
+        hdr += isItalic ? L"\"italic\": true" : L"\"italic\": false";
         }
     if (header.GetFont().IsOk() && header.GetFont().GetFaceName() != defaultGuiFont.GetFaceName())
         {
@@ -930,7 +933,7 @@ wxString WisteriaDoc::BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderI
             }
         hdr += L"\"color\": \"" + EscapeJsonStr(ColorToStr(header.GetFontColor())) + L"\"";
         }
-    if (!compare_doubles(header.GetRelativeScaling(), 1.0))
+    if (includeDefaults || !compare_doubles(header.GetRelativeScaling(), 1.0))
         {
         if (hdr.Last() != L'{')
             {
@@ -938,7 +941,7 @@ wxString WisteriaDoc::BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderI
             }
         hdr += L"\"relative-scaling\": " + DoubleToJsonStr(header.GetRelativeScaling());
         }
-    if (header.GetLabelAlignment() != Wisteria::TextAlignment::FlushLeft)
+    if (includeDefaults || header.GetLabelAlignment() != Wisteria::TextAlignment::FlushLeft)
         {
         const auto taStr =
             Wisteria::ReportEnumConvert::ConvertTextAlignmentToString(header.GetLabelAlignment());
@@ -1131,104 +1134,108 @@ wxSimpleJSON::Ptr_t WisteriaDoc::SaveLabel(const Wisteria::GraphItems::Label* la
         return wxSimpleJSON::Create(L"{\"type\": \"spacer\"}");
         }
 
-    // build header JSON string first (needed for template)
-    const wxString headerStr = BuildHeaderInfoJsonStr(label->GetHeaderInfo());
+    auto node = wxSimpleJSON::Create(
+        L"{\"type\": \"label\", \"canvas-margins\": [], \"padding\": [], \"outline\": []}");
+    SaveLabelToNode(node, label, canvas);
+    return node;
+    }
 
-    // build template with all sub-objects embedded
-    wxString tmpl = L"{\"type\": \"label\"";
+//-------------------------------------------
+void WisteriaDoc::SaveLabelToNode(wxSimpleJSON::Ptr_t& node,
+                                  const Wisteria::GraphItems::Label* label,
+                                  const Wisteria::Canvas* canvas,
+                                  const bool includeHeaderDefaults) const
+    {
+    if (label == nullptr)
+        {
+        return;
+        }
+
+    const wxString headerStr =
+        BuildHeaderInfoJsonStr(label->GetHeaderInfo(), includeHeaderDefaults);
     if (!headerStr.empty())
         {
-        tmpl += L", \"header\": " + headerStr;
+        node->Add(L"header", wxSimpleJSON::Create(headerStr));
         }
     const auto& pen = label->GetPen();
     if (pen.IsOk() && pen != wxNullPen)
         {
-        tmpl += L", \"pen\": " + SavePenToStr(pen);
+        node->Add(L"pen", wxSimpleJSON::Create(SavePenToStr(pen)));
         }
 
     // left-image
     const auto leftImgPath = label->GetPropertyTemplate(L"left-image.path");
     if (!leftImgPath.empty())
         {
-        tmpl += L", \"left-image\": {\"image-import\": {\"path\": \"" + EscapeJsonStr(leftImgPath) +
-                L"\"}}";
+        node->Add(L"left-image", wxSimpleJSON::Create(L"{\"image-import\": {\"path\": \"" +
+                                                      EscapeJsonStr(leftImgPath) + L"\"}}"));
         }
 
     // top-image
     const auto topImgPath = label->GetPropertyTemplate(L"top-image.path");
     if (!topImgPath.empty())
         {
-        tmpl += L", \"top-image\": {\"image-import\": {\"path\": \"" + EscapeJsonStr(topImgPath) +
-                L"\"}";
+        wxString topImgStr =
+            L"{\"image-import\": {\"path\": \"" + EscapeJsonStr(topImgPath) + L"\"}";
         if (label->GetTopImageOffset() != 0)
             {
-            tmpl += wxString::Format(L", \"offset\": %zu", label->GetTopImageOffset());
+            topImgStr += wxString::Format(L", \"offset\": %zu", label->GetTopImageOffset());
             }
-        tmpl += L"}";
+        topImgStr += L"}";
+        node->Add(L"top-image", wxSimpleJSON::Create(topImgStr));
         }
 
     // top-shape
     const auto& topShape = label->GetTopShape();
     if (topShape.has_value() && !topShape->empty())
         {
-        if (topShape->size() == 1)
-            {
-            tmpl += L", \"top-shape\": ";
-            }
-        else
-            {
-            tmpl += L", \"top-shape\": [";
-            }
+        wxString topShapeStr = (topShape->size() == 1) ? wxString{} : wxString{ L"[" };
         for (size_t i = 0; i < topShape->size(); ++i)
             {
             if (i > 0)
                 {
-                tmpl += L", ";
+                topShapeStr += L", ";
                 }
             const auto& si = topShape->at(i);
             const auto siIconStr = Wisteria::ReportEnumConvert::ConvertIconToString(si.GetShape());
-            tmpl += L"{";
+            topShapeStr += L"{";
             if (siIconStr.has_value())
                 {
-                tmpl += L"\"icon\": \"" + siIconStr.value() + L"\"";
+                topShapeStr += L"\"icon\": \"" + siIconStr.value() + L"\"";
                 }
             const auto siSz = si.GetSizeDIPs();
-            tmpl += wxString::Format(L", \"size\": {\"width\": %d, \"height\": %d}",
-                                     siSz.GetWidth(), siSz.GetHeight());
+            topShapeStr += wxString::Format(L", \"size\": {\"width\": %d, \"height\": %d}",
+                                            siSz.GetWidth(), siSz.GetHeight());
             const auto& siPen = si.GetPen();
             if (siPen.IsOk() && siPen != wxNullPen)
                 {
-                tmpl += L", \"pen\": " + SavePenToStr(siPen);
+                topShapeStr += L", \"pen\": " + SavePenToStr(siPen);
                 }
             const auto& siBrush = si.GetBrush();
             if (siBrush.IsOk() && siBrush != wxNullBrush)
                 {
-                tmpl += L", \"brush\": " + SaveBrushToStr(siBrush);
+                topShapeStr += L", \"brush\": " + SaveBrushToStr(siBrush);
                 }
             if (!compare_doubles(si.GetFillPercent(), math_constants::full))
                 {
-                tmpl += L", \"fill-percent\": " + DoubleToJsonStr(si.GetFillPercent());
+                topShapeStr += L", \"fill-percent\": " + DoubleToJsonStr(si.GetFillPercent());
                 }
             if (!si.GetText().empty())
                 {
-                tmpl += L", \"label\": \"" + EscapeJsonStr(si.GetText()) + L"\"";
+                topShapeStr += L", \"label\": \"" + EscapeJsonStr(si.GetText()) + L"\"";
                 }
-            tmpl += L"}";
+            topShapeStr += L"}";
             }
         if (topShape->size() > 1)
             {
-            tmpl += L"]";
+            topShapeStr += L"]";
             }
+        node->Add(L"top-shape", wxSimpleJSON::Create(topShapeStr));
         if (label->GetTopImageOffset() != 0 && topImgPath.empty())
             {
-            tmpl += wxString::Format(L", \"top-shape-offset\": %zu", label->GetTopImageOffset());
+            node->Add(L"top-shape-offset", static_cast<double>(label->GetTopImageOffset()));
             }
         }
-
-    tmpl += L", \"canvas-margins\": [], \"padding\": [], \"outline\": []";
-    tmpl += L"}";
-
-    auto node = wxSimpleJSON::Create(tmpl);
 
     // text (prefer template if it has {{constants}})
     const auto textTemplate = label->GetPropertyTemplate(L"text");
@@ -1344,7 +1351,6 @@ wxSimpleJSON::Ptr_t WisteriaDoc::SaveLabel(const Wisteria::GraphItems::Label* la
         }
 
     SaveItem(node, label, canvas);
-    return node;
     }
 
 //-------------------------------------------
@@ -4066,6 +4072,78 @@ wxSimpleJSON::Ptr_t WisteriaDoc::SaveGraphByType(const Wisteria::Graphs::Graph2D
                 }
             node->Add(L"ranges", rangesArray);
             }
+        }
+    else if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::KpiCard)))
+        {
+        const auto* kpiCard = dynamic_cast<const Wisteria::Graphs::KpiCard*>(graph);
+        if (kpiCard->GetAggregate() != Wisteria::Data::ColumnAggregation::Sum)
+            {
+            const auto aggStr = Wisteria::ReportEnumConvert::ConvertColumnAggregationToString(
+                kpiCard->GetAggregate());
+            if (aggStr.has_value())
+                {
+                node->Add(L"aggregate", aggStr.value());
+                }
+            }
+
+        auto formatNode = wxSimpleJSON::Create(wxSimpleJSON::JSONType::IS_OBJECT, true);
+        bool hasFormat{ false };
+        if (kpiCard->GetNumberDisplay() != Wisteria::NumberDisplay::Value)
+            {
+            const auto styleStr = Wisteria::ReportEnumConvert::ConvertNumberDisplayToString(
+                kpiCard->GetNumberDisplay());
+            if (styleStr.has_value())
+                {
+                formatNode->Add(L"style", styleStr.value());
+                hasFormat = true;
+                }
+            }
+        if (kpiCard->GetPrecision() != 0)
+            {
+            formatNode->Add(L"precision", static_cast<double>(kpiCard->GetPrecision()));
+            hasFormat = true;
+            }
+        if (kpiCard->GetAbbreviation() != Wisteria::Graphs::KpiNumberAbbreviation::None)
+            {
+            const auto abbrStr = Wisteria::ReportEnumConvert::ConvertKpiNumberAbbreviationToString(
+                kpiCard->GetAbbreviation());
+            if (abbrStr.has_value())
+                {
+                formatNode->Add(L"abbreviation", abbrStr.value());
+                hasFormat = true;
+                }
+            }
+        if (kpiCard->IsShowingPlusSign())
+            {
+            formatNode->Add(L"show-plus-sign", true);
+            hasFormat = true;
+            }
+        // prefer the templates if they have {{constants}}
+        const auto suffixTemplate = kpiCard->GetPropertyTemplate(L"number-format.suffix");
+        const auto& suffix = suffixTemplate.empty() ? kpiCard->GetSuffix() : suffixTemplate;
+        if (!suffix.empty())
+            {
+            formatNode->Add(L"suffix", suffix);
+            hasFormat = true;
+            }
+        const auto missingTemplate =
+            kpiCard->GetPropertyTemplate(L"number-format.missing-value-text");
+        const auto& missingText =
+            missingTemplate.empty() ? kpiCard->GetMissingValueText() : missingTemplate;
+        if (missingText != L"—")
+            {
+            formatNode->Add(L"missing-value-text", missingText);
+            hasFormat = true;
+            }
+        if (hasFormat)
+            {
+            node->Add(L"number-format", formatNode);
+            }
+
+        auto labelNode =
+            wxSimpleJSON::Create(L"{\"canvas-margins\": [], \"padding\": [], \"outline\": []}");
+        SaveLabelToNode(labelNode, &kpiCard->GetLabel(), canvas, true);
+        node->Add(L"label", labelNode);
         }
     else if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::BarChart)))
         {

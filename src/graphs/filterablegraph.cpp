@@ -390,7 +390,15 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::FilterableGraph, Wisteria::GraphItem
     //----------------------------------------------------------------
     bool FilterableGraph::IsOk() const noexcept
         {
-        return !m_variants.empty() && GraphItemBase::IsOk() && GetActiveGraph()->IsOk();
+        return m_activeIndex < m_variants.size() && GraphItemBase::IsOk() &&
+               m_variants[m_activeIndex].m_graph->IsOk();
+        }
+
+    //----------------------------------------------------------------
+    bool FilterableGraph::IsBoundingBoxScalingLocked() const noexcept
+        {
+        return m_activeIndex < m_variants.size() &&
+               m_variants[m_activeIndex].m_graph->IsBoundingBoxScalingLocked();
         }
 
     //----------------------------------------------------------------

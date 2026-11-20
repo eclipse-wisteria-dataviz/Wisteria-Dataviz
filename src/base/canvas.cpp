@@ -9,6 +9,7 @@
 #include "canvas.h"
 #include "../graphs/filterablegraph.h"
 #include "../graphs/graph2d.h"
+#include "../graphs/kpicard.h"
 #include "../graphs/table.h"
 #include "../graphs/waffle_chart.h"
 #include "../reporting/reportprintout.h"
@@ -2997,6 +2998,18 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Canvas, wxScrolledWindow)
             {
             label->m_parentScaling = 1.0;
             label->InvalidateCachedBoundingBox();
+            }
+        // a KPI card without a box is measured at its natural size
+        else if (item.IsKindOf(wxCLASSINFO(Graphs::KpiCard)))
+            {
+            item.SetBoundingBox(wxRect{}, gdc, 1.0);
+            }
+        else if (const auto* filterableGraph = dynamic_cast<Graphs::FilterableGraph*>(&item);
+                 filterableGraph != nullptr && filterableGraph->IsOk() &&
+                 filterableGraph->GetActiveGraph()->IsKindOf(wxCLASSINFO(Graphs::KpiCard)))
+            {
+            static_cast<GraphItems::GraphItemBase&>(*filterableGraph->GetActiveGraph())
+                .SetBoundingBox(wxRect{}, gdc, 1.0);
             }
         item.SetMinimumUserSizeDIPs(std::nullopt, std::nullopt);
         item.SetCanvasHeightProportion(std::nullopt);

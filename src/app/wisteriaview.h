@@ -289,6 +289,8 @@ class WisteriaView final : public wxView
     void EditLabel(const Wisteria::GraphItems::Label& label, Wisteria::Canvas* canvas,
                    size_t labelRow, size_t labelCol) const;
     void OnInsertKpiCard(wxCommandEvent& event);
+    void EditKpiCard(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,
+                     size_t graphRow, size_t graphCol, bool pasteAsNew = false) const;
     void OnInsertSpacer(wxCommandEvent& event);
     void OnDividerDropdown(wxCommandEvent& event);
     void OnInsertDivider(wxCommandEvent& event);

@@ -76,6 +76,7 @@ SET(APP_WISTERIA_SRC
     src/graphs/histogram.cpp
     src/graphs/inflesz.cpp
     src/graphs/ishikawadiagram.cpp
+    src/graphs/kpicard.cpp
     src/graphs/likertchart.cpp
     src/graphs/lineplot.cpp
     src/graphs/lixgauge.cpp

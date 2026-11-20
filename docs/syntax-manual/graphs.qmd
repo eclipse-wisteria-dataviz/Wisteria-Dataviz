@@ -86,6 +86,82 @@ Properties for `"bullet-chart"` nodes:
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
+## KPI Card {#kpi-card-properties .unnumbered}
+
+Properties for `"kpi-card"` nodes:
+
+- `"variables"`: An item containing the following properties:
+  - `"value"`: The continuous column whose values are combined into the card's number.
+- `"aggregate"`: A string specifying how the column's values are combined into the number. \
+  Missing values are skipped. \
+  Available options are:
+  - `"sum"`: The total of the values (the default).
+  - `"mean"`: The average of the values.
+  - `"median"`: The median of the values.
+  - `"min"`: The smallest value.
+  - `"max"`: The largest value.
+  - `"count"`: The number of values.
+- `"number-format"`: An (optional) item specifying how the number is displayed.
+  It contains the following properties:
+  - `"style"`: A string specifying the number's style. \
+    Available options are:
+    - `"value"`: A number with thousands separators (the default).
+    - `"value-simple"`: A number without thousands separators.
+    - `"percentage"`: The number multiplied by 100, followed by a `%` (e.g., `0.25` is shown as `25%`).
+    - `"currency"`: The number formatted as the current locale's currency.
+    - `"accounting"`: The number formatted as the current locale's currency, with negative values in parentheses.
+  - `"precision"`: The number of decimal places to show (0–10).
+    Default is `0`.
+  - `"abbreviation"`: A string specifying how large numbers are shortened. \
+    Available options are:
+    - `"none"`: The full number is shown (the default).
+    - `"thousands"`: The number is divided by 1,000 and followed by `K`.
+    - `"millions"`: The number is divided by 1,000,000 and followed by `M`.
+    - `"billions"`: The number is divided by 1,000,000,000 and followed by `B`.
+    - `"auto"`: The largest unit that keeps the number at 1 or more is used.
+
+    These units count in thousands.
+    Some languages count large numbers in ten-thousands instead (e.g., 万 in Chinese and Japanese), so the abbreviations may not suit them.
+  - `"show-plus-sign"`: `true` to show a `+` in front of positive numbers.
+  - `"suffix"`: Text to show after the number (e.g., `" pts"`). \
+    Note that this property supports embedded formulas that can reference user-defined values loaded from the
+    [constants](#constants-properties) section.
+  - `"missing-value-text"`: The text shown in place of the number if the column has no valid values.
+    Default is `"—"`. \
+    This property also supports constants.
+- `"label"`: A [label](#label-properties) item specifying the card's appearance. \
+  Its `"text"` is the body text shown beneath the number. \
+  Its `"header"` specifies the number's font, color, alignment, and size.
+  By default, the number is bold, centered, and three times the size of the body text.
+- Some base properties available to [graphs](#graph-properties).
+
+```json
+{
+  "type": "kpi-card",
+  "dataset": "Sales",
+  "variables": {
+    "value": "Revenue"
+  },
+  "aggregate": "sum",
+  "number-format": {
+    "style": "currency",
+    "precision": 1,
+    "abbreviation": "auto"
+  },
+  "label": {
+    "text": "Total revenue for {{Quarter}}",
+    "style": "index-card",
+    "box-content-adjustment": "adjust-width",
+    "header": {
+      "color": "ForestGreen",
+      "relative-scaling": 3
+    }
+  }
+}
+```
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
 ## Ishikawa Diagram {#ishikawa-diagram-properties .unnumbered}
 
 Properties for `"ishikawa-diagram"` nodes:
@@ -288,7 +364,7 @@ Properties for `"waterfall-chart"` nodes:
 - `"total-color"`: The color (a named color or hex value) for total bars.
 - `"value-display-format"`: A string specifying how values on the bars and blocks are displayed. \
   Available options are:
-  - `"value"`: Display the raw value (the default).
+  - `"value"`: Display the value with thousands separators (the default).
   - `"currency"`: Display using the current locale's currency formatting.
   - `"percentage"`: Append a `%` suffix to the value.
   - `"value-simple"`: Display the raw value without thousands separators.
@@ -412,7 +488,7 @@ Properties for `"choropleth-map"` nodes:
   - `"symbol-column"`: A continuous column drawn as a proportional circle at each region's center (its area proportional to the value). \
     This can run alongside a shading column or on its own.
   - `"aggregation"`: How multiple dataset rows that share one region key (and group, if `"category-column"` is used) are combined into one value. \
-    One of `sum` (the default), `mean`, `min`, `max`, or `count`. \
+    One of `sum` (the default), `mean`, `median`, `min`, `max`, or `count`. \
     Applies to `"value-column"` and `"symbol-column"`.
     Non-finite values are skipped.
 - `"color-scheme"`: A [color scheme](#color-scheme-properties) specification. \

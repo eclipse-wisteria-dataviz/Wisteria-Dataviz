@@ -1164,12 +1164,17 @@ namespace Wisteria::UI
             return false;
             }
 
-        dlg.ApplyGridSize();
-        WisteriaView::ClearGraphBeingReplaced(stagingCanvas, dlg.GetSelectedRow(),
-                                              dlg.GetSelectedColumn());
-        stagingCanvas->SetFixedObject(dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
-                                      dlg.BuildKpiCard());
-        return true;
+        try
+            {
+            auto plot = dlg.BuildKpiCard();
+            PlaceGraphInCell(stagingCanvas, plot, dlg.GetSelectedRow(), dlg.GetSelectedColumn());
+            return true;
+            }
+        catch (const std::exception& exc)
+            {
+            wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, this);
+            return false;
+            }
         }
 
     //-------------------------------------------

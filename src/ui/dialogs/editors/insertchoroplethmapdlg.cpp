@@ -267,16 +267,16 @@ namespace Wisteria::UI
         dataGrid->Add(
             new wxStaticText(dataBox->GetStaticBox(), wxID_ANY, _(L"Combine rows per region:")),
             wxSizerFlags{}.CenterVertical());
-        // the order of these entries is the numeric order of Data::GeoColumnAggregation
+        // the order of these entries is the numeric order of Data::ColumnAggregation
         m_aggregationChoice =
             new wxChoice(dataBox->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize, 0,
                          nullptr, 0, wxGenericValidator{ &m_dataAggregation });
         for (const auto aggregation :
-             { Data::GeoColumnAggregation::Sum, Data::GeoColumnAggregation::Mean,
-               Data::GeoColumnAggregation::Min, Data::GeoColumnAggregation::Max,
-               Data::GeoColumnAggregation::Count })
+             { Data::ColumnAggregation::Sum, Data::ColumnAggregation::Mean,
+               Data::ColumnAggregation::Min, Data::ColumnAggregation::Max,
+               Data::ColumnAggregation::Count, Data::ColumnAggregation::Median })
             {
-            m_aggregationChoice->Append(Data::GetGeoColumnAggregationName(aggregation));
+            m_aggregationChoice->Append(Data::GetColumnAggregationName(aggregation));
             }
         m_aggregationChoice->SetSelection(m_dataAggregation);
         dataGrid->Add(m_aggregationChoice, wxSizerFlags{}.Expand());
@@ -747,8 +747,7 @@ namespace Wisteria::UI
         const wxString newKeyColumn = hasSourceColumns ? GetKeyColumn() : wxString{};
         const bool newIsGrouped = !GetCategoryColumn().empty();
         const wxString newShadingColumn = newIsGrouped ? GetCategoryColumn() : GetValueColumn();
-        const auto newDataAggregation =
-            static_cast<Data::GeoColumnAggregation>(GetDataAggregation());
+        const auto newDataAggregation = static_cast<Data::ColumnAggregation>(GetDataAggregation());
 
         // Imports the KML/GeoJSON region file and copies over any mapped
         // dataset columns from scratch. A group column is read straight from the

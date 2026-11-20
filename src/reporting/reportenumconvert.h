@@ -23,6 +23,7 @@
 #include "../graphs/ganttchart.h"
 #include "../graphs/histogram.h"
 #include "../graphs/ishikawadiagram.h"
+#include "../graphs/kpicard.h"
 #include "../graphs/likertchart.h"
 #include "../graphs/nightingale_rose_chart.h"
 #include "../graphs/piechart.h"
@@ -592,6 +593,25 @@ namespace Wisteria
             const auto foundValue = colorSchemes.find(value.Lower().ToStdWstring());
             return ((foundValue != colorSchemes.cend()) ?
                         std::optional<Graphs::BulletChartRangeColorScheme>(foundValue->second) :
+                        std::nullopt);
+            }
+
+        //---------------------------------------------------
+        [[nodiscard]]
+        static std::optional<Graphs::KpiNumberAbbreviation>
+        ConvertKpiNumberAbbreviation(const wxString& value)
+            {
+            static const std::map<std::wstring, Graphs::KpiNumberAbbreviation> abbreviations = {
+                { L"none", Graphs::KpiNumberAbbreviation::None },
+                { L"thousands", Graphs::KpiNumberAbbreviation::Thousands },
+                { L"millions", Graphs::KpiNumberAbbreviation::Millions },
+                { L"billions", Graphs::KpiNumberAbbreviation::Billions },
+                { L"auto", Graphs::KpiNumberAbbreviation::Auto }
+            };
+
+            const auto foundValue = abbreviations.find(value.Lower().ToStdWstring());
+            return ((foundValue != abbreviations.cend()) ?
+                        std::optional<Graphs::KpiNumberAbbreviation>(foundValue->second) :
                         std::nullopt);
             }
 
@@ -2280,6 +2300,26 @@ namespace Wisteria
             static const std::map<Graphs::BulletChartRangeColorScheme, wxString> values = {
                 { Graphs::BulletChartRangeColorScheme::TwoTone, L"two-tone" },
                 { Graphs::BulletChartRangeColorScheme::GoalStatus, L"goal-status" }
+            };
+
+            const auto foundValue = values.find(value);
+            return (foundValue != values.cend()) ? std::optional<wxString>{ foundValue->second } :
+                                                   std::nullopt;
+            }
+
+        /// @brief Converts a KpiNumberAbbreviation enum to its JSON string.
+        /// @param value The abbreviation enum value.
+        /// @returns The string if found, or std::nullopt.
+        [[nodiscard]]
+        static std::optional<wxString>
+        ConvertKpiNumberAbbreviationToString(Graphs::KpiNumberAbbreviation value)
+            {
+            static const std::map<Graphs::KpiNumberAbbreviation, wxString> values = {
+                { Graphs::KpiNumberAbbreviation::None, L"none" },
+                { Graphs::KpiNumberAbbreviation::Thousands, L"thousands" },
+                { Graphs::KpiNumberAbbreviation::Millions, L"millions" },
+                { Graphs::KpiNumberAbbreviation::Billions, L"billions" },
+                { Graphs::KpiNumberAbbreviation::Auto, L"auto" }
             };
 
             const auto foundValue = values.find(value);

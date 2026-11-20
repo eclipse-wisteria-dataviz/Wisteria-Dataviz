@@ -127,8 +127,8 @@ namespace Wisteria::UI
         bool IsUsingProportionalSymbols() const;
 
         /// @returns How rows sharing a region key are combined into one value,
-        ///     as a Data::GeoColumnAggregation cast to @c int
-        ///     (0 sum, 1 mean, 2 min, 3 max, 4 count).
+        ///     as a Data::ColumnAggregation cast to @c int
+        ///     (0 sum, 1 mean, 2 min, 3 max, 4 count, 5 median).
         [[nodiscard]]
         int GetDataAggregation() const noexcept
             {
@@ -273,7 +273,7 @@ namespace Wisteria::UI
         bool m_showOnlyValuedRegions{ false };
         // 0 is a solid fill.
         int m_noDataFillStyle{ 0 };
-        // 0 is a sum, matching Data::GeoColumnAggregation
+        // 0 is a sum, matching Data::ColumnAggregation
         int m_dataAggregation{ 0 };
         // 0 is Value, 1 is Currency, and 2 is Simple value
         int m_valueFormatIndex{ 0 };

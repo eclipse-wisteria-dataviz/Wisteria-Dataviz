@@ -2495,6 +2495,10 @@ wxString WisteriaApp::GetGraphTypeString(const Wisteria::Graphs::Graph2D* graph)
         {
         return _DT(L"bullet-chart");
         }
+    if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::KpiCard)))
+        {
+        return _DT(L"kpi-card");
+        }
     if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::IshikawaDiagram)))
         {
         return _DT(L"ishikawa-diagram");
@@ -2665,6 +2669,10 @@ wxString WisteriaApp::GetItemIconName(const Wisteria::GraphItems::GraphItemBase*
     if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::BulletChart)))
         {
         return L"images/bulletchart.svg";
+        }
+    if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::KpiCard)))
+        {
+        return L"images/kpi-card.svg";
         }
     if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::IshikawaDiagram)))
         {

@@ -149,8 +149,9 @@ namespace Wisteria::Graphs
         bool SetActiveValue(const wxString& label);
 
         /// @returns The graph being shown.
+        /// @throws std::out_of_range If there are no variants.
         [[nodiscard]]
-        const std::shared_ptr<Graph2D>& GetActiveGraph() const noexcept
+        const std::shared_ptr<Graph2D>& GetActiveGraph() const
             {
             return m_variants.at(m_activeIndex).m_graph;
             }
@@ -205,6 +206,9 @@ namespace Wisteria::Graphs
         /// @private
         [[nodiscard]]
         bool IsOk() const noexcept override;
+        /// @private
+        [[nodiscard]]
+        bool IsBoundingBoxScalingLocked() const noexcept override;
 
       private:
         wxRect Draw(wxDC& dc) const override;

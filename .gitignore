@@ -95,3 +95,4 @@ cpp.hint
 *.app
 *.manifest
 
+/docs/release-notes/docs

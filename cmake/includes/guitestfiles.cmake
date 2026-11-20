@@ -29,6 +29,7 @@ SET(TEST_SRC_FILES
     ishikawadiagramrendertests.cpp
     jittertests.cpp
     jointests.cpp
+    kpicardtests.cpp
     labeltests.cpp
     likertchartrendertests.cpp
     lineplotrendertests.cpp

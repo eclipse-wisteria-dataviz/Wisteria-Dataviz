@@ -88,7 +88,8 @@ class WisteriaDoc final : public wxDocument
     [[nodiscard]]
     wxString SaveBrushToStr(const wxBrush& brush) const;
     [[nodiscard]]
-    wxString BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderInfo& header) const;
+    wxString BuildHeaderInfoJsonStr(const Wisteria::GraphItems::HeaderInfo& header,
+                                    bool includeDefaults = false) const;
     [[nodiscard]]
     wxString SaveLabelPropertiesToStr(
         const Wisteria::GraphItems::Label& label,
@@ -98,6 +99,10 @@ class WisteriaDoc final : public wxDocument
     [[nodiscard]]
     wxSimpleJSON::Ptr_t SaveLabel(const Wisteria::GraphItems::Label* label,
                                   const Wisteria::Canvas* canvas) const;
+    /// @brief Writes a label's content and item settings into @p node.
+    /// @note @p node must contain empty "canvas-margins", "padding", and "outline" arrays.
+    void SaveLabelToNode(wxSimpleJSON::Ptr_t& node, const Wisteria::GraphItems::Label* label,
+                         const Wisteria::Canvas* canvas, bool includeHeaderDefaults = false) const;
     [[nodiscard]]
     wxSimpleJSON::Ptr_t SaveImage(const Wisteria::GraphItems::Image* image,
                                   const Wisteria::Canvas* canvas) const;

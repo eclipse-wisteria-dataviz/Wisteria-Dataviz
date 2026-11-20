@@ -1,5 +1,10 @@
 # Releases
 
+## 1.2.3
+
+- Added KPI Card.
+- Choropleth now supports median.
+
 ## 1.2.2
 
 - Added Run Chart.

@@ -3913,6 +3913,10 @@ void WisteriaView::EditGraphByType(Wisteria::Graphs::Graph2D& graph, Wisteria::C
         {
         EditBulletChart(graph, canvas, graphRow, graphCol, pasteAsNew);
         }
+    else if (graph.IsKindOf(wxCLASSINFO(Wisteria::Graphs::KpiCard)))
+        {
+        EditKpiCard(graph, canvas, graphRow, graphCol, pasteAsNew);
+        }
     else if (graph.IsKindOf(wxCLASSINFO(Wisteria::Graphs::IshikawaDiagram)))
         {
         EditIshikawaDiagram(graph, canvas, graphRow, graphCol, pasteAsNew);
@@ -3970,6 +3974,7 @@ const std::vector<WisteriaView::FilterableGraphType>& WisteriaView::GetFilterabl
           wxCLASSINFO(BulletChart) },
         { ID_NEW_ISHIKAWA_DIAGRAM, GalleryItemType::IshikawaDiagram, _(L"Ishikawa Diagram"),
           wxCLASSINFO(IshikawaDiagram) },
+        { ID_NEW_KPI_CARD, GalleryItemType::KpiCard, _(L"KPI Card"), wxCLASSINFO(KpiCard) },
         { ID_NEW_RUN_CHART, GalleryItemType::RunChart, _(L"Run Chart"), wxCLASSINFO(RunChart) },
         { ID_NEW_WATERFALL_CHART, GalleryItemType::WaterfallChart, _(L"Waterfall Chart"),
           wxCLASSINFO(WaterfallChart) },
@@ -7157,6 +7162,13 @@ void WisteriaView::OnInsertKpiCard([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
+    if (m_reportBuilder.GetDatasets().empty())
+        {
+        wxMessageBox(_(L"Please import a dataset before inserting a KPI card."), _(L"No Datasets"),
+                     wxOK | wxICON_INFORMATION, m_frame);
+        return;
+        }
+
     Wisteria::UI::InsertKpiCardDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/kpi-card.svg");
     if (dlg.ShowModal() != wxID_OK)
@@ -7164,13 +7176,54 @@ void WisteriaView::OnInsertKpiCard([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
-    dlg.ApplyGridSize();
+    try
+        {
+        auto plot = dlg.BuildKpiCard();
+        PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
+                             dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
+                             Wisteria::UI::LegendPlacement::None);
+        }
+    catch (const std::exception& exc)
+        {
+        wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, m_frame);
+        }
+    }
 
-    ClearGraphBeingReplaced(canvas, dlg.GetSelectedRow(), dlg.GetSelectedColumn());
-    canvas->SetFixedObject(dlg.GetSelectedRow(), dlg.GetSelectedColumn(), dlg.BuildKpiCard());
-    UpdateCanvas(canvas);
+//-------------------------------------------
+void WisteriaView::EditKpiCard(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,
+                               const size_t graphRow, const size_t graphCol,
+                               const bool pasteAsNew) const
+    {
+    Wisteria::UI::InsertKpiCardDlg dlg(canvas, &m_reportBuilder, m_frame,
+                                       pasteAsNew ? _(L"Insert KPI Card") : _(L"Edit KPI Card"),
+                                       wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                       wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
+                                       pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
+                                                    Wisteria::UI::InsertItemDlg::EditMode::Edit);
+    SetDialogIcon(dlg, L"images/kpi-card.svg");
+    if (!pasteAsNew)
+        {
+        dlg.SetSelectedCell(graphRow, graphCol);
+        }
+    dlg.LoadFromGraph(graph);
 
-    GetDocument()->Modify(true);
+    if (dlg.ShowModal() != wxID_OK)
+        {
+        return;
+        }
+
+    try
+        {
+        auto plot = dlg.BuildKpiCard(&graph);
+        PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
+                             pasteAsNew ? dlg.GetSelectedRow() : graphRow,
+                             pasteAsNew ? dlg.GetSelectedColumn() : graphCol,
+                             Wisteria::UI::LegendPlacement::None);
+        }
+    catch (const std::exception& exc)
+        {
+        wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, m_frame);
+        }
     }
 
 //-------------------------------------------

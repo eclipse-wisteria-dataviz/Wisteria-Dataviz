@@ -608,7 +608,7 @@ Click `r keys("Select columns...")` to select the following columns:
 - **Group column**: Colors each region by the group that it belongs to (e.g., a sales territory).
 - **Symbol size column**: A second measurement, shown as a circle at the center of each region with its area proportional to the value.
 
-**Combine rows per region**: If the dataset has several rows for a region, then select how they are combined into one number (sum, mean, minimum, maximum, or count).
+**Combine rows per region**: If the dataset has several rows for a region, then select how they are combined into one number (sum, mean, minimum, maximum, count, or median).
 
 **Value format**: Select how values are shown (**Value**, **Currency**, or **Simple value**).
 

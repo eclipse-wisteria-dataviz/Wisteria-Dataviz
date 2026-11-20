@@ -120,37 +120,48 @@ Click `r keys("Clear")` to remove it.
 
 ## KPI Card {#sec-kpi-card-dlg}
 
-A KPI (key performance indicator) card shows a big number with a caption beneath it (e.g., *1,204* above *Fall Enrollment*).
+A KPI (key performance indicator) card shows a single number calculated from a dataset, with optional text beneath it (e.g., *$45.2K* above *Total revenue*).
 To insert one, click the `r keys("KPI Card")` button in the **Objects** section of the **Objects** tab.
-
-A KPI card is a [label](#sec-label-dlg), with the number drawn as its bold header (at three times the size of the caption) and the caption as its text.
-Along with the **KPI Card** page, its editor includes the label's **Shapes** page, so that an image or shapes can be added above the number.
-
-::: {.notesection data-latex=""}
-This dialog is only used to insert a KPI card.
-To edit an existing KPI card, select it and click `r keys("Edit")`, which opens the [**Label**](#sec-label-dlg) dialog.
-:::
-
-### Content {-}
-
-**Big number**: Enter the value to display (e.g., *1,204*, *$45.2K*, or *-5%*).
-This is entered as text, so it can include any formatting, symbols, or abbreviations that you want shown.
-
-**Number color**: Select the color of the big number.
-The default is black.
-
-**Caption**: Enter the text shown beneath the number (e.g., *Fall Enrollment* or *Less than target*).
-This is optional.
-
-**Caption color**: Select the color of the caption.
-The default is black.
+To edit an existing KPI card, select it and click `r keys("Edit")`.
 
 ::: {.tipsection data-latex=""}
-The big number and caption can include the project's constants (added from the **Constants** section of the **Data** tab), written in double braces (e.g., `{{PercentFemale}}`).
+To show the number for each value of a column (e.g., each region), click the `r keys("Filtered")` button in the **Graphs** section of the **Analyses** tab and select **KPI Card** as the graph (see [Filtered Graph](#sec-filtered-graph-dlg)).
+:::
+
+### Data {-}
+
+**Dataset**: Select the dataset that the number is calculated from.
+
+**Variables**: Click `r keys("Variables...")` to select the **Value** variable.
+This is the numeric column whose values are combined into the number.
+
+**Aggregate**: Select how the column's values are combined (**Sum**, **Mean**, **Minimum**, **Maximum**, **Count**, or **Median**).
+Missing values are skipped.
+
+**Value**: Shows the number, as it will appear on the card.
+
+### Number {-}
+
+**Font**, **Color**, and **Alignment**: Select the number's font, color, and alignment.
+By default, the number is bold and centered.
+
+**Size**: Enter the size of the number, relative to the body text.
+The default is 3 (i.e., three times the size of the body text).
+
+### Body {-}
+
+**Text**: Enter the text shown beneath the number (e.g., *Fall Enrollment* or *Less than target*).
+This is optional.
+
+::: {.tipsection data-latex=""}
+The text can include the project's constants (added from the **Constants** section of the **Data** tab), written in double braces (e.g., `{{Quarter}}`).
 These are replaced with the constants' values, so the card updates when the constants change.
 :::
 
-### Layout {-}
+**Font**, **Color**, and **Alignment**: Select the body text's font, color, and alignment.
+By default, the body text is centered.
+
+### Box {-}
 
 **Preset**: Select the card's style:
 
@@ -158,14 +169,38 @@ These are replaced with the constants' values, so the card updates when the cons
   The card fills its cell.
 - **Index Card**: The text is drawn on an index card, which shrinks to the width of the text.
 
-With either preset, the card is centered (horizontally and vertically) within its cell.
-This overrides the alignment options on the **Placement** page.
+### Number Format {-}
 
-**Number alignment**: Select how the big number is aligned (**Left**, **Right**, **Center**, **Justified**, or **Justified (at word)**).
-The default is **Center**.
+**Style**: Select how the number is shown:
 
-**Caption alignment**: Select how the caption is aligned.
-The default is **Center**.
+- **Number**: A number with thousands separators (e.g., *1,204*).
+- **Percent**: The number multiplied by 100, followed by a percent sign (e.g., *0.25* is shown as *25%*).
+- **Currency**: The number in your system's currency format (e.g., *$45,200*).
+- **Number (no thousands separators)**: A number without thousands separators (e.g., *2026*).
+- **Accounting**: The same as **Currency**, but negative numbers are shown in parentheses (e.g., *($5,000)*).
+
+**Decimal places**: Enter the number of decimal places to show (0–10).
+
+**Abbreviation**: Select how large numbers are shortened:
+
+- **None**: The full number is shown.
+- **Thousands (K)**, **Millions (M)**, or **Billions (B)**: The number is shown in that unit (e.g., *45,200* in thousands is *45K*, or *45.2K* with one decimal place).
+- **Automatic**: The largest unit that keeps the number at 1 or more is used.
+
+::: {.notesection data-latex=""}
+These units count in thousands.
+Some languages count large numbers in ten-thousands instead (e.g., 万 in Chinese and Japanese), so the abbreviations may not suit them.
+:::
+
+**Suffix**: Enter text to show after the number (e.g., *pts*).
+Include a leading space if you want one between the number and the suffix.
+
+**Missing-value text**: Enter the text shown in place of the number if the column has no values.
+The default is a dash (*—*).
+
+**Show plus sign on positive values**: Check this option to show a *+* in front of positive numbers (e.g., *+5%*).
+
+**Preview**: Shows the number with these settings.
 
 ## Image {#sec-image-dlg}
 
