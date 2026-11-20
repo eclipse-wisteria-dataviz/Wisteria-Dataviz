@@ -842,7 +842,7 @@ namespace Wisteria::UI
     void InsertItemDlg::FinalizeControls()
         {
         CreateAccessibilityPage();
-        GetSizer()->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        GetSizer()->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                         wxSizerFlags{}.Expand().Border());
         GetSizer()->SetSizeHints(this);
 

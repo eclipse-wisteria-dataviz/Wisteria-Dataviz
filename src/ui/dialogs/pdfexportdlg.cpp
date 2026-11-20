@@ -136,7 +136,7 @@ namespace Wisteria::UI
 
         mainSizer->Add(docInfoBox, wxSizerFlags{}.Expand().Border(wxLEFT | wxRIGHT | wxBOTTOM));
 
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizer(mainSizer);

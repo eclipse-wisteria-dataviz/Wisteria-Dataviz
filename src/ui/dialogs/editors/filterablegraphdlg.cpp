@@ -100,7 +100,7 @@ namespace Wisteria::UI
         noteLabel->Wrap(FromDIP(350));
         mainSizer->Add(noteLabel, wxSizerFlags{}.Expand().Border());
 
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         // only the default value can be changed once the graph exists

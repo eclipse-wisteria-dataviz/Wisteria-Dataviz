@@ -16,7 +16,7 @@ namespace Wisteria::UI
     //-------------------------------------------
     SubsetDlg::SubsetDlg(const ReportBuilder* reportBuilder, wxWindow* parent, const wxWindowID id,
                          const wxPoint& pos, const wxSize& size, const long style)
-        : wxDialog(parent, id, _(L"Subset Dataset"), pos, size, style),
+        : DialogWithHelp(parent, id, _(L"Subset Dataset"), pos, size, style),
           m_reportBuilder(reportBuilder)
         {
         CreateControls();
@@ -37,8 +37,8 @@ namespace Wisteria::UI
     SubsetDlg::SubsetDlg(const ReportBuilder* reportBuilder, const SubsetOptions& subsetOptions,
                          wxWindow* parent, const wxWindowID id, const wxPoint& pos,
                          const wxSize& size, const long style)
-        : wxDialog(parent, id, _(L"Edit Subset"), pos, size, style), m_reportBuilder(reportBuilder),
-          m_mode(subsetOptions.m_mode)
+        : DialogWithHelp(parent, id, _(L"Edit Subset"), pos, size, style),
+          m_reportBuilder(reportBuilder), m_mode(subsetOptions.m_mode)
         {
         CreateControls();
 
@@ -272,7 +272,7 @@ namespace Wisteria::UI
         mainSizer->Add(previewBox, wxSizerFlags{ 1 }.Expand().Border());
 
         // OK / Cancel
-        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizer(mainSizer);

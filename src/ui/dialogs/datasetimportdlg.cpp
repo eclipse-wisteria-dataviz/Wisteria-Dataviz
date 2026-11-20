@@ -370,7 +370,7 @@ namespace Wisteria::UI
         mainSizer->Add(previewBox, wxSizerFlags{ 1 }.Expand().Border());
 
         // OK/Cancel
-        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border(wxALL, wxSizerFlags::GetDefaultBorder() * 2));
 
         SetSizer(mainSizer);

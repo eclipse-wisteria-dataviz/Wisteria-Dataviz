@@ -664,6 +664,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
             }
 
         Wisteria::UI::DatasetImportDlg importDlg(wxGetApp().GetMainFrame(), filePath);
+        SetDialogHelpTopic(importDlg, L"online/dialogs/import-dataset.html");
         if (importDlg.ShowModal() != wxID_OK)
             {
             m_frame->Destroy();
@@ -1451,6 +1452,7 @@ void WisteriaView::OnPasteItem([[maybe_unused]] wxCommandEvent& event)
         }
 
     PastePlacementDlg dlg(canvas, canvas);
+    SetDialogHelpTopic(dlg, L"online/dialogs/editor-common-pages.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -1587,6 +1589,7 @@ bool WisteriaView::SelectPagesToExport(const Wisteria::ReportBuilder::ExportForm
 
     Wisteria::UI::PageSelectionDlg pagesDlg(m_frame, caption, pageLabels, pageGuids,
                                             previousExcluded);
+    SetDialogHelpTopic(pagesDlg, L"online/dialogs/exporting.html");
     if (pagesDlg.ShowModal() != wxID_OK)
         {
         return false;
@@ -1633,6 +1636,7 @@ void WisteriaView::OnSvgExport([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::SvgExportDlg sizeDlg(m_frame, defaultPageSize, printData,
                                        FindThemeNames(themesFolder), &savedOptions);
+    SetDialogHelpTopic(sizeDlg, L"online/dialogs/exporting.html");
     if (sizeDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -1770,6 +1774,7 @@ void WisteriaView::OnHtmlExport([[maybe_unused]] wxCommandEvent& event)
             Wisteria::ReportExportPage::ToCanvases(GetReportBuilder().GetPagesForExport(
                 Wisteria::ReportBuilder::ExportFormat::Html,
                 Wisteria::ReportExportPage::FromCanvases(m_pages)))));
+    SetDialogHelpTopic(optionsDlg, L"online/dialogs/exporting.html");
     if (optionsDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -1926,6 +1931,7 @@ void WisteriaView::OnPdfExport([[maybe_unused]] wxCommandEvent& event)
     printData.SetOrientation(options.m_paperOrientation);
 
     Wisteria::UI::PdfExportDlg pdfOptionsDlg(m_frame, printData, options);
+    SetDialogHelpTopic(pdfOptionsDlg, L"online/dialogs/exporting.html");
     if (pdfOptionsDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -2013,6 +2019,7 @@ void WisteriaView::OnPptxExport([[maybe_unused]] wxCommandEvent& event)
     options.m_keywords = GetReportBuilder().GetKeywords();
 
     Wisteria::UI::PptxExportDlg pptxOptionsDlg(m_frame, options);
+    SetDialogHelpTopic(pptxOptionsDlg, L"online/dialogs/exporting.html");
     if (pptxOptionsDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -2107,6 +2114,7 @@ void WisteriaView::OnOdpExport([[maybe_unused]] wxCommandEvent& event)
     options.m_keywords = GetReportBuilder().GetKeywords();
 
     Wisteria::UI::OdpExportDlg odpOptionsDlg(m_frame, options);
+    SetDialogHelpTopic(odpOptionsDlg, L"online/dialogs/exporting.html");
     if (odpOptionsDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -2179,6 +2187,7 @@ void WisteriaView::ExportOdp(const Wisteria::ReportBuilder& builder,
 void WisteriaView::OnProjectSettings([[maybe_unused]] wxCommandEvent& event)
     {
     Wisteria::UI::ProjectSettingsDlg dlg(m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/project-settings.html");
     dlg.LoadFromProject(GetReportBuilder());
     if (dlg.ShowModal() != wxID_OK)
         {
@@ -2278,6 +2287,7 @@ void WisteriaView::OnInsertPage([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertPageDlg dlg(nullptr, pageNames, &m_reportBuilder,
                                     dynamic_cast<WisteriaDoc*>(GetDocument()), m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -2333,6 +2343,7 @@ void WisteriaView::OnEditPage([[maybe_unused]] wxCommandEvent& event)
                                     _(L"Edit Page"), wxDefaultPosition, wxDefaultSize,
                                     wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
                                     Wisteria::UI::InsertPageDlg::EditMode::Edit);
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (m_sideBar->GetSelectedFolder())
         {
         dlg.SetPageName(m_sideBar->GetFolderText(m_sideBar->GetSelectedFolder().value()));
@@ -3040,6 +3051,12 @@ void WisteriaView::SetDialogIcon(wxDialog& dlg, const wxString& svgName)
     }
 
 //-------------------------------------------
+void WisteriaView::SetDialogHelpTopic(Wisteria::UI::DialogWithHelp& dlg, const wxString& topicPath)
+    {
+    dlg.SetHelpTopic(wxGetApp().GetMainFrame()->GetHelpDirectory(), topicPath);
+    }
+
+//-------------------------------------------
 std::pair<Wisteria::Side, Wisteria::LegendCanvasPlacementHint>
 WisteriaView::GetLegendSideAndHint(Wisteria::UI::LegendPlacement placement)
     {
@@ -3514,6 +3531,7 @@ void WisteriaView::OnInsertChernoffPlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertChernoffDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/chernoffplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -3555,6 +3573,7 @@ void WisteriaView::OnInsertScatterPlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertScatterPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/scatterplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -3617,6 +3636,7 @@ void WisteriaView::OnInsertTable([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertTableDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/table.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -3647,6 +3667,7 @@ void WisteriaView::EditTable(Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas*
                                      pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                   Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/table.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -4065,6 +4086,7 @@ void WisteriaView::OnInsertFilteredGraph([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::FilterableGraphDlg filterDlg(&m_reportBuilder, graphNames, m_frame);
     SetDialogIcon(filterDlg, L"images/filtered-graph.svg");
+    SetDialogHelpTopic(filterDlg, L"online/dialogs/objects.html");
     filterDlg.SetLinkedPages({ m_pages.cbegin(), m_pages.cend() });
     if (filterDlg.ShowModal() != wxID_OK || filterDlg.GetGraphType() < 0 ||
         std::cmp_greater_equal(filterDlg.GetGraphType(), graphTypes.size()))
@@ -4118,6 +4140,7 @@ void WisteriaView::EditFilterableGraph(Wisteria::Graphs::FilterableGraph& filter
     Wisteria::UI::FilterableGraphDlg filterDlg(&m_reportBuilder, graphNames, m_frame, true,
                                                wxID_ANY, _(L"Edit Filtered Graph"));
     SetDialogIcon(filterDlg, L"images/filtered-graph.svg");
+    SetDialogHelpTopic(filterDlg, L"online/dialogs/objects.html");
     filterDlg.SetFilter(activeGraph->GetPropertyTemplate(L"dataset"),
                         filterableGraph.GetFilterColumn(),
                         filteredGraphs.at(filterableGraph.GetActiveIndex()).m_label,
@@ -4718,6 +4741,7 @@ void WisteriaView::EditScatterPlot(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/scatterplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -4759,6 +4783,7 @@ void WisteriaView::OnInsertBubblePlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertBubblePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/bubbleplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -4790,6 +4815,7 @@ void WisteriaView::EditBubblePlot(const Wisteria::Graphs::Graph2D& graph, Wister
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/bubbleplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -4833,6 +4859,7 @@ void WisteriaView::EditChernoffPlot(const Wisteria::Graphs::Graph2D& graph,
                                         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/chernoffplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -4885,6 +4912,7 @@ void WisteriaView::OnInsertLinePlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertLinePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/lineplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -4916,6 +4944,7 @@ void WisteriaView::EditLinePlot(const Wisteria::Graphs::Graph2D& graph, Wisteria
                                         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/lineplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -4957,6 +4986,7 @@ void WisteriaView::OnInsertMultiSeriesLinePlot([[maybe_unused]] wxCommandEvent& 
 
     Wisteria::UI::InsertMultiSeriesLinePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/lineplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -4989,6 +5019,7 @@ void WisteriaView::EditMultiSeriesLinePlot(const Wisteria::Graphs::Graph2D& grap
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/lineplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5030,6 +5061,7 @@ void WisteriaView::OnInsertWCurvePlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertWCurveDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wcurve.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5062,6 +5094,7 @@ void WisteriaView::EditWCurvePlot(const Wisteria::Graphs::Graph2D& graph, Wister
                                       pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                    Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/wcurve.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5103,6 +5136,7 @@ void WisteriaView::OnInsertLRRoadmap([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertLRRoadmapDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/roadmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5135,6 +5169,7 @@ void WisteriaView::EditLRRoadmap(const Wisteria::Graphs::Graph2D& graph, Wisteri
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/roadmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5176,6 +5211,7 @@ void WisteriaView::OnInsertProConRoadmap([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertProConRoadmapDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/roadmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5208,6 +5244,7 @@ void WisteriaView::EditProConRoadmap(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/roadmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5249,6 +5286,7 @@ void WisteriaView::OnInsertGanttChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertGanttChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/gantt.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5280,6 +5318,7 @@ void WisteriaView::EditGanttChart(Wisteria::Graphs::Graph2D& graph, Wisteria::Ca
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/gantt.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5321,6 +5360,7 @@ void WisteriaView::OnInsertCandlestickPlot([[maybe_unused]] wxCommandEvent& even
 
     Wisteria::UI::InsertCandlestickPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/candlestick.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5352,6 +5392,7 @@ void WisteriaView::EditCandlestickPlot(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/candlestick.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5388,6 +5429,7 @@ void WisteriaView::OnInsertSankeyDiagram([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertSankeyDiagramDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/sankey.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5420,6 +5462,7 @@ void WisteriaView::EditSankeyDiagram(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/sankey.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5463,6 +5506,7 @@ void WisteriaView::OnInsertBoxPlot([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertBoxPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/boxplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5501,6 +5545,7 @@ void WisteriaView::EditBoxPlot(Wisteria::Graphs::Graph2D& graph, Wisteria::Canva
                                        pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                     Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/boxplot.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5548,6 +5593,7 @@ void WisteriaView::OnInsertCatBarChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertCatBarChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/barchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5586,6 +5632,7 @@ void WisteriaView::EditCatBarChart(Wisteria::Graphs::Graph2D& graph, Wisteria::C
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/barchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5627,6 +5674,7 @@ void WisteriaView::OnInsertLikertChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertLikertDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/likert7.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5659,6 +5707,7 @@ void WisteriaView::EditLikertChart(const Wisteria::Graphs::Graph2D& graph, Wiste
                                       pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                    Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/likert7.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5700,6 +5749,7 @@ void WisteriaView::OnInsertHeatMap([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertHeatMapDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/heatmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5731,6 +5781,7 @@ void WisteriaView::EditHeatMap(const Wisteria::Graphs::Graph2D& graph, Wisteria:
                                        pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                     Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/heatmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5772,6 +5823,7 @@ void WisteriaView::OnInsertHistogram([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertHistogramDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/histogram.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5803,6 +5855,7 @@ void WisteriaView::EditHistogram(const Wisteria::Graphs::Graph2D& graph, Wisteri
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/histogram.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5844,6 +5897,7 @@ void WisteriaView::OnInsertScaleChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertScaleChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/scale.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5875,6 +5929,7 @@ void WisteriaView::EditScaleChart(const Wisteria::Graphs::Graph2D& graph, Wister
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/scale.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -5916,6 +5971,7 @@ void WisteriaView::OnInsertWordCloud([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertWordCloudDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wordcloud.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5947,6 +6003,7 @@ void WisteriaView::OnInsertChoroplethMap([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertChoroplethMapDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/choropleth.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -5995,6 +6052,7 @@ void WisteriaView::EditChoroplethMap(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/choropleth.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6052,6 +6110,7 @@ void WisteriaView::EditWordCloud(const Wisteria::Graphs::Graph2D& graph, Wisteri
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/wordcloud.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6093,6 +6152,7 @@ void WisteriaView::OnInsertWLSparkline([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertWLSparklineDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/sparkline.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6125,6 +6185,7 @@ void WisteriaView::EditWLSparkline(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/sparkline.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6166,6 +6227,7 @@ void WisteriaView::OnInsertStemAndLeaf([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertStemAndLeafDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/stem-leaf.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6198,6 +6260,7 @@ void WisteriaView::EditStemAndLeaf(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/stem-leaf.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6245,6 +6308,7 @@ void WisteriaView::OnInsertPieChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertPieChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/piechart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6283,6 +6347,7 @@ void WisteriaView::EditPieChart(const Wisteria::Graphs::Graph2D& graph, Wisteria
                                         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/piechart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6324,6 +6389,7 @@ void WisteriaView::OnInsertWaffleChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertWaffleChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/waffle.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6356,6 +6422,7 @@ void WisteriaView::EditWaffleChart(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/waffle.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6399,6 +6466,7 @@ void WisteriaView::OnInsertRaceTrackChart([[maybe_unused]] wxCommandEvent& event
 
     Wisteria::UI::InsertRaceTrackChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/racetrack.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6431,6 +6499,7 @@ void WisteriaView::EditRaceTrackChart(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/racetrack.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6473,6 +6542,7 @@ void WisteriaView::OnInsertNightingaleRoseChart([[maybe_unused]] wxCommandEvent&
 
     Wisteria::UI::InsertNightingaleRoseChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/rose.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6505,6 +6575,7 @@ void WisteriaView::EditNightingaleRoseChart(const Wisteria::Graphs::Graph2D& gra
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/rose.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6548,6 +6619,7 @@ void WisteriaView::OnInsertBulletChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertBulletChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/bulletchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6579,6 +6651,7 @@ void WisteriaView::EditBulletChart(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/bulletchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6615,6 +6688,7 @@ void WisteriaView::OnInsertIshikawaDiagram([[maybe_unused]] wxCommandEvent& even
 
     Wisteria::UI::InsertIshikawaDiagramDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/ishikawa.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6646,6 +6720,7 @@ void WisteriaView::EditIshikawaDiagram(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/ishikawa.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6688,6 +6763,7 @@ void WisteriaView::OnInsertRunChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertRunChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/runchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6719,6 +6795,7 @@ void WisteriaView::EditRunChart(const Wisteria::Graphs::Graph2D& graph, Wisteria
                                         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/runchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6761,6 +6838,7 @@ void WisteriaView::OnInsertWaterfallChart([[maybe_unused]] wxCommandEvent& event
 
     Wisteria::UI::InsertWaterfallChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/waterfallchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6792,6 +6870,7 @@ void WisteriaView::EditWaterfallChart(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/waterfallchart.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6828,6 +6907,7 @@ void WisteriaView::OnInsertFunnelChart([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertFunnelChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/funnel.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6859,6 +6939,7 @@ void WisteriaView::EditFunnelChart(const Wisteria::Graphs::Graph2D& graph, Wiste
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/funnel.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6895,6 +6976,7 @@ void WisteriaView::OnInsertDuBoisSpiralChart([[maybe_unused]] wxCommandEvent& ev
 
     Wisteria::UI::InsertDuBoisSpiralChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/dubois-spiral.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6926,6 +7008,7 @@ void WisteriaView::EditDuBoisSpiralChart(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/dubois-spiral.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -6962,6 +7045,7 @@ void WisteriaView::OnInsertDuelingPieChart([[maybe_unused]] wxCommandEvent& even
 
     Wisteria::UI::InsertDuelingPieChartDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/dueling-pie.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -6993,6 +7077,7 @@ void WisteriaView::EditDuelingPieChart(const Wisteria::Graphs::Graph2D& graph,
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/dueling-pie.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -7029,6 +7114,7 @@ void WisteriaView::OnInsertPictograph([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertPictographDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/pictograph.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7059,6 +7145,7 @@ void WisteriaView::EditPictograph(const Wisteria::Graphs::Graph2D& graph, Wister
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/pictograph.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -7095,6 +7182,7 @@ void WisteriaView::OnInsertWilmarthBridgePlot([[maybe_unused]] wxCommandEvent& e
 
     Wisteria::UI::InsertWilmarthBridgePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wilmarth-bridge.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7127,6 +7215,7 @@ void WisteriaView::EditWilmarthBridgePlot(const Wisteria::Graphs::Graph2D& graph
         pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/wilmarth-bridge.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -7169,6 +7258,7 @@ void WisteriaView::OnInsertLabel([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertLabelDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/label.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7201,6 +7291,7 @@ void WisteriaView::OnInsertKpiCard([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertKpiCardDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/kpi-card.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7231,6 +7322,7 @@ void WisteriaView::EditKpiCard(const Wisteria::Graphs::Graph2D& graph, Wisteria:
                                        pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
                                                     Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/kpi-card.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (!pasteAsNew)
         {
         dlg.SetSelectedCell(graphRow, graphCol);
@@ -7274,6 +7366,7 @@ void WisteriaView::EditLabel(const Wisteria::GraphItems::Label& label, Wisteria:
             wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
             Wisteria::UI::InsertItemDlg::EditMode::Edit, Wisteria::UI::LabelDlgIncludePageOptions);
         SetDialogIcon(dlg, L"images/spacer.svg");
+        SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
         dlg.SetSelectedCell(labelRow, labelCol);
 
         if (dlg.ShowModal() != wxID_OK)
@@ -7301,6 +7394,7 @@ void WisteriaView::EditLabel(const Wisteria::GraphItems::Label& label, Wisteria:
             wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
             Wisteria::UI::InsertItemDlg::EditMode::Edit, Wisteria::UI::LabelDlgIncludePageOptions);
         SetDialogIcon(dlg, WisteriaApp::GetItemIconName(&label));
+        SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
         dlg.SetSelectedCell(labelRow, labelCol);
         dlg.LoadFromLabel(label);
 
@@ -7323,6 +7417,7 @@ void WisteriaView::EditLabel(const Wisteria::GraphItems::Label& label, Wisteria:
                                      wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/label.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.SetSelectedCell(labelRow, labelCol);
     dlg.LoadFromLabel(label);
 
@@ -7351,6 +7446,7 @@ void WisteriaView::OnInsertSpacer([[maybe_unused]] wxCommandEvent& event)
         wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
         Wisteria::UI::InsertItemDlg::EditMode::Insert, Wisteria::UI::LabelDlgIncludePageOptions);
     SetDialogIcon(dlg, L"images/spacer.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7398,6 +7494,7 @@ void WisteriaView::OnInsertDivider(wxCommandEvent& event)
         wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
         Wisteria::UI::InsertItemDlg::EditMode::Insert, Wisteria::UI::LabelDlgIncludePageOptions);
     SetDialogIcon(dlg, iconName);
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.LoadFromLabel(*label);
     if (dlg.ShowModal() != wxID_OK)
         {
@@ -7431,6 +7528,7 @@ void WisteriaView::OnInsertImage([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertImageDlg dlg(canvas, nullptr, m_frame);
     SetDialogIcon(dlg, L"images/image.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7467,6 +7565,7 @@ void WisteriaView::EditImage(Wisteria::GraphItems::Image& image, Wisteria::Canva
                                      wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
                                      Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/image.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.SetSelectedCell(imageRow, imageCol);
     dlg.LoadFromImage(image);
 
@@ -7502,6 +7601,7 @@ void WisteriaView::OnInsertShape([[maybe_unused]] wxCommandEvent& event)
         Wisteria::UI::InsertItemDlg::EditMode::Insert,
         Wisteria::UI::ShapeDlgIncludeMost | Wisteria::UI::ShapeDlgIncludeCanvasMargins);
     SetDialogIcon(dlg, L"images/shape.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7526,6 +7626,7 @@ void WisteriaView::EditShape(const Wisteria::GraphItems::Shape& shape, Wisteria:
         Wisteria::UI::InsertItemDlg::EditMode::Edit,
         Wisteria::UI::ShapeDlgIncludeMost | Wisteria::UI::ShapeDlgIncludeCanvasMargins);
     SetDialogIcon(dlg, L"images/shape.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.SetSelectedCell(shapeRow, shapeCol);
     dlg.LoadFromShape(shape);
 
@@ -7551,6 +7652,7 @@ void WisteriaView::EditFillableShape(const Wisteria::GraphItems::FillableShape& 
         Wisteria::UI::InsertItemDlg::EditMode::Edit,
         Wisteria::UI::ShapeDlgIncludeMost | Wisteria::UI::ShapeDlgIncludeCanvasMargins);
     SetDialogIcon(dlg, L"images/shape.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.SetSelectedCell(shapeRow, shapeCol);
     dlg.LoadFromFillableShape(shape);
 
@@ -7576,6 +7678,7 @@ void WisteriaView::OnInsertCommonAxis([[maybe_unused]] wxCommandEvent& event)
 
     Wisteria::UI::InsertCommonAxisDlg dlg(canvas, &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/axis.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -7606,6 +7709,7 @@ void WisteriaView::EditCommonAxis(Wisteria::GraphItems::Axis& axis, Wisteria::Ca
         wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
         Wisteria::UI::InsertItemDlg::EditMode::Edit);
     SetDialogIcon(dlg, L"images/axis.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/objects.html");
     dlg.LoadFromAxis(axis);
     dlg.LoadPageOptions(axis);
 

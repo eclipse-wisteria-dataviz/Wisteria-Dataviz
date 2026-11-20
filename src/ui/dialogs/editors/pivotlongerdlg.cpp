@@ -15,7 +15,8 @@ namespace Wisteria::UI
     PivotLongerDlg::PivotLongerDlg(const ReportBuilder* reportBuilder, wxWindow* parent,
                                    const wxWindowID id, const wxPoint& pos, const wxSize& size,
                                    const long style)
-        : wxDialog(parent, id, _(L"Pivot Longer"), pos, size, style), m_reportBuilder(reportBuilder)
+        : DialogWithHelp(parent, id, _(L"Pivot Longer"), pos, size, style),
+          m_reportBuilder(reportBuilder)
         {
         CreateControls();
 
@@ -31,7 +32,7 @@ namespace Wisteria::UI
                                    const PivotLongerOptions& pivotOptions, wxWindow* parent,
                                    const wxWindowID id, const wxPoint& pos, const wxSize& size,
                                    const long style)
-        : wxDialog(parent, id, _(L"Edit Pivot Longer"), pos, size, style),
+        : DialogWithHelp(parent, id, _(L"Edit Pivot Longer"), pos, size, style),
           m_reportBuilder(reportBuilder), m_columnsToKeep(pivotOptions.m_columnsToKeep),
           m_fromColumns(pivotOptions.m_fromColumns), m_mode(pivotOptions.m_mode)
         {
@@ -180,7 +181,7 @@ namespace Wisteria::UI
         mainSizer->Add(previewBox, wxSizerFlags{ 1 }.Expand().Border());
 
         // OK / Cancel
-        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizer(mainSizer);

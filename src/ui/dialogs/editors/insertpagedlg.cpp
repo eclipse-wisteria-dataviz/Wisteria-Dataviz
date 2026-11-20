@@ -761,7 +761,7 @@ namespace Wisteria::UI
         mainSizer->Add(contentSizer, wxSizerFlags{ 1 }.Expand());
 
         // OK/Cancel buttons
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizer(mainSizer);

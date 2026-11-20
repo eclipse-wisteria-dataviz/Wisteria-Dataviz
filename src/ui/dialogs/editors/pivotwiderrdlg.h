@@ -16,6 +16,7 @@
 #include "../../controls/datasetgridtable.h"
 #include "../../data/pivot.h"
 #include "../../reporting/reportbuilder.h"
+#include "../dialogwithhelp.h"
 #include "../variableselectdlg.h"
 #include <wx/dialog.h>
 #include <wx/grid.h>
@@ -62,7 +63,7 @@ namespace Wisteria::UI
             - Separator, prefix, and fill value options.
             - A live preview grid showing the pivoted result.
             - An output dataset name field.*/
-    class PivotWiderDlg final : public wxDialog
+    class PivotWiderDlg final : public DialogWithHelp
         {
       public:
         /** @brief Constructor.

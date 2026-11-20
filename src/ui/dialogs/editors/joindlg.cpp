@@ -13,7 +13,7 @@ namespace Wisteria::UI
     //-------------------------------------------
     JoinDlg::JoinDlg(const ReportBuilder* reportBuilder, wxWindow* parent, const wxWindowID id,
                      const wxPoint& pos, const wxSize& size, const long style)
-        : wxDialog(parent, id, _(L"Join Datasets"), pos, size, style),
+        : DialogWithHelp(parent, id, _(L"Join Datasets"), pos, size, style),
           m_reportBuilder(reportBuilder)
         {
         CreateControls();
@@ -32,8 +32,8 @@ namespace Wisteria::UI
     JoinDlg::JoinDlg(const ReportBuilder* reportBuilder, const JoinOptions& joinOptions,
                      wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size,
                      const long style)
-        : wxDialog(parent, id, _(L"Edit Join"), pos, size, style), m_reportBuilder(reportBuilder),
-          m_mode(Mode::Edit)
+        : DialogWithHelp(parent, id, _(L"Edit Join"), pos, size, style),
+          m_reportBuilder(reportBuilder), m_mode(Mode::Edit)
         {
         CreateControls();
 
@@ -246,7 +246,7 @@ namespace Wisteria::UI
         mainSizer->Add(previewBox, wxSizerFlags{ 1 }.Expand().Border());
 
         // OK / Cancel
-        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizer(mainSizer);

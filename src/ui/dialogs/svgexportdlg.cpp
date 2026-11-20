@@ -306,7 +306,7 @@ namespace Wisteria::UI
         previewSizer->SetMinSize(previewBounds);
         contentSizer->Add(previewSizer, wxSizerFlags{});
 
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizerAndFit(mainSizer);

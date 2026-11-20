@@ -461,6 +461,7 @@ void WisteriaView::OnEditDataset([[maybe_unused]] wxCommandEvent& event)
                                                  foundDsImportOptions->second.m_worksheet,
                                                  existingDataset, wxID_ANY,
                                                  _(L"Edit Import Options"));
+        SetDialogHelpTopic(importDlg, L"online/dialogs/import-dataset.html");
         if (importDlg.ShowModal() != wxID_OK)
             {
             return;
@@ -522,6 +523,7 @@ void WisteriaView::OnEditDataset([[maybe_unused]] wxCommandEvent& event)
         subsetOpts.m_sectionIncludeSentinelLabels = storedOpts.m_sectionIncludeSentinelLabels;
 
         Wisteria::UI::SubsetDlg dlg(&m_reportBuilder, subsetOpts, m_frame);
+        SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
         if (dlg.ShowModal() != wxID_OK)
             {
             return;
@@ -576,6 +578,7 @@ void WisteriaView::OnEditDataset([[maybe_unused]] wxCommandEvent& event)
             };
 
             Wisteria::UI::PivotWiderDlg dlg(&m_reportBuilder, widerOpts, m_frame);
+            SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
             if (dlg.ShowModal() != wxID_OK)
                 {
                 return;
@@ -610,6 +613,7 @@ void WisteriaView::OnEditDataset([[maybe_unused]] wxCommandEvent& event)
             };
 
             Wisteria::UI::PivotLongerDlg dlg(&m_reportBuilder, longerOpts, m_frame);
+            SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
             if (dlg.ShowModal() != wxID_OK)
                 {
                 return;
@@ -672,6 +676,7 @@ void WisteriaView::OnEditDataset([[maybe_unused]] wxCommandEvent& event)
             }
 
         Wisteria::UI::JoinDlg dlg(&m_reportBuilder, joinOpts, m_frame);
+        SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
         if (dlg.ShowModal() != wxID_OK)
             {
             return;
@@ -851,6 +856,7 @@ void WisteriaView::OnInsertDataset([[maybe_unused]] wxCommandEvent& event)
     const wxString initialFilePath = fileDlg.GetPath();
 
     Wisteria::UI::DatasetImportDlg importDlg(m_frame, initialFilePath);
+    SetDialogHelpTopic(importDlg, L"online/dialogs/import-dataset.html");
     if (importDlg.ShowModal() != wxID_OK)
         {
         return;
@@ -930,6 +936,7 @@ void WisteriaView::OnPivotWider([[maybe_unused]] wxCommandEvent& event)
         }
 
     Wisteria::UI::PivotWiderDlg dlg(&m_reportBuilder, widerOpts, m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -983,6 +990,7 @@ void WisteriaView::OnPivotLonger([[maybe_unused]] wxCommandEvent& event)
         }
 
     Wisteria::UI::PivotLongerDlg dlg(&m_reportBuilder, longerOpts, m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
@@ -1035,6 +1043,7 @@ void WisteriaView::OnSubsetDataset([[maybe_unused]] wxCommandEvent& event)
         }
 
     Wisteria::UI::SubsetDlg dlg(&m_reportBuilder, subOptions, m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
 
     if (dlg.ShowModal() != wxID_OK)
         {
@@ -1086,6 +1095,7 @@ void WisteriaView::OnJoinDataset([[maybe_unused]] wxCommandEvent& event)
         }
 
     Wisteria::UI::JoinDlg dlg(&m_reportBuilder, m_frame);
+    SetDialogHelpTopic(dlg, L"online/dialogs/transformations.html");
     if (dlg.ShowModal() != wxID_OK)
         {
         return;

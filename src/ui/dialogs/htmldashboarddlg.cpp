@@ -209,7 +209,7 @@ namespace Wisteria::UI
             mainSizer->Add(filterSizer, wxSizerFlags{}.Expand().Border());
             }
 
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizerAndFit(mainSizer);

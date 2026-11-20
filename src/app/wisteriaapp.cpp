@@ -406,6 +406,7 @@ void WisteriaApp::ShowAboutDialog(wxWindow* parent)
 void WisteriaApp::ShowOptionsDialog(wxWindow* parent)
     {
     Wisteria::UI::OptionsDlg dlg(parent);
+    dlg.SetHelpTopic(GetMainFrame()->GetHelpDirectory(), L"online/program-options.html");
     dlg.LoadFromSettings(*GetAppSettings());
     if (dlg.ShowModal() != wxID_OK)
         {

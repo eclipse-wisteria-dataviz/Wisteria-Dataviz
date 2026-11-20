@@ -17,6 +17,7 @@
 #include "../../data/join_inner.h"
 #include "../../data/join_left.h"
 #include "../../reporting/reportbuilder.h"
+#include "../dialogwithhelp.h"
 #include <wx/dialog.h>
 #include <wx/grid.h>
 #include <wx/wx.h>
@@ -58,7 +59,7 @@ namespace Wisteria::UI
             - A suffix option for duplicate column names.
             - A live preview grid showing the joined result.
             - An output dataset name field.*/
-    class JoinDlg final : public wxDialog
+    class JoinDlg final : public DialogWithHelp
         {
       public:
         /** @brief Constructor.

@@ -68,7 +68,7 @@ namespace Wisteria::UI
         mainSizer->Add(selectSizer,
                        wxSizerFlags{}.Align(wxALIGN_LEFT).Border(wxLEFT | wxRIGHT | wxBOTTOM));
 
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
 
         SetSizerAndFit(mainSizer);

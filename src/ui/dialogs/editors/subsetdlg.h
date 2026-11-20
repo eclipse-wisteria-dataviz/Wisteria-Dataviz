@@ -16,6 +16,7 @@
 #include "../../controls/datasetgridtable.h"
 #include "../../data/subset.h"
 #include "../../reporting/reportbuilder.h"
+#include "../dialogwithhelp.h"
 #include <wx/dialog.h>
 #include <wx/grid.h>
 #include <wx/wx.h>
@@ -86,7 +87,7 @@ namespace Wisteria::UI
               and an include-sentinels checkbox.
             - A live preview grid showing the subsetted result.
             - An output dataset name field.*/
-    class SubsetDlg final : public wxDialog
+    class SubsetDlg final : public DialogWithHelp
         {
       public:
         /** @brief Constructor.

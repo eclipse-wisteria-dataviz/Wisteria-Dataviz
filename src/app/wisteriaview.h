@@ -541,6 +541,11 @@ class WisteriaView final : public wxView
     /// @param svgName The SVG resource name.
     static void SetDialogIcon(wxDialog& dlg, const wxString& svgName);
 
+    /// @brief Connects a dialog's Help button to a topic in the manual.
+    /// @param dlg The dialog to set the help topic for.
+    /// @param topicPath The topic's path, relative to the help directory.
+    static void SetDialogHelpTopic(Wisteria::UI::DialogWithHelp& dlg, const wxString& topicPath);
+
     /// @brief Helper to get the side and hint for a legend's placement.
     /// @param placement The legend's placement.
     /// @returns The side and hint for the legend's placement.

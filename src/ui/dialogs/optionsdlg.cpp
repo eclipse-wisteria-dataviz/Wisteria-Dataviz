@@ -191,7 +191,7 @@ namespace Wisteria::UI
                                ID_PAGE_SETUP_SECTION, false, 0);
 
         mainSizer->Add(m_sideBarBook, wxSizerFlags{ 1 }.Expand().Border());
-        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL),
+        mainSizer->Add(CreateSeparatedButtonSizer(wxOK | wxCANCEL | wxHELP),
                        wxSizerFlags{}.Expand().Border());
         SetSizer(mainSizer);
         }

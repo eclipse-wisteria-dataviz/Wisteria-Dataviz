@@ -16,6 +16,7 @@
 #include "../../controls/datasetgridtable.h"
 #include "../../data/pivot.h"
 #include "../../reporting/reportbuilder.h"
+#include "../dialogwithhelp.h"
 #include "../variableselectdlg.h"
 #include <wx/dialog.h>
 #include <wx/grid.h>
@@ -61,7 +62,7 @@ namespace Wisteria::UI
             - An optional names pattern (regex) for splitting column names.
             - A live preview grid showing the pivoted result.
             - An output dataset name field.*/
-    class PivotLongerDlg final : public wxDialog
+    class PivotLongerDlg final : public DialogWithHelp
         {
       public:
         /** @brief Constructor.
