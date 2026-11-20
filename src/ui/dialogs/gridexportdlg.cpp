@@ -152,7 +152,7 @@ namespace Wisteria::UI
             m_rangeBoxSizer->GetStaticBox(), ControlIDs::ID_ROWS_FROM_SPIN, L"1", wxDefaultPosition,
             wxDefaultSize, wxSP_ARROW_KEYS, 1, m_options.m_toRow, 1);
         fromRowSpinCtrl->SetValidator(wxGenericValidator{ &m_options.m_fromRow });
-        rangeOptionsSizer->Add(fromRowSpinCtrl, wxSizerFlags{}.Expand());
+        rangeOptionsSizer->Add(fromRowSpinCtrl, wxSizerFlags{}.CenterVertical());
 
         rangeOptionsSizer->Add(
             new wxStaticText(m_rangeBoxSizer->GetStaticBox(), ID_ROWS_TO_LABEL, _(L"to")),
@@ -162,7 +162,7 @@ namespace Wisteria::UI
             m_rangeBoxSizer->GetStaticBox(), ControlIDs::ID_ROWS_TO_SPIN, L"1", wxDefaultPosition,
             wxDefaultSize, wxSP_ARROW_KEYS, 1, m_options.m_toRow, 1);
         toRowSpinCtrl->SetValidator(wxGenericValidator{ &m_options.m_toRow });
-        rangeOptionsSizer->Add(toRowSpinCtrl, wxSizerFlags{}.Expand());
+        rangeOptionsSizer->Add(toRowSpinCtrl, wxSizerFlags{}.CenterVertical());
 
         // column options
         rangeOptionsSizer->Add(
@@ -173,7 +173,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(m_rangeBoxSizer->GetStaticBox(), wxID_ANY, L"1", wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, m_options.m_toColumn, 1);
         fromColumnSpinCtrl->SetValidator(wxGenericValidator{ &m_options.m_fromColumn });
-        rangeOptionsSizer->Add(fromColumnSpinCtrl, wxSizerFlags{}.Expand());
+        rangeOptionsSizer->Add(fromColumnSpinCtrl, wxSizerFlags{}.CenterVertical());
 
         rangeOptionsSizer->Add(
             new wxStaticText(m_rangeBoxSizer->GetStaticBox(), wxID_STATIC, _(L"to")),
@@ -183,7 +183,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(m_rangeBoxSizer->GetStaticBox(), wxID_ANY, L"1", wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, m_options.m_toColumn, 1);
         toColumnSpinCtrl->SetValidator(wxGenericValidator{ &m_options.m_toColumn });
-        rangeOptionsSizer->Add(toColumnSpinCtrl, wxSizerFlags{}.Expand());
+        rangeOptionsSizer->Add(toColumnSpinCtrl, wxSizerFlags{}.CenterVertical());
 
         if (m_exportFormat == GridExportFormat::ExportHtml)
             {

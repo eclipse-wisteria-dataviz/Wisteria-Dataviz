@@ -627,7 +627,7 @@ namespace Wisteria::UI
         auto* rowsSpin = new wxSpinCtrl(this, wxID_ANY, wxString{}, wxDefaultPosition,
                                         wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1);
         rowsSpin->SetValidator(wxGenericValidator{ &m_rowCount });
-        gridSizer->Add(rowsSpin, wxSizerFlags{}.Expand());
+        gridSizer->Add(rowsSpin, wxSizerFlags{}.CenterVertical());
 
         // columns
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Columns:")),
@@ -635,7 +635,7 @@ namespace Wisteria::UI
         auto* columnsSpin = new wxSpinCtrl(this, wxID_ANY, wxString{}, wxDefaultPosition,
                                            wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1);
         columnsSpin->SetValidator(wxGenericValidator{ &m_columnCount });
-        gridSizer->Add(columnsSpin, wxSizerFlags{}.Expand());
+        gridSizer->Add(columnsSpin, wxSizerFlags{}.CenterVertical());
 
         // left-side sizer holds the grid controls and the appearance section
         auto* leftSizer = new wxBoxSizer(wxVERTICAL);
@@ -662,7 +662,7 @@ namespace Wisteria::UI
             wxSizerFlags{}.CenterVertical());
         m_watermarkColorPicker =
             new wxColourPickerCtrl(appearanceBox->GetStaticBox(), wxID_ANY, m_watermarkColor);
-        appearanceGrid->Add(m_watermarkColorPicker, wxSizerFlags{}.Expand());
+        appearanceGrid->Add(m_watermarkColorPicker, wxSizerFlags{}.CenterVertical());
 
         // background color
         appearanceGrid->Add(
@@ -670,7 +670,7 @@ namespace Wisteria::UI
             wxSizerFlags{}.CenterVertical());
         m_bgColorPicker =
             new wxColourPickerCtrl(appearanceBox->GetStaticBox(), wxID_ANY, m_backgroundColor);
-        appearanceGrid->Add(m_bgColorPicker, wxSizerFlags{}.Expand());
+        appearanceGrid->Add(m_bgColorPicker, wxSizerFlags{}.CenterVertical());
 
         // background image thumbnail (click or drag-and-drop to select)
         appearanceGrid->Add(

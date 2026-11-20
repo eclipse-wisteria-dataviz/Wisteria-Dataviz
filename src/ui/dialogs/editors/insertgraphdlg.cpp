@@ -1311,7 +1311,7 @@ namespace Wisteria::UI
         axisChoice->Append(_(L"Left Y"));
         axisChoice->Append(_(L"Right Y"));
         axisChoice->SetSelection(0);
-        sizer->Add(axisChoice, wxSizerFlags{}.Expand());
+        sizer->Add(axisChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Position:")),
                    wxSizerFlags{}.CenterVertical());
@@ -1319,7 +1319,7 @@ namespace Wisteria::UI
         posSpin->SetRange(-1e9, 1e9);
         posSpin->SetIncrement(1);
         posSpin->SetDigits(4);
-        sizer->Add(posSpin, wxSizerFlags{}.Expand());
+        sizer->Add(posSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Label:")), wxSizerFlags{}.CenterVertical());
         auto* labelCtrl = new wxTextCtrl(&dlg, wxID_ANY);
@@ -1336,7 +1336,7 @@ namespace Wisteria::UI
         placementChoice->Append(_(L"Legend"));
         placementChoice->Append(_(L"Opposite axis"));
         placementChoice->SetSelection(0);
-        sizer->Add(placementChoice, wxSizerFlags{}.Expand());
+        sizer->Add(placementChoice, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1395,7 +1395,7 @@ namespace Wisteria::UI
                 break;
                 }
             }
-        sizer->Add(axisChoice, wxSizerFlags{}.Expand());
+        sizer->Add(axisChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Position:")),
                    wxSizerFlags{}.CenterVertical());
@@ -1404,7 +1404,7 @@ namespace Wisteria::UI
         posSpin->SetIncrement(1);
         posSpin->SetDigits(4);
         posSpin->SetValue(rl.GetAxisPosition());
-        sizer->Add(posSpin, wxSizerFlags{}.Expand());
+        sizer->Add(posSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Label:")), wxSizerFlags{}.CenterVertical());
         auto* labelCtrl = new wxTextCtrl(&dlg, wxID_ANY, rl.GetLabel());
@@ -1421,7 +1421,7 @@ namespace Wisteria::UI
         placementChoice->Append(_(L"Opposite axis"));
         placementChoice->SetSelection(
             rl.GetLabelPlacement() == ReferenceLabelPlacement::OppositeAxis ? 1 : 0);
-        sizer->Add(placementChoice, wxSizerFlags{}.Expand());
+        sizer->Add(placementChoice, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1489,21 +1489,21 @@ namespace Wisteria::UI
         axisChoice->Append(_(L"Left Y"));
         axisChoice->Append(_(L"Right Y"));
         axisChoice->SetSelection(0);
-        sizer->Add(axisChoice, wxSizerFlags{}.Expand());
+        sizer->Add(axisChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Start:")), wxSizerFlags{}.CenterVertical());
         auto* startSpin = new wxSpinCtrlDouble(&dlg, wxID_ANY);
         startSpin->SetRange(-1e9, 1e9);
         startSpin->SetIncrement(1);
         startSpin->SetDigits(4);
-        sizer->Add(startSpin, wxSizerFlags{}.Expand());
+        sizer->Add(startSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End:")), wxSizerFlags{}.CenterVertical());
         auto* endSpin = new wxSpinCtrlDouble(&dlg, wxID_ANY);
         endSpin->SetRange(-1e9, 1e9);
         endSpin->SetIncrement(1);
         endSpin->SetDigits(4);
-        sizer->Add(endSpin, wxSizerFlags{}.Expand());
+        sizer->Add(endSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Label:")), wxSizerFlags{}.CenterVertical());
         auto* labelCtrl = new wxTextCtrl(&dlg, wxID_ANY);
@@ -1520,7 +1520,7 @@ namespace Wisteria::UI
         styleChoice->Append(_(L"Fade from left to right"));
         styleChoice->Append(_(L"Fade from right to left"));
         styleChoice->SetSelection(0);
-        sizer->Add(styleChoice, wxSizerFlags{}.Expand());
+        sizer->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1580,7 +1580,7 @@ namespace Wisteria::UI
                 break;
                 }
             }
-        sizer->Add(axisChoice, wxSizerFlags{}.Expand());
+        sizer->Add(axisChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Start:")), wxSizerFlags{}.CenterVertical());
         auto* startSpin = new wxSpinCtrlDouble(&dlg, wxID_ANY);
@@ -1588,7 +1588,7 @@ namespace Wisteria::UI
         startSpin->SetIncrement(1);
         startSpin->SetDigits(4);
         startSpin->SetValue(ra.GetAxisPosition());
-        sizer->Add(startSpin, wxSizerFlags{}.Expand());
+        sizer->Add(startSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End:")), wxSizerFlags{}.CenterVertical());
         auto* endSpin = new wxSpinCtrlDouble(&dlg, wxID_ANY);
@@ -1596,7 +1596,7 @@ namespace Wisteria::UI
         endSpin->SetIncrement(1);
         endSpin->SetDigits(4);
         endSpin->SetValue(ra.GetAxisPosition2());
-        sizer->Add(endSpin, wxSizerFlags{}.Expand());
+        sizer->Add(endSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Label:")), wxSizerFlags{}.CenterVertical());
         auto* labelCtrl = new wxTextCtrl(&dlg, wxID_ANY, ra.GetLabel());
@@ -1623,7 +1623,7 @@ namespace Wisteria::UI
                 break;
                 }
             }
-        sizer->Add(styleChoice, wxSizerFlags{}.Expand());
+        sizer->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1723,7 +1723,7 @@ namespace Wisteria::UI
         anchorXSpin->SetRange(-1e9, 1e9);
         anchorXSpin->SetIncrement(1);
         anchorXSpin->SetDigits(4);
-        anchorGrid->Add(anchorXSpin, wxSizerFlags{}.Expand());
+        anchorGrid->Add(anchorXSpin, wxSizerFlags{}.CenterVertical());
 
         anchorGrid->Add(new wxStaticText(anchorBox->GetStaticBox(), wxID_ANY, _(L"y-axis:")),
                         wxSizerFlags{}.CenterVertical());
@@ -1731,7 +1731,7 @@ namespace Wisteria::UI
         anchorYSpin->SetRange(-1e9, 1e9);
         anchorYSpin->SetIncrement(1);
         anchorYSpin->SetDigits(4);
-        anchorGrid->Add(anchorYSpin, wxSizerFlags{}.Expand());
+        anchorGrid->Add(anchorYSpin, wxSizerFlags{}.CenterVertical());
 
         anchorBox->Add(anchorGrid, wxSizerFlags{}.Expand().Border(wxLEFT | wxBOTTOM));
         topSizer->Add(anchorBox, wxSizerFlags{}.Expand().Border());
@@ -1771,7 +1771,7 @@ namespace Wisteria::UI
                 xSpin->SetRange(-1e9, 1e9);
                 xSpin->SetIncrement(1);
                 xSpin->SetDigits(4);
-                sizer->Add(xSpin, wxSizerFlags{}.Expand());
+                sizer->Add(xSpin, wxSizerFlags{}.CenterVertical());
 
                 sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axis:")),
                            wxSizerFlags{}.CenterVertical());
@@ -1779,7 +1779,7 @@ namespace Wisteria::UI
                 ySpin->SetRange(-1e9, 1e9);
                 ySpin->SetIncrement(1);
                 ySpin->SetDigits(4);
-                sizer->Add(ySpin, wxSizerFlags{}.Expand());
+                sizer->Add(ySpin, wxSizerFlags{}.CenterVertical());
 
                 auto* ts = new wxBoxSizer(wxVERTICAL);
                 ts->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1818,7 +1818,7 @@ namespace Wisteria::UI
                 xSpin->SetIncrement(1);
                 xSpin->SetDigits(4);
                 xSpin->SetValue(pt.m_x);
-                sizer->Add(xSpin, wxSizerFlags{}.Expand());
+                sizer->Add(xSpin, wxSizerFlags{}.CenterVertical());
 
                 sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axis:")),
                            wxSizerFlags{}.CenterVertical());
@@ -1827,7 +1827,7 @@ namespace Wisteria::UI
                 ySpin->SetIncrement(1);
                 ySpin->SetDigits(4);
                 ySpin->SetValue(pt.m_y);
-                sizer->Add(ySpin, wxSizerFlags{}.Expand());
+                sizer->Add(ySpin, wxSizerFlags{}.CenterVertical());
 
                 auto* ts = new wxBoxSizer(wxVERTICAL);
                 ts->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1982,7 +1982,7 @@ namespace Wisteria::UI
         anchorXSpin->SetIncrement(1);
         anchorXSpin->SetDigits(4);
         anchorXSpin->SetValue(ann.anchor.m_x);
-        anchorGrid->Add(anchorXSpin, wxSizerFlags{}.Expand());
+        anchorGrid->Add(anchorXSpin, wxSizerFlags{}.CenterVertical());
 
         anchorGrid->Add(new wxStaticText(anchorBox->GetStaticBox(), wxID_ANY, _(L"y-axis:")),
                         wxSizerFlags{}.CenterVertical());
@@ -1991,7 +1991,7 @@ namespace Wisteria::UI
         anchorYSpin->SetIncrement(1);
         anchorYSpin->SetDigits(4);
         anchorYSpin->SetValue(ann.anchor.m_y);
-        anchorGrid->Add(anchorYSpin, wxSizerFlags{}.Expand());
+        anchorGrid->Add(anchorYSpin, wxSizerFlags{}.CenterVertical());
 
         anchorBox->Add(anchorGrid, wxSizerFlags{}.Expand().Border(wxLEFT | wxBOTTOM));
         topSizer->Add(anchorBox, wxSizerFlags{}.Expand().Border());
@@ -2032,7 +2032,7 @@ namespace Wisteria::UI
                 xSpin->SetRange(-1e9, 1e9);
                 xSpin->SetIncrement(1);
                 xSpin->SetDigits(4);
-                sizer->Add(xSpin, wxSizerFlags{}.Expand());
+                sizer->Add(xSpin, wxSizerFlags{}.CenterVertical());
 
                 sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axis:")),
                            wxSizerFlags{}.CenterVertical());
@@ -2040,7 +2040,7 @@ namespace Wisteria::UI
                 ySpin->SetRange(-1e9, 1e9);
                 ySpin->SetIncrement(1);
                 ySpin->SetDigits(4);
-                sizer->Add(ySpin, wxSizerFlags{}.Expand());
+                sizer->Add(ySpin, wxSizerFlags{}.CenterVertical());
 
                 auto* ts = new wxBoxSizer(wxVERTICAL);
                 ts->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -2079,7 +2079,7 @@ namespace Wisteria::UI
                 xSpin->SetIncrement(1);
                 xSpin->SetDigits(4);
                 xSpin->SetValue(pt.m_x);
-                sizer->Add(xSpin, wxSizerFlags{}.Expand());
+                sizer->Add(xSpin, wxSizerFlags{}.CenterVertical());
 
                 sizer->Add(new wxStaticText(&ipDlg, wxID_ANY, _(L"y-axis:")),
                            wxSizerFlags{}.CenterVertical());
@@ -2088,7 +2088,7 @@ namespace Wisteria::UI
                 ySpin->SetIncrement(1);
                 ySpin->SetDigits(4);
                 ySpin->SetValue(pt.m_y);
-                sizer->Add(ySpin, wxSizerFlags{}.Expand());
+                sizer->Add(ySpin, wxSizerFlags{}.CenterVertical());
 
                 auto* ts = new wxBoxSizer(wxVERTICAL);
                 ts->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());

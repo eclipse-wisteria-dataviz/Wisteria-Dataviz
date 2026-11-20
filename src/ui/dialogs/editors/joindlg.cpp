@@ -136,7 +136,7 @@ namespace Wisteria::UI
             }
         leftLabel->Enable(m_mode == Mode::Insert);
         m_leftDatasetChoice->Enable(m_mode == Mode::Insert);
-        datasetSizer->Add(m_leftDatasetChoice, wxSizerFlags{}.Expand());
+        datasetSizer->Add(m_leftDatasetChoice, wxSizerFlags{}.CenterVertical());
 
         datasetSizer->Add(rightLabel, wxSizerFlags{}.CenterVertical());
         m_rightDatasetChoice = new wxChoice(this, wxID_ANY);
@@ -154,7 +154,7 @@ namespace Wisteria::UI
             }
         rightLabel->Enable(m_mode == Mode::Insert);
         m_rightDatasetChoice->Enable(m_mode == Mode::Insert);
-        datasetSizer->Add(m_rightDatasetChoice, wxSizerFlags{}.Expand());
+        datasetSizer->Add(m_rightDatasetChoice, wxSizerFlags{}.CenterVertical());
 
         mainSizer->Add(datasetSizer, wxSizerFlags{}.Expand().Border());
 
@@ -169,7 +169,7 @@ namespace Wisteria::UI
                                                         _(L"Left Join (Unique First)"),
                                                         _(L"Left Join"), _(L"Inner Join") });
         m_joinTypeChoice->SetSelection(0);
-        joinTypeSizer->Add(m_joinTypeChoice, wxSizerFlags{}.Expand());
+        joinTypeSizer->Add(m_joinTypeChoice, wxSizerFlags{}.CenterVertical());
         mainSizer->Add(joinTypeSizer, wxSizerFlags{}.Expand().Border());
 
         // by-column pairs

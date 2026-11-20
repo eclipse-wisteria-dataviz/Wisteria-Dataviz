@@ -905,7 +905,7 @@ namespace Wisteria::UI
         const wxArrayString types{ _(L"Column"), _(L"Row") };
         auto* typeCtrl = new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, types);
         typeCtrl->SetSelection(0);
-        gridSizer->Add(typeCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(typeCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Aggregate Type:")),
                        wxSizerFlags{}.CenterVertical());
@@ -913,7 +913,7 @@ namespace Wisteria::UI
         auto* aggTypeCtrl =
             new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, aggTypes);
         aggTypeCtrl->SetSelection(0);
-        gridSizer->Add(aggTypeCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(aggTypeCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Start:")),
                        wxSizerFlags{}.CenterVertical());
@@ -924,7 +924,7 @@ namespace Wisteria::UI
                        wxSizerFlags{}.CenterVertical());
         auto* startOffsetCtrl = new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition,
                                                wxDefaultSize, wxSP_ARROW_KEYS, -1000, 1000, 0);
-        gridSizer->Add(startOffsetCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(startOffsetCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End:")),
                        wxSizerFlags{}.CenterVertical());
@@ -935,7 +935,7 @@ namespace Wisteria::UI
                        wxSizerFlags{}.CenterVertical());
         auto* endOffsetCtrl = new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition,
                                              wxDefaultSize, wxSP_ARROW_KEYS, -1000, 1000, 0);
-        gridSizer->Add(endOffsetCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(endOffsetCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* useAdjCtrl = new wxCheckBox(&dlg, wxID_ANY, _(L"Use adjacent cell color"));
         gridSizer->Add(useAdjCtrl, wxSizerFlags{}.CenterVertical());
@@ -944,7 +944,7 @@ namespace Wisteria::UI
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Background Color:")),
                        wxSizerFlags{}.CenterVertical());
         auto* colorCtrl = new wxColourPickerCtrl(&dlg, wxID_ANY, *wxLIGHT_GREY);
-        gridSizer->Add(colorCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(colorCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(gridSizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1020,7 +1020,7 @@ namespace Wisteria::UI
         const wxArrayString types{ _(L"Column"), _(L"Row") };
         auto* typeCtrl = new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, types);
         typeCtrl->SetSelection(entry.m_type.CmpNoCase(L"row") == 0 ? 1 : 0);
-        gridSizer->Add(typeCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(typeCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Aggregate Type:")),
                        wxSizerFlags{}.CenterVertical());
@@ -1044,7 +1044,7 @@ namespace Wisteria::UI
             break;
             }
         aggTypeCtrl->SetSelection(aggSel);
-        gridSizer->Add(aggTypeCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(aggTypeCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Start:")),
                        wxSizerFlags{}.CenterVertical());
@@ -1056,7 +1056,7 @@ namespace Wisteria::UI
         auto* startOffsetCtrl =
             new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition, wxDefaultSize,
                            wxSP_ARROW_KEYS, -1000, 1000, entry.m_startOffset);
-        gridSizer->Add(startOffsetCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(startOffsetCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End:")),
                        wxSizerFlags{}.CenterVertical());
@@ -1068,7 +1068,7 @@ namespace Wisteria::UI
         auto* endOffsetCtrl =
             new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition, wxDefaultSize,
                            wxSP_ARROW_KEYS, -1000, 1000, entry.m_endOffset);
-        gridSizer->Add(endOffsetCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(endOffsetCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* useAdjCtrl = new wxCheckBox(&dlg, wxID_ANY, _(L"Use adjacent cell color"));
         useAdjCtrl->SetValue(entry.m_useAdjacentColor);
@@ -1078,7 +1078,7 @@ namespace Wisteria::UI
         gridSizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Background Color:")),
                        wxSizerFlags{}.CenterVertical());
         auto* colorCtrl = new wxColourPickerCtrl(&dlg, wxID_ANY, entry.m_bkColor);
-        gridSizer->Add(colorCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(colorCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* topSizer = new wxBoxSizer(wxVERTICAL);
         topSizer->Add(gridSizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1247,7 +1247,7 @@ namespace Wisteria::UI
         auto* sideCtrl =
             new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, sideChoices);
         sideCtrl->SetSelection(entry.m_sideRight ? 0 : 1);
-        grid->Add(sideCtrl, wxSizerFlags{}.Expand());
+        grid->Add(sideCtrl, wxSizerFlags{}.CenterVertical());
 
         // a colour picker has no "no colour" state, so gate it with a checkbox;
         // when unchecked, the entry's background color is left invalid (none)
@@ -1269,7 +1269,7 @@ namespace Wisteria::UI
         auto* modeCtrl =
             new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, modeChoices);
         modeCtrl->SetSelection(static_cast<int>(entry.m_cellMode));
-        grid->Add(modeCtrl, wxSizerFlags{}.Expand());
+        grid->Add(modeCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* colLabel = new wxStaticText(&dlg, wxID_ANY, _(L"Column name:"));
         grid->Add(colLabel, wxSizerFlags{}.CenterVertical());
@@ -1282,7 +1282,7 @@ namespace Wisteria::UI
         auto* nCtrl =
             new wxSpinCtrl(&dlg, wxID_ANY, std::to_wstring(entry.m_topN), wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, 9999, entry.m_topN);
-        grid->Add(nCtrl, wxSizerFlags{}.Expand());
+        grid->Add(nCtrl, wxSizerFlags{}.CenterVertical());
 
         auto* startLabel = new wxStaticText(&dlg, wxID_ANY, _(L"Start cell:"));
         grid->Add(startLabel, wxSizerFlags{}.CenterVertical());

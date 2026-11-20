@@ -59,7 +59,7 @@ namespace Wisteria::UI
                                                  wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS,
                                                  1.0, PowerPointExportOptions::MAX_SLIDE_INCHES,
                                                  m_options.m_customWidthInches, 0.1);
-        customSizeGrid->Add(m_customWidthCtrl, wxSizerFlags{}.Expand());
+        customSizeGrid->Add(m_customWidthCtrl, wxSizerFlags{}.CenterVertical());
 
         m_customHeightLabel =
             new wxStaticText(slideSizeBox->GetStaticBox(), wxID_STATIC, _(L"Height (inches):"));
@@ -68,7 +68,7 @@ namespace Wisteria::UI
             slideSizeBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition, wxDefaultSize,
             wxSP_ARROW_KEYS, 1.0, PowerPointExportOptions::MAX_SLIDE_INCHES,
             m_options.m_customHeightInches, 0.1);
-        customSizeGrid->Add(m_customHeightCtrl, wxSizerFlags{}.Expand());
+        customSizeGrid->Add(m_customHeightCtrl, wxSizerFlags{}.CenterVertical());
 
         slideSizeBox->Add(customSizeGrid, wxSizerFlags{}.Expand().Border());
 
@@ -173,7 +173,7 @@ namespace Wisteria::UI
         m_transitionChoice = new wxChoice(transitionsBox->GetStaticBox(), wxID_ANY,
                                           wxDefaultPosition, wxDefaultSize, transitionChoices);
         m_transitionChoice->SetSelection(static_cast<int>(m_options.m_transition));
-        transitionsGrid->Add(m_transitionChoice, wxSizerFlags{}.Expand());
+        transitionsGrid->Add(m_transitionChoice, wxSizerFlags{}.CenterVertical());
 
         m_transitionSpeedLabel =
             new wxStaticText(transitionsBox->GetStaticBox(), wxID_STATIC, _(L"Speed:"));
@@ -182,7 +182,7 @@ namespace Wisteria::UI
         m_transitionSpeedChoice = new wxChoice(transitionsBox->GetStaticBox(), wxID_ANY,
                                                wxDefaultPosition, wxDefaultSize, speedChoices);
         m_transitionSpeedChoice->SetSelection(static_cast<int>(m_options.m_transitionSpeed));
-        transitionsGrid->Add(m_transitionSpeedChoice, wxSizerFlags{}.Expand());
+        transitionsGrid->Add(m_transitionSpeedChoice, wxSizerFlags{}.CenterVertical());
 
         transitionsBox->Add(transitionsGrid, wxSizerFlags{}.Expand().Border());
 

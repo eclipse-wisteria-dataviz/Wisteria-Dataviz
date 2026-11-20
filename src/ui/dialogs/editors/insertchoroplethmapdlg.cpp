@@ -242,7 +242,7 @@ namespace Wisteria::UI
                 }
             }
         m_datasetChoice->SetSelection(0);
-        dataGrid->Add(m_datasetChoice, wxSizerFlags{}.Expand());
+        dataGrid->Add(m_datasetChoice, wxSizerFlags{}.CenterVertical());
 
         m_selectVarsButton =
             new wxButton(dataBox->GetStaticBox(), ID_SELECT_VARS_BUTTON, _(L"Select columns..."));
@@ -279,7 +279,7 @@ namespace Wisteria::UI
             m_aggregationChoice->Append(Data::GetColumnAggregationName(aggregation));
             }
         m_aggregationChoice->SetSelection(m_dataAggregation);
-        dataGrid->Add(m_aggregationChoice, wxSizerFlags{}.Expand());
+        dataGrid->Add(m_aggregationChoice, wxSizerFlags{}.CenterVertical());
 
         dataGrid->Add(new wxStaticText(dataBox->GetStaticBox(), wxID_ANY, _(L"Value format:")),
                       wxSizerFlags{}.CenterVertical());
@@ -287,7 +287,7 @@ namespace Wisteria::UI
             new wxChoice(dataBox->GetStaticBox(), wxID_ANY, wxDefaultPosition, wxDefaultSize,
                          wxArrayString{ _(L"Value"), _(L"Currency"), _(L"Simple value") }, 0,
                          wxGenericValidator{ &m_valueFormatIndex });
-        dataGrid->Add(m_valueFormatChoice, wxSizerFlags{}.Expand());
+        dataGrid->Add(m_valueFormatChoice, wxSizerFlags{}.CenterVertical());
 
         dataBox->Add(dataGrid, wxSizerFlags{}.Expand().Border());
         optionsSizer->Add(dataBox, wxSizerFlags{}.Expand().Border());

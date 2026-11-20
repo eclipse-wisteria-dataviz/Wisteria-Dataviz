@@ -107,12 +107,12 @@ namespace Wisteria::UI
         auto defaultFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
         GraphItems::Label::FixFont(defaultFont);
         m_fontPicker = new wxFontPickerCtrl(fontBox->GetStaticBox(), wxID_ANY, defaultFont);
-        fontGrid->Add(m_fontPicker, wxSizerFlags{}.Expand());
+        fontGrid->Add(m_fontPicker, wxSizerFlags{}.CenterVertical());
 
         fontGrid->Add(new wxStaticText(fontBox->GetStaticBox(), wxID_ANY, _(L"Font color:")),
                       wxSizerFlags{}.CenterVertical());
         m_fontColorPicker = new wxColourPickerCtrl(fontBox->GetStaticBox(), wxID_ANY, *wxBLACK);
-        fontGrid->Add(m_fontColorPicker, wxSizerFlags{}.Expand());
+        fontGrid->Add(m_fontColorPicker, wxSizerFlags{}.CenterVertical());
 
         auto* enableBackgroundColorCheck = new wxCheckBox(
             fontBox->GetStaticBox(), wxID_ANY, _(L"Include background color:"), wxDefaultPosition,
@@ -120,7 +120,7 @@ namespace Wisteria::UI
         fontGrid->Add(enableBackgroundColorCheck, wxSizerFlags{}.CenterVertical());
         m_bgColorPicker =
             new wxColourPickerCtrl(fontBox->GetStaticBox(), wxID_ANY, wxTransparentColour);
-        fontGrid->Add(m_bgColorPicker, wxSizerFlags{}.Expand());
+        fontGrid->Add(m_bgColorPicker, wxSizerFlags{}.CenterVertical());
 
         fontGrid->Add(new wxStaticText(fontBox->GetStaticBox(), wxID_ANY, _(L"Alignment:")),
                       wxSizerFlags{}.CenterVertical());
@@ -133,7 +133,7 @@ namespace Wisteria::UI
             alignChoice->Append(_(L"Center"));
             alignChoice->Append(_(L"Justified"));
             alignChoice->Append(_(L"Justified (at word)"));
-            fontGrid->Add(alignChoice, wxSizerFlags{}.Expand());
+            fontGrid->Add(alignChoice, wxSizerFlags{}.CenterVertical());
             }
 
         fontGrid->Add(new wxStaticText(fontBox->GetStaticBox(), wxID_ANY, _(L"Line spacing:")),
@@ -142,7 +142,7 @@ namespace Wisteria::UI
             new wxSpinCtrlDouble(fontBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                                  wxDefaultSize, wxSP_ARROW_KEYS, -100.0, 100.0, 1.0, 0.5);
         m_lineSpacingSpin->SetDigits(1);
-        fontGrid->Add(m_lineSpacingSpin, wxSizerFlags{}.Expand());
+        fontGrid->Add(m_lineSpacingSpin, wxSizerFlags{}.CenterVertical());
 
         fontBox->Add(fontGrid, wxSizerFlags{}.Expand().Border());
         labelSizer->Add(fontBox, wxSizerFlags{}.Expand().Border());
@@ -162,7 +162,7 @@ namespace Wisteria::UI
                              wxDefaultSize, 0, nullptr, 0, wxGenericValidator{ &m_orientation });
             orientationChoice->Append(_(L"Horizontal"));
             orientationChoice->Append(_(L"Vertical"));
-            appearanceGrid->Add(orientationChoice, wxSizerFlags{}.Expand());
+            appearanceGrid->Add(orientationChoice, wxSizerFlags{}.CenterVertical());
             }
 
         appearanceGrid->Add(
@@ -181,7 +181,7 @@ namespace Wisteria::UI
             styleChoice->Append(_(L"Dotted lined paper (with margins)"));
             styleChoice->Append(_(L"Right-arrow lined paper"));
             styleChoice->Append(_(L"Right-arrow lined paper (with margins)"));
-            appearanceGrid->Add(styleChoice, wxSizerFlags{}.Expand());
+            appearanceGrid->Add(styleChoice, wxSizerFlags{}.CenterVertical());
             }
 
         appearanceGrid->Add(
@@ -197,7 +197,7 @@ namespace Wisteria::UI
             shapeChoice->Append(_(L"Word balloon (tail pointing up-right)"));
             shapeChoice->Append(_(L"Word balloon (tail pointing down-left)"));
             shapeChoice->Append(_(L"Word balloon (tail pointing down-right)"));
-            appearanceGrid->Add(shapeChoice, wxSizerFlags{}.Expand());
+            appearanceGrid->Add(shapeChoice, wxSizerFlags{}.CenterVertical());
             }
 
         appearanceGrid->Add(
@@ -212,7 +212,7 @@ namespace Wisteria::UI
             boxSizingChoice->Append(_(L"Shrink height to content"));
             boxSizingChoice->Append(_(L"Shrink width to content"));
             boxSizingChoice->Append(_(L"Shrink to content"));
-            appearanceGrid->Add(boxSizingChoice, wxSizerFlags{}.Expand());
+            appearanceGrid->Add(boxSizingChoice, wxSizerFlags{}.CenterVertical());
             }
 
         appearanceBox->Add(appearanceGrid, wxSizerFlags{}.Expand().Border());
@@ -236,12 +236,12 @@ namespace Wisteria::UI
         GraphItems::Label::FixFont(headerDefaultFont);
         m_headerFontPicker =
             new wxFontPickerCtrl(headerBox->GetStaticBox(), wxID_ANY, headerDefaultFont);
-        headerGrid->Add(m_headerFontPicker, wxSizerFlags{}.Expand());
+        headerGrid->Add(m_headerFontPicker, wxSizerFlags{}.CenterVertical());
 
         headerGrid->Add(new wxStaticText(headerBox->GetStaticBox(), wxID_ANY, _(L"Color:")),
                         wxSizerFlags{}.CenterVertical());
         m_headerColorPicker = new wxColourPickerCtrl(headerBox->GetStaticBox(), wxID_ANY, *wxBLACK);
-        headerGrid->Add(m_headerColorPicker, wxSizerFlags{}.Expand());
+        headerGrid->Add(m_headerColorPicker, wxSizerFlags{}.CenterVertical());
 
         headerGrid->Add(new wxStaticText(headerBox->GetStaticBox(), wxID_ANY, _(L"Alignment:")),
                         wxSizerFlags{}.CenterVertical());
@@ -253,7 +253,7 @@ namespace Wisteria::UI
         m_headerAlignmentChoice->Append(_(L"Center"));
         m_headerAlignmentChoice->Append(_(L"Justified"));
         m_headerAlignmentChoice->Append(_(L"Justified (at word)"));
-        headerGrid->Add(m_headerAlignmentChoice, wxSizerFlags{}.Expand());
+        headerGrid->Add(m_headerAlignmentChoice, wxSizerFlags{}.CenterVertical());
 
         headerGrid->Add(
             new wxStaticText(headerBox->GetStaticBox(), wxID_ANY, _(L"Relative scaling:")),
@@ -261,7 +261,7 @@ namespace Wisteria::UI
         m_headerScalingSpin =
             new wxSpinCtrlDouble(headerBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                                  wxDefaultSize, wxSP_ARROW_KEYS, 0.1, 128.0, 1.0, 0.1);
-        headerGrid->Add(m_headerScalingSpin, wxSizerFlags{}.Expand());
+        headerGrid->Add(m_headerScalingSpin, wxSizerFlags{}.CenterVertical());
 
         headerBox->Add(headerGrid, wxSizerFlags{}.Expand().Border());
         labelSizer->Add(headerBox, wxSizerFlags{}.Expand().Border());
@@ -403,7 +403,7 @@ namespace Wisteria::UI
         m_topShapeOffsetSpin = new wxSpinCtrl(topShapeBox->GetStaticBox(), wxID_ANY);
         m_topShapeOffsetSpin->SetRange(0, 1'000);
         m_topShapeOffsetSpin->SetValue(0);
-        offsetGrid->Add(m_topShapeOffsetSpin, wxSizerFlags{}.Expand());
+        offsetGrid->Add(m_topShapeOffsetSpin, wxSizerFlags{}.CenterVertical());
 
         topShapeBox->Add(offsetGrid, wxSizerFlags{}.Expand().Border());
         shapesSizer->Add(topShapeBox, wxSizerFlags{}.Expand().Border());

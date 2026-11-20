@@ -64,21 +64,21 @@ namespace Wisteria::UI
         auto* datasetChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition,
                                            FromDIP(wxSize{ 250, -1 }), datasetNames);
         datasetChoice->SetValidator(wxGenericValidator{ &m_datasetIndex });
-        gridSizer->Add(datasetChoice, wxSizerFlags{}.Expand());
+        gridSizer->Add(datasetChoice, wxSizerFlags{}.CenterVertical());
 
         // column to filter on
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Filter by:")),
                        wxSizerFlags{}.CenterVertical());
         m_columnChoice = new wxChoice(this, wxID_ANY);
         m_columnChoice->SetValidator(wxGenericValidator{ &m_columnIndex });
-        gridSizer->Add(m_columnChoice, wxSizerFlags{}.Expand());
+        gridSizer->Add(m_columnChoice, wxSizerFlags{}.CenterVertical());
 
         // value shown by default
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Show by default:")),
                        wxSizerFlags{}.CenterVertical());
         m_defaultChoice = new wxChoice(this, wxID_ANY);
         m_defaultChoice->SetValidator(wxGenericValidator{ &m_defaultIndex });
-        gridSizer->Add(m_defaultChoice, wxSizerFlags{}.Expand());
+        gridSizer->Add(m_defaultChoice, wxSizerFlags{}.CenterVertical());
 
         // graph type
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Graph:")),
@@ -86,7 +86,7 @@ namespace Wisteria::UI
         auto* graphChoice =
             new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, graphTypes);
         graphChoice->SetValidator(wxGenericValidator{ &m_graphType });
-        gridSizer->Add(graphChoice, wxSizerFlags{}.Expand());
+        gridSizer->Add(graphChoice, wxSizerFlags{}.CenterVertical());
 
         mainSizer->Add(gridSizer, wxSizerFlags{}.Expand().Border());
 

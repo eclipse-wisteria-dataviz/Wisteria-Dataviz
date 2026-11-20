@@ -101,7 +101,7 @@ namespace Wisteria::UI
                        wxSizerFlags{}.CenterVertical());
         auto* themeChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, themes);
         themeChoice->SetValidator(wxGenericValidator{ &m_theme });
-        gridSizer->Add(themeChoice, wxSizerFlags{}.Expand());
+        gridSizer->Add(themeChoice, wxSizerFlags{}.CenterVertical());
 
         // page size
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Page width:")),
@@ -110,7 +110,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(this, wxID_ANY, std::to_wstring(m_pageWidth), wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 128, 10'000);
         widthCtrl->SetValidator(wxGenericValidator{ &m_pageWidth });
-        gridSizer->Add(widthCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(widthCtrl, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(new wxStaticText(this, wxID_STATIC, _(L"Page height:")),
                        wxSizerFlags{}.CenterVertical());
@@ -118,7 +118,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(this, wxID_ANY, std::to_wstring(m_pageHeight), wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 128, 10'000);
         heightCtrl->SetValidator(wxGenericValidator{ &m_pageHeight });
-        gridSizer->Add(heightCtrl, wxSizerFlags{}.Expand());
+        gridSizer->Add(heightCtrl, wxSizerFlags{}.CenterVertical());
 
         mainSizer->Add(gridSizer, wxSizerFlags{}.Expand().Border());
 
@@ -203,7 +203,7 @@ namespace Wisteria::UI
                                                 wxDefaultPosition, wxDefaultSize, choiceLabels);
                 choiceCtrl->SetSelection(static_cast<int>(filterDefault.m_defaultChoice));
                 m_filterChoices.push_back(choiceCtrl);
-                filterGrid->Add(choiceCtrl, wxSizerFlags{}.Expand());
+                filterGrid->Add(choiceCtrl, wxSizerFlags{}.CenterVertical());
                 }
             filterSizer->Add(filterGrid, wxSizerFlags{}.Expand().Border());
             mainSizer->Add(filterSizer, wxSizerFlags{}.Expand().Border());

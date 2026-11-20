@@ -176,7 +176,7 @@ namespace Wisteria::UI
             }
         datasetLabel->Enable(m_mode == SubsetOptions::Mode::Insert);
         m_datasetChoice->Enable(m_mode == SubsetOptions::Mode::Insert);
-        datasetSizer->Add(m_datasetChoice, wxSizerFlags{}.Expand());
+        datasetSizer->Add(m_datasetChoice, wxSizerFlags{}.CenterVertical());
         mainSizer->Add(datasetSizer, wxSizerFlags{}.Expand().Border());
 
         // filter type radio buttons
@@ -219,7 +219,7 @@ namespace Wisteria::UI
             new wxStaticText(m_sectionBox->GetStaticBox(), wxID_ANY, _(L"Column:"));
         sectionGrid->Add(m_sectionColumnLabel, wxSizerFlags{}.CenterVertical());
         m_sectionColumnChoice = new wxChoice(m_sectionBox->GetStaticBox(), wxID_ANY);
-        sectionGrid->Add(m_sectionColumnChoice, wxSizerFlags{}.Expand());
+        sectionGrid->Add(m_sectionColumnChoice, wxSizerFlags{}.CenterVertical());
 
         m_startLabelLabel =
             new wxStaticText(m_sectionBox->GetStaticBox(), wxID_ANY, _(L"Start label:"));

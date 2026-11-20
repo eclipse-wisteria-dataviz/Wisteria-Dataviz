@@ -102,7 +102,7 @@ namespace Wisteria::UI
         dataGrid->Add(new wxStaticText(dataBox->GetStaticBox(), wxID_ANY, _(L"Dataset:")),
                       wxSizerFlags{}.CenterVertical());
         auto* datasetChoice = CreateDatasetChoice(dataBox->GetStaticBox());
-        dataGrid->Add(datasetChoice, wxSizerFlags{}.Expand());
+        dataGrid->Add(datasetChoice, wxSizerFlags{}.CenterVertical());
 
         auto* varButton =
             new wxButton(dataBox->GetStaticBox(), ID_SELECT_VARS_BUTTON, _(L"Variables..."));
@@ -129,7 +129,7 @@ namespace Wisteria::UI
             {
             aggregateChoice->Append(Data::GetColumnAggregationName(aggregation));
             }
-        dataGrid->Add(aggregateChoice, wxSizerFlags{}.Expand());
+        dataGrid->Add(aggregateChoice, wxSizerFlags{}.CenterVertical());
 
         dataGrid->Add(new wxStaticText(dataBox->GetStaticBox(), wxID_ANY, _(L"Value:")),
                       wxSizerFlags{}.CenterVertical());
@@ -151,7 +151,7 @@ namespace Wisteria::UI
                         wxSizerFlags{}.CenterVertical());
         m_numberFontPicker =
             new wxFontPickerCtrl(numberBox->GetStaticBox(), wxID_ANY, defaultHeader.GetFont());
-        numberGrid->Add(m_numberFontPicker, wxSizerFlags{}.Expand());
+        numberGrid->Add(m_numberFontPicker, wxSizerFlags{}.CenterVertical());
 
         numberGrid->Add(new wxStaticText(numberBox->GetStaticBox(), wxID_ANY, _(L"Size:")),
                         wxSizerFlags{}.CenterVertical());
@@ -165,14 +165,14 @@ namespace Wisteria::UI
                         wxSizerFlags{}.CenterVertical());
         m_numberColorPicker = new wxColourPickerCtrl(numberBox->GetStaticBox(), wxID_ANY,
                                                      defaultHeader.GetFontColor());
-        numberGrid->Add(m_numberColorPicker, wxSizerFlags{}.Expand());
+        numberGrid->Add(m_numberColorPicker, wxSizerFlags{}.CenterVertical());
 
         numberGrid->Add(new wxStaticText(numberBox->GetStaticBox(), wxID_ANY, _(L"Alignment:")),
                         wxSizerFlags{}.CenterVertical());
         numberGrid->Add(new wxChoice(numberBox->GetStaticBox(), wxID_ANY, wxDefaultPosition,
                                      wxDefaultSize, alignmentNames, 0,
                                      wxGenericValidator{ &m_numberAlignment }),
-                        wxSizerFlags{}.Expand());
+                        wxSizerFlags{}.CenterVertical());
 
         numberBox->Add(numberGrid, wxSizerFlags{}.Expand().Border());
         kpiSizer->Add(numberBox, wxSizerFlags{}.Expand().Border());
@@ -198,20 +198,20 @@ namespace Wisteria::UI
                       wxSizerFlags{}.CenterVertical());
         m_bodyFontPicker =
             new wxFontPickerCtrl(bodyBox->GetStaticBox(), wxID_ANY, defaultLabel.GetFont());
-        bodyGrid->Add(m_bodyFontPicker, wxSizerFlags{}.Expand());
+        bodyGrid->Add(m_bodyFontPicker, wxSizerFlags{}.CenterVertical());
 
         bodyGrid->Add(new wxStaticText(bodyBox->GetStaticBox(), wxID_ANY, _(L"Color:")),
                       wxSizerFlags{}.CenterVertical());
         m_bodyColorPicker =
             new wxColourPickerCtrl(bodyBox->GetStaticBox(), wxID_ANY, defaultLabel.GetFontColor());
-        bodyGrid->Add(m_bodyColorPicker, wxSizerFlags{}.Expand());
+        bodyGrid->Add(m_bodyColorPicker, wxSizerFlags{}.CenterVertical());
 
         bodyGrid->Add(new wxStaticText(bodyBox->GetStaticBox(), wxID_ANY, _(L"Alignment:")),
                       wxSizerFlags{}.CenterVertical());
         bodyGrid->Add(new wxChoice(bodyBox->GetStaticBox(), wxID_ANY, wxDefaultPosition,
                                    wxDefaultSize, alignmentNames, 0,
                                    wxGenericValidator{ &m_bodyAlignment }),
-                      wxSizerFlags{}.Expand());
+                      wxSizerFlags{}.CenterVertical());
 
         bodyBox->Add(bodyGrid, wxSizerFlags{}.Expand().Border());
         kpiSizer->Add(bodyBox, wxSizerFlags{}.Expand().Border());
@@ -228,7 +228,7 @@ namespace Wisteria::UI
         boxGrid->Add(new wxChoice(boxBox->GetStaticBox(), wxID_ANY, wxDefaultPosition,
                                   wxDefaultSize, presetNames, 0,
                                   wxGenericValidator{ &m_layoutPreset }),
-                     wxSizerFlags{}.Expand());
+                     wxSizerFlags{}.CenterVertical());
         boxBox->Add(boxGrid, wxSizerFlags{}.Expand().Border());
         kpiSizer->Add(boxBox, wxSizerFlags{}.Expand().Border());
 
@@ -260,7 +260,7 @@ namespace Wisteria::UI
                                         _(L"Number (no thousands separators)"), _(L"Accounting") };
         auto* styleChoice = new wxChoice(formatPage, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                          styleNames, 0, wxGenericValidator{ &m_numberStyleIndex });
-        formatGrid->Add(styleChoice, wxSizerFlags{}.Expand());
+        formatGrid->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         formatGrid->Add(new wxStaticText(formatPage, wxID_ANY, _(L"Decimal places:")),
                         wxSizerFlags{}.CenterVertical());
@@ -278,7 +278,7 @@ namespace Wisteria::UI
         auto* abbreviationChoice =
             new wxChoice(formatPage, wxID_ANY, wxDefaultPosition, wxDefaultSize, abbreviationNames,
                          0, wxGenericValidator{ &m_abbreviationIndex });
-        formatGrid->Add(abbreviationChoice, wxSizerFlags{}.Expand());
+        formatGrid->Add(abbreviationChoice, wxSizerFlags{}.CenterVertical());
 
         formatGrid->Add(new wxStaticText(formatPage, wxID_ANY, _(L"Suffix:")),
                         wxSizerFlags{}.CenterVertical());

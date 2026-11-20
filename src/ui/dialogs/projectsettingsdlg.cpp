@@ -144,7 +144,7 @@ namespace Wisteria::UI
         watermarkGrid->Add(new wxStaticText(page, wxID_STATIC, _(L"Color:")),
                            wxSizerFlags{}.CenterVertical());
         m_watermarkColorPicker = new wxColourPickerCtrl(page, wxID_ANY, m_watermarkColor);
-        watermarkGrid->Add(m_watermarkColorPicker, wxSizerFlags{}.Expand());
+        watermarkGrid->Add(m_watermarkColorPicker, wxSizerFlags{}.CenterVertical());
 
         pageSizer->Add(watermarkGrid, wxSizerFlags{}.Expand().Border(wxLEFT | wxRIGHT | wxBOTTOM));
 

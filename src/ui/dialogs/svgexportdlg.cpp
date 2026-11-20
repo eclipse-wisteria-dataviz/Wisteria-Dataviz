@@ -149,7 +149,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(sizeBoxSizer->GetStaticBox(), wxID_ANY, std::to_wstring(m_pageWidth),
                            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 128, 10'000);
         m_widthCtrl->SetValidator(wxGenericValidator{ &m_pageWidth });
-        sizeGridSizer->Add(m_widthCtrl, wxSizerFlags{}.Expand());
+        sizeGridSizer->Add(m_widthCtrl, wxSizerFlags{}.CenterVertical());
 
         m_heightLabel = new wxStaticText(sizeBoxSizer->GetStaticBox(), wxID_STATIC, _(L"Height:"));
         sizeGridSizer->Add(m_heightLabel, wxSizerFlags{}.CenterVertical());
@@ -157,7 +157,7 @@ namespace Wisteria::UI
             new wxSpinCtrl(sizeBoxSizer->GetStaticBox(), wxID_ANY, std::to_wstring(m_pageHeight),
                            wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 128, 10'000);
         m_heightCtrl->SetValidator(wxGenericValidator{ &m_pageHeight });
-        sizeGridSizer->Add(m_heightCtrl, wxSizerFlags{}.Expand());
+        sizeGridSizer->Add(m_heightCtrl, wxSizerFlags{}.CenterVertical());
 
         customSizeIndentSizer->Add(sizeGridSizer, wxSizerFlags{}.Expand());
         sizeBoxSizer->Add(customSizeIndentSizer,

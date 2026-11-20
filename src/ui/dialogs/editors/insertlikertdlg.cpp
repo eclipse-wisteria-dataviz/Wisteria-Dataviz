@@ -293,14 +293,14 @@ namespace Wisteria::UI
                 auto* startCtrl =
                     new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, questionChoices);
                 startCtrl->SetSelection(0);
-                grid->Add(startCtrl, wxSizerFlags{}.Expand());
+                grid->Add(startCtrl, wxSizerFlags{}.CenterVertical());
 
                 grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End question:")),
                           wxSizerFlags{}.CenterVertical());
                 auto* endCtrl =
                     new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, questionChoices);
                 endCtrl->SetSelection(static_cast<int>(questionChoices.size()) - 1);
-                grid->Add(endCtrl, wxSizerFlags{}.Expand());
+                grid->Add(endCtrl, wxSizerFlags{}.CenterVertical());
 
                 sizer->Add(grid, wxSizerFlags{ 1 }.Expand().Border());
                 sizer->Add(dlg.CreateStdDialogButtonSizer(wxOK | wxCANCEL),
@@ -571,14 +571,14 @@ namespace Wisteria::UI
         auto* startCtrl =
             new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, questionChoices);
         startCtrl->SetStringSelection(bracket.m_question1);
-        grid->Add(startCtrl, wxSizerFlags{}.Expand());
+        grid->Add(startCtrl, wxSizerFlags{}.CenterVertical());
 
         grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"End question:")),
                   wxSizerFlags{}.CenterVertical());
         auto* endCtrl =
             new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, questionChoices);
         endCtrl->SetStringSelection(bracket.m_question2);
-        grid->Add(endCtrl, wxSizerFlags{}.Expand());
+        grid->Add(endCtrl, wxSizerFlags{}.CenterVertical());
 
         grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Title:")), wxSizerFlags{}.CenterVertical());
         auto* titleCtrl = new wxTextCtrl(&dlg, wxID_ANY, bracket.m_title);

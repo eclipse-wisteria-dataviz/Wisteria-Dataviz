@@ -100,7 +100,7 @@ namespace Wisteria::UI
                 m_paperIds.push_back(paperType->GetId());
                 }
             }
-        paperGrid->Add(m_paperChoice, wxSizerFlags{}.Expand());
+        paperGrid->Add(m_paperChoice, wxSizerFlags{}.CenterVertical());
         paperBox->Add(paperGrid, wxSizerFlags{}.Expand().Border());
 
         // orientation
@@ -126,7 +126,7 @@ namespace Wisteria::UI
         m_duplexChoice->Append(_(L"None"));
         m_duplexChoice->Append(_(L"Flip on long edge"));
         m_duplexChoice->Append(_(L"Flip on short edge"));
-        printGrid->Add(m_duplexChoice, wxSizerFlags{}.Expand());
+        printGrid->Add(m_duplexChoice, wxSizerFlags{}.CenterVertical());
         printBox->Add(printGrid, wxSizerFlags{}.Expand().Border());
         printBox->Add(new wxCheckBox(printBox->GetStaticBox(), wxID_ANY, _(L"Collate copies"),
                                      wxDefaultPosition, wxDefaultSize, 0,

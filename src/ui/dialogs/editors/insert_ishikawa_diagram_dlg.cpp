@@ -209,7 +209,7 @@ namespace Wisteria::UI
                                               updatePreview]([[maybe_unused]] wxCommandEvent&)
                                  { updatePreview(valueCombo, preview); });
 
-                grid->Add(modeChoice, wxSizerFlags{}.Expand());
+                grid->Add(modeChoice, wxSizerFlags{}.CenterVertical());
                 grid->Add(valueCombo, wxSizerFlags{}.Expand());
                 grid->Add(preview, wxSizerFlags{}.CenterVertical());
 
@@ -520,7 +520,7 @@ namespace Wisteria::UI
                                             FromDIP(wxSize{ 90, -1 }), modes);
             modeChoice->SetMinSize(FromDIP(wxSize{ 170, 24 }));
             modeChoice->SetSelection(inColumn ? 0 : 1);
-            m_branchSizer->Add(modeChoice, wxSizerFlags{}.Expand());
+            m_branchSizer->Add(modeChoice, wxSizerFlags{}.CenterVertical());
 
             auto* valueCombo =
                 new wxComboBox(m_branchPanel, wxID_ANY, wxString{}, wxDefaultPosition,

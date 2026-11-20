@@ -366,14 +366,14 @@ namespace Wisteria::UI
                 {
                 barCtrl->SetSelection(0);
                 }
-            grid->Add(barCtrl, wxSizerFlags{}.Expand());
+            grid->Add(barCtrl, wxSizerFlags{}.CenterVertical());
 
             grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Shape:")),
                       wxSizerFlags{}.CenterVertical());
             auto* shapeCtrl =
                 new wxChoice(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, shapeChoices);
             shapeCtrl->SetSelection(BarShapeToIndex(inOutShape));
-            grid->Add(shapeCtrl, wxSizerFlags{}.Expand());
+            grid->Add(shapeCtrl, wxSizerFlags{}.CenterVertical());
 
             sizer->Add(grid, wxSizerFlags{ 1 }.Expand().Border());
             sizer->Add(dlg.CreateStdDialogButtonSizer(wxOK | wxCANCEL),
@@ -570,14 +570,14 @@ namespace Wisteria::UI
                 {
                 barCtrl->SetSelection(0);
                 }
-            grid->Add(barCtrl, wxSizerFlags{}.Expand());
+            grid->Add(barCtrl, wxSizerFlags{}.CenterVertical());
 
             grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Block:")),
                       wxSizerFlags{}.CenterVertical());
             auto* blockSpin = new wxSpinCtrl(&dlg, wxID_ANY);
             blockSpin->SetRange(0, 99);
             blockSpin->SetValue(static_cast<int>(inOutBlock));
-            grid->Add(blockSpin, wxSizerFlags{}.Expand());
+            grid->Add(blockSpin, wxSizerFlags{}.CenterVertical());
 
             grid->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Text:")),
                       wxSizerFlags{}.CenterVertical());

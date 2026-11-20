@@ -87,7 +87,7 @@ namespace Wisteria::UI
             }
         datasetLabel->Enable(m_mode == PivotWiderOptions::Mode::Insert);
         m_datasetChoice->Enable(m_mode == PivotWiderOptions::Mode::Insert);
-        datasetSizer->Add(m_datasetChoice, wxSizerFlags{}.Expand());
+        datasetSizer->Add(m_datasetChoice, wxSizerFlags{}.CenterVertical());
         mainSizer->Add(datasetSizer, wxSizerFlags{}.Expand().Border());
 
         // column selection button

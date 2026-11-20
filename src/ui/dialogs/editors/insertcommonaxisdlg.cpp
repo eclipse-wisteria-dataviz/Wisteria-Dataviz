@@ -58,7 +58,7 @@ namespace Wisteria::UI
         m_axisTypeChoice->Append(_(L"Right Y"));
         m_axisTypeChoice->SetSelection(0);
         m_axisTypeChoice->Bind(wxEVT_CHOICE, [this](wxCommandEvent&) { OnAxisTypeChanged(); });
-        typeSizer->Add(m_axisTypeChoice, wxSizerFlags{}.Expand());
+        typeSizer->Add(m_axisTypeChoice, wxSizerFlags{}.CenterVertical());
 
         mainSizer->Add(typeSizer, wxSizerFlags{}.Expand().Border());
 

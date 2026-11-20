@@ -157,14 +157,14 @@ namespace Wisteria::UI
         lineGrid->Add(new wxStaticText(lineBox->GetStaticBox(), wxID_ANY, _(L"Color:")),
                       wxSizerFlags{}.CenterVertical());
         m_axisLineColorPicker = new wxColourPickerCtrl(lineBox->GetStaticBox(), wxID_ANY);
-        lineGrid->Add(m_axisLineColorPicker, wxSizerFlags{}.Expand());
+        lineGrid->Add(m_axisLineColorPicker, wxSizerFlags{}.CenterVertical());
 
         lineGrid->Add(new wxStaticText(lineBox->GetStaticBox(), wxID_ANY, _(L"Width:")),
                       wxSizerFlags{}.CenterVertical());
         m_axisLineWidthSpin =
             new wxSpinCtrl(lineBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
-        lineGrid->Add(m_axisLineWidthSpin, wxSizerFlags{}.Expand());
+        lineGrid->Add(m_axisLineWidthSpin, wxSizerFlags{}.CenterVertical());
 
         lineGrid->Add(new wxStaticText(lineBox->GetStaticBox(), wxID_ANY, _(L"Style:")),
                       wxSizerFlags{}.CenterVertical());
@@ -176,7 +176,7 @@ namespace Wisteria::UI
         m_axisLineStyleChoice->Append(_(L"Short dash"));
         m_axisLineStyleChoice->Append(_(L"Dot dash"));
         m_axisLineStyleChoice->SetSelection(0);
-        lineGrid->Add(m_axisLineStyleChoice, wxSizerFlags{}.Expand());
+        lineGrid->Add(m_axisLineStyleChoice, wxSizerFlags{}.CenterVertical());
 
         lineGrid->Add(new wxStaticText(lineBox->GetStaticBox(), wxID_ANY, _(L"Cap:")),
                       wxSizerFlags{}.CenterVertical());
@@ -184,7 +184,7 @@ namespace Wisteria::UI
         m_axisCapStyleChoice->Append(_(L"No cap"));
         m_axisCapStyleChoice->Append(_(L"Arrow"));
         m_axisCapStyleChoice->SetSelection(0);
-        lineGrid->Add(m_axisCapStyleChoice, wxSizerFlags{}.Expand());
+        lineGrid->Add(m_axisCapStyleChoice, wxSizerFlags{}.CenterVertical());
 
         m_axisReverseCheck = new wxCheckBox(lineBox->GetStaticBox(), wxID_ANY, _(L"Reverse"));
         lineBox->Add(m_axisReverseCheck, wxSizerFlags{}.Border());
@@ -203,14 +203,14 @@ namespace Wisteria::UI
         gridlineGrid->Add(new wxStaticText(gridlineBox->GetStaticBox(), wxID_ANY, _(L"Color:")),
                           wxSizerFlags{}.CenterVertical());
         m_gridlineColorPicker = new wxColourPickerCtrl(gridlineBox->GetStaticBox(), wxID_ANY);
-        gridlineGrid->Add(m_gridlineColorPicker, wxSizerFlags{}.Expand());
+        gridlineGrid->Add(m_gridlineColorPicker, wxSizerFlags{}.CenterVertical());
 
         gridlineGrid->Add(new wxStaticText(gridlineBox->GetStaticBox(), wxID_ANY, _(L"Width:")),
                           wxSizerFlags{}.CenterVertical());
         m_gridlineWidthSpin =
             new wxSpinCtrl(gridlineBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 1);
-        gridlineGrid->Add(m_gridlineWidthSpin, wxSizerFlags{}.Expand());
+        gridlineGrid->Add(m_gridlineWidthSpin, wxSizerFlags{}.CenterVertical());
 
         gridlineGrid->Add(new wxStaticText(gridlineBox->GetStaticBox(), wxID_ANY, _(L"Style:")),
                           wxSizerFlags{}.CenterVertical());
@@ -222,7 +222,7 @@ namespace Wisteria::UI
         m_gridlineStyleChoice->Append(_(L"Short dash"));
         m_gridlineStyleChoice->Append(_(L"Dot dash"));
         m_gridlineStyleChoice->SetSelection(0);
-        gridlineGrid->Add(m_gridlineStyleChoice, wxSizerFlags{}.Expand());
+        gridlineGrid->Add(m_gridlineStyleChoice, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(gridlineBox, wxGBPosition(1, 1), wxDefaultSpan, wxEXPAND | wxALL,
                        wxSizerFlags::GetDefaultBorder());
@@ -243,7 +243,7 @@ namespace Wisteria::UI
         m_tickmarkDisplayChoice->Append(_(L"Crossed"));
         m_tickmarkDisplayChoice->Append(_(L"No display"));
         m_tickmarkDisplayChoice->SetSelection(0);
-        tickGrid->Add(m_tickmarkDisplayChoice, wxSizerFlags{}.Expand());
+        tickGrid->Add(m_tickmarkDisplayChoice, wxSizerFlags{}.CenterVertical());
 
         gridSizer->Add(tickBox, wxGBPosition(2, 1), wxDefaultSpan, wxEXPAND | wxALL,
                        wxSizerFlags::GetDefaultBorder());
@@ -265,7 +265,7 @@ namespace Wisteria::UI
         m_labelDisplayChoice->Append(_(L"No display"));
         m_labelDisplayChoice->Append(_(L"Values"));
         m_labelDisplayChoice->SetSelection(0);
-        labelGrid->Add(m_labelDisplayChoice, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_labelDisplayChoice, wxSizerFlags{}.CenterVertical());
 
         labelGrid->Add(new wxStaticText(labelBox->GetStaticBox(), wxID_ANY, _(L"Number format:")),
                        wxSizerFlags{}.CenterVertical());
@@ -275,7 +275,7 @@ namespace Wisteria::UI
         m_numberDisplayChoice->Append(_(L"Currency"));
         m_numberDisplayChoice->Append(_(L"Value (simple)"));
         m_numberDisplayChoice->SetSelection(0);
-        labelGrid->Add(m_numberDisplayChoice, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_numberDisplayChoice, wxSizerFlags{}.CenterVertical());
 
         labelGrid->Add(new wxStaticText(labelBox->GetStaticBox(), wxID_ANY, _(L"Orientation:")),
                        wxSizerFlags{}.CenterVertical());
@@ -283,7 +283,7 @@ namespace Wisteria::UI
         m_labelOrientationChoice->Append(_(L"Parallel"));
         m_labelOrientationChoice->Append(_(L"Perpendicular"));
         m_labelOrientationChoice->SetSelection(0);
-        labelGrid->Add(m_labelOrientationChoice, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_labelOrientationChoice, wxSizerFlags{}.CenterVertical());
 
         labelGrid->Add(
             new wxStaticText(labelBox->GetStaticBox(), wxID_ANY, _(L"Perpendicular alignment:")),
@@ -293,14 +293,14 @@ namespace Wisteria::UI
         m_perpAlignmentChoice->Append(_(L"Align with boundary"));
         m_perpAlignmentChoice->Append(_(L"Center on axis line"));
         m_perpAlignmentChoice->SetSelection(0);
-        labelGrid->Add(m_perpAlignmentChoice, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_perpAlignmentChoice, wxSizerFlags{}.CenterVertical());
 
         labelGrid->Add(new wxStaticText(labelBox->GetStaticBox(), wxID_ANY, _(L"Precision:")),
                        wxSizerFlags{}.CenterVertical());
         m_precisionSpin =
             new wxSpinCtrl(labelBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 0);
-        labelGrid->Add(m_precisionSpin, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_precisionSpin, wxSizerFlags{}.CenterVertical());
 
         labelGrid->Add(
             new wxStaticText(labelBox->GetStaticBox(), wxID_ANY, _(L"Label line length:")),
@@ -308,7 +308,7 @@ namespace Wisteria::UI
         m_labelLineLengthSpin =
             new wxSpinCtrl(labelBox->GetStaticBox(), wxID_ANY, wxString{}, wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 10, 500, 100);
-        labelGrid->Add(m_labelLineLengthSpin, wxSizerFlags{}.Expand());
+        labelGrid->Add(m_labelLineLengthSpin, wxSizerFlags{}.CenterVertical());
 
         m_doubleSidedCheck =
             new wxCheckBox(labelBox->GetStaticBox(), wxID_ANY, _(L"Double-sided labels"));
@@ -346,25 +346,25 @@ namespace Wisteria::UI
         m_rangeStartSpin =
             new wxSpinCtrlDouble(m_numericRangePanel, wxID_ANY, wxString{}, wxDefaultPosition,
                                  wxDefaultSize, wxSP_ARROW_KEYS, -1e12, 1e12, 0, 1.0);
-        numericGrid->Add(m_rangeStartSpin, wxSizerFlags{}.Expand());
+        numericGrid->Add(m_rangeStartSpin, wxSizerFlags{}.CenterVertical());
         numericGrid->Add(new wxStaticText(m_numericRangePanel, wxID_ANY, _(L"End:")),
                          wxSizerFlags{}.CenterVertical());
         m_rangeEndSpin =
             new wxSpinCtrlDouble(m_numericRangePanel, wxID_ANY, wxString{}, wxDefaultPosition,
                                  wxDefaultSize, wxSP_ARROW_KEYS, -1e12, 1e12, 100, 1.0);
-        numericGrid->Add(m_rangeEndSpin, wxSizerFlags{}.Expand());
+        numericGrid->Add(m_rangeEndSpin, wxSizerFlags{}.CenterVertical());
         numericGrid->Add(new wxStaticText(m_numericRangePanel, wxID_ANY, _(L"Interval:")),
                          wxSizerFlags{}.CenterVertical());
         m_rangeIntervalSpin =
             new wxSpinCtrlDouble(m_numericRangePanel, wxID_ANY, wxString{}, wxDefaultPosition,
                                  wxDefaultSize, wxSP_ARROW_KEYS, 0.001, 1e9, 1.0, 0.1);
-        numericGrid->Add(m_rangeIntervalSpin, wxSizerFlags{}.Expand());
+        numericGrid->Add(m_rangeIntervalSpin, wxSizerFlags{}.CenterVertical());
         numericGrid->Add(new wxStaticText(m_numericRangePanel, wxID_ANY, _(L"Display interval:")),
                          wxSizerFlags{}.CenterVertical());
         m_rangeDisplayIntervalSpin =
             new wxSpinCtrl(m_numericRangePanel, wxID_ANY, wxString{}, wxDefaultPosition,
                            wxDefaultSize, wxSP_ARROW_KEYS, 1, 100, 1);
-        numericGrid->Add(m_rangeDisplayIntervalSpin, wxSizerFlags{}.Expand());
+        numericGrid->Add(m_rangeDisplayIntervalSpin, wxSizerFlags{}.CenterVertical());
         m_numericRangePanel->SetSizer(numericGrid);
         rangeBox->Add(m_numericRangePanel,
                       wxSizerFlags{}.Expand().Border(wxLEFT | wxRIGHT | wxBOTTOM));
@@ -390,7 +390,7 @@ namespace Wisteria::UI
         m_dateIntervalChoice->Append(_(L"Weekly"));
         m_dateIntervalChoice->Append(_(L"Daily"));
         m_dateIntervalChoice->SetSelection(0);
-        dateGrid->Add(m_dateIntervalChoice, wxSizerFlags{}.Expand());
+        dateGrid->Add(m_dateIntervalChoice, wxSizerFlags{}.CenterVertical());
         m_dateRangePanel->SetSizer(dateGrid);
         rangeBox->Add(m_dateRangePanel,
                       wxSizerFlags{}.Expand().Border(wxLEFT | wxRIGHT | wxBOTTOM));
@@ -1241,12 +1241,12 @@ namespace Wisteria::UI
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Color:")), wxSizerFlags{}.CenterVertical());
         auto* colorPicker = new wxColourPickerCtrl(&dlg, wxID_ANY, *wxBLACK);
-        sizer->Add(colorPicker, wxSizerFlags{}.Expand());
+        sizer->Add(colorPicker, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Width:")), wxSizerFlags{}.CenterVertical());
         auto* widthSpin = new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition,
                                          wxDefaultSize, wxSP_ARROW_KEYS, 1, 5, 2);
-        sizer->Add(widthSpin, wxSizerFlags{}.Expand());
+        sizer->Add(widthSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Style:")), wxSizerFlags{}.CenterVertical());
         auto* styleChoice = new wxChoice(&dlg, wxID_ANY);
@@ -1256,7 +1256,7 @@ namespace Wisteria::UI
         styleChoice->Append(_(L"No connection lines"));
         styleChoice->Append(_(L"Curly braces"));
         styleChoice->SetSelection(4);
-        sizer->Add(styleChoice, wxSizerFlags{}.Expand());
+        sizer->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         auto* mainSizer = new wxBoxSizer(wxVERTICAL);
         mainSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1415,13 +1415,13 @@ namespace Wisteria::UI
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Color:")), wxSizerFlags{}.CenterVertical());
         auto* colorPicker =
             new wxColourPickerCtrl(&dlg, wxID_ANY, bracket.GetLinePen().GetColour());
-        sizer->Add(colorPicker, wxSizerFlags{}.Expand());
+        sizer->Add(colorPicker, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Width:")), wxSizerFlags{}.CenterVertical());
         auto* widthSpin =
             new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition, wxDefaultSize,
                            wxSP_ARROW_KEYS, 1, 5, bracket.GetLinePen().GetWidth());
-        sizer->Add(widthSpin, wxSizerFlags{}.Expand());
+        sizer->Add(widthSpin, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Style:")), wxSizerFlags{}.CenterVertical());
         auto* styleChoice = new wxChoice(&dlg, wxID_ANY);
@@ -1449,7 +1449,7 @@ namespace Wisteria::UI
                 }
         }();
         styleChoice->SetSelection(currentStyle);
-        sizer->Add(styleChoice, wxSizerFlags{}.Expand());
+        sizer->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         auto* mainSizer = new wxBoxSizer(wxVERTICAL);
         mainSizer->Add(sizer, wxSizerFlags{ 1 }.Expand().Border());
@@ -1555,17 +1555,17 @@ namespace Wisteria::UI
                 }
             }
         datasetChoice->SetSelection(datasetHintIdx);
-        sizer->Add(datasetChoice, wxSizerFlags{}.Expand());
+        sizer->Add(datasetChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Label column:")),
                    wxSizerFlags{}.CenterVertical());
         auto* labelColChoice = new wxChoice(&dlg, wxID_ANY);
-        sizer->Add(labelColChoice, wxSizerFlags{}.Expand());
+        sizer->Add(labelColChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Value column:")),
                    wxSizerFlags{}.CenterVertical());
         auto* valueColChoice = new wxChoice(&dlg, wxID_ANY);
-        sizer->Add(valueColChoice, wxSizerFlags{}.Expand());
+        sizer->Add(valueColChoice, wxSizerFlags{}.CenterVertical());
 
         const auto populateColumns = [&datasets, &datasetNames, labelColChoice, valueColChoice,
                                       &effectiveLabelHint, &effectiveValueHint](const int sel)
@@ -1643,16 +1643,16 @@ namespace Wisteria::UI
         styleChoice->Append(_(L"No connection lines"));
         styleChoice->Append(_(L"Curly braces"));
         styleChoice->SetSelection(4);
-        sizer->Add(styleChoice, wxSizerFlags{}.Expand());
+        sizer->Add(styleChoice, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Color:")), wxSizerFlags{}.CenterVertical());
         auto* colorPicker = new wxColourPickerCtrl(&dlg, wxID_ANY, *wxBLACK);
-        sizer->Add(colorPicker, wxSizerFlags{}.Expand());
+        sizer->Add(colorPicker, wxSizerFlags{}.CenterVertical());
 
         sizer->Add(new wxStaticText(&dlg, wxID_ANY, _(L"Width:")), wxSizerFlags{}.CenterVertical());
         auto* widthSpin = new wxSpinCtrl(&dlg, wxID_ANY, wxString{}, wxDefaultPosition,
                                          wxDefaultSize, wxSP_ARROW_KEYS, 1, 5, 2);
-        sizer->Add(widthSpin, wxSizerFlags{}.Expand());
+        sizer->Add(widthSpin, wxSizerFlags{}.CenterVertical());
 
         auto* simplifyCheck = new wxCheckBox(&dlg, wxID_ANY, _(L"Simplify brackets"));
         simplifyCheck->SetValue(axis.AreBracketsSimplified());
