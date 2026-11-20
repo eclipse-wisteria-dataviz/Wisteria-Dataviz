@@ -680,10 +680,26 @@ if(APPLE)
 endif()
 
 # Documentation
+# Help folders are optional. Missing ones are skipped with a warning.
+set(HELP_MANUAL_DIR "docs/wisteria-dataviz-manual/docs-manual")
+set(HELP_ONLINE_DIR "docs/wisteria-dataviz-manual/docs-online")
+set(HELP_RELEASE_NOTES_DIR "docs/release-notes/docs")
+foreach(HELP_DIR IN ITEMS HELP_MANUAL_DIR HELP_ONLINE_DIR HELP_RELEASE_NOTES_DIR)
+    if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${${HELP_DIR}}")
+        message(WARNING "Help folder '${${HELP_DIR}}' not found. It will not be staged.")
+    endif()
+endforeach()
+
 # Clean the manual folder once here, since the following calls merge into it
-stage_directory(${WISTERIA_APP} "docs/wisteria-dataviz-manual/docs-manual" "wisteria-dataviz-manual" CLEAN)
-stage_directory(${WISTERIA_APP} "docs/wisteria-dataviz-manual/docs-online" "wisteria-dataviz-manual/online")
-stage_directory(${WISTERIA_APP} "docs/release-notes/docs" "wisteria-dataviz-manual")
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${HELP_MANUAL_DIR}")
+    stage_directory(${WISTERIA_APP} "${HELP_MANUAL_DIR}" "wisteria-dataviz-manual" CLEAN)
+endif()
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${HELP_ONLINE_DIR}")
+    stage_directory(${WISTERIA_APP} "${HELP_ONLINE_DIR}" "wisteria-dataviz-manual/online")
+endif()
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${HELP_RELEASE_NOTES_DIR}")
+    stage_directory(${WISTERIA_APP} "${HELP_RELEASE_NOTES_DIR}" "wisteria-dataviz-manual")
+endif()
 
 stage_translations(${WISTERIA_APP} es)
 

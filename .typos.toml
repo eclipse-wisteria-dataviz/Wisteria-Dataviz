@@ -64,4 +64,10 @@ check-file = false
 [files]
 extend-exclude = ["src/import/Uni*-UTF16-H", "src/import/glyphlist.txt", "src/lua/", "*.po",
                   "docs/wisteria-dataviz-manual/fonts/",
-                  "docs/wisteria-dataviz-manual/_extensions/"]
+                  "docs/wisteria-dataviz-manual/_extensions/",
+                  "installers/windows/messages/messages-de.isl",
+                  "installers/windows/messages/messages-es.isl",
+                  "installers/windows/messages/messages-fr.isl",
+                  "installers/windows/messages/messages-ja.isl",
+                  "installers/windows/messages/messages-pt.isl",
+                  "installers/windows/messages/messages-ru.isl"]
