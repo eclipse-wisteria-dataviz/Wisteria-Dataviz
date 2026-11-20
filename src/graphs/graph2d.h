@@ -1089,6 +1089,13 @@ namespace Wisteria::Graphs
                 }
             }
 
+        /// @brief Removes all objects from the plot and resets their ID counter.
+        void ClearObjects() noexcept
+            {
+            m_currentAssignedId = 0;
+            m_plotObjects.clear();
+            }
+
         /// @brief Called after the reference lines and areas are added during layout.
         /// @details Objects added here are drawn beneath the derived class's data.
         virtual void AddUnderlayObjects() {}
@@ -1128,12 +1135,13 @@ namespace Wisteria::Graphs
             @param rect The rectangle to bound the entire plot to. This is relative to its parent
            canvas.
             @param dc Measurement DC, which is not used in this implementation.
-            @param parentScaling This parameter is ignored.
+            @param parentScaling The parent's scaling (e.g., the canvas's zoom level).\n
+                This is ignored here, but derived classes may use it.
             @note Derived classes should not need to call this except for special situations.\n
                 For example, Table uses it to scale itself down so that it doesn't consume
                 more space than needed.*/
         void SetBoundingBox(const wxRect& rect, [[maybe_unused]] wxDC& dc,
-                            [[maybe_unused]] const double parentScaling) noexcept final
+                            [[maybe_unused]] const double parentScaling) noexcept override
             {
             m_rect = rect;
             }

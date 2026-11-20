@@ -1230,23 +1230,8 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Canvas, wxScrolledWindow)
                 if (objectsPos != nullptr)
                     {
                     // set the scaling from the canvas and get the bounding box for it to fit in,
-                    // unless it's a label whose scaling has been explicitly locked
-                    const bool isLockedLabel{
-                        [&objectsPos]()
-                        {
-                            if (objectsPos->IsKindOf(wxCLASSINFO(GraphItems::Label)))
-                                {
-                                const auto* label =
-                                    dynamic_cast<const GraphItems::Label*>(objectsPos.get());
-                                if (label != nullptr)
-                                    {
-                                    return label->IsBoundingBoxScalingLocked();
-                                    }
-                                }
-                            return false;
-                        }()
-                    };
-                    if (!isLockedLabel)
+                    // unless its scaling has been explicitly locked
+                    if (!objectsPos->IsBoundingBoxScalingLocked())
                         {
                         objectsPos->SetScaling(GetScaling());
                         }
@@ -1598,8 +1583,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Canvas, wxScrolledWindow)
                                               std::max(rowHeightProportion.value(),
                                                        CalcMinHeightProportion(*object)) :
                                               CalcMinHeightProportion(*object);
-                    if (const auto* label = dynamic_cast<const GraphItems::Label*>(object.get());
-                        label != nullptr && label->IsBoundingBoxScalingLocked())
+                    if (object->IsBoundingBoxScalingLocked())
                         {
                         contentLockedRows[currentRow] = true;
                         }

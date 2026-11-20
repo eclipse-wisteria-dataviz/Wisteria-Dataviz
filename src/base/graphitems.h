@@ -1770,6 +1770,14 @@ namespace Wisteria
                 return m_itemInfo.m_fitCanvasRowToContent;
                 }
 
+            /// @returns @c true if the canvas should not change this object's scaling
+            ///     when fitting it to its bounding box.
+            [[nodiscard]]
+            virtual bool IsBoundingBoxScalingLocked() const noexcept
+                {
+                return false;
+                }
+
             /// @brief Tells the canvas that this object's parent row should be as tall as
             ///     this object's height (at the default scaling) and no more.
             /// @details By default, this is false and canvases will stretch all of its rows

@@ -618,8 +618,7 @@ namespace Wisteria::Graphs
     //----------------------------------------------------------------
     void Graph2D::RecalcSizes(wxDC& dc)
         {
-        m_currentAssignedId = 0;
-        m_plotObjects.clear();
+        ClearObjects();
 
         ContrastColors();
 

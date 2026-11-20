@@ -484,7 +484,7 @@ namespace Wisteria::GraphItems
 
         /// @returns @c true if the bounding box scaling is locked.
         [[nodiscard]]
-        bool IsBoundingBoxScalingLocked() const noexcept
+        bool IsBoundingBoxScalingLocked() const noexcept final
             {
             return m_boundingBoxScalingLocked;
             }
