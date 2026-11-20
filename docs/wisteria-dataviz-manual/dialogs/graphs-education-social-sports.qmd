@@ -1,0 +1,145 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Education, Social Sciences, & Sports Graphs {#sec-graphs-education-social-sports}
+
+The graphs in this chapter are available from the `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")` buttons in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Scale Chart {#sec-scale-chart-dlg}
+
+*Education*
+
+A scale chart places scores along one or more labeled scales (e.g., letter grades or proficiency levels), so that each score can be read against them.
+The dataset should have one row per score, with an ID to label the point and (optionally) the group that it belongs to.
+
+::: {.tipsection data-latex=""}
+The dataset's ID column provides the label for each point, so fill it with meaningful names.
+:::
+
+### Variables {-}
+
+**Score**: The value to place along the scales (e.g., a test score).
+
+**Grouping** (optional): Splits the scores into groups (e.g., by student), with each group's scores shown separately.
+A blank group is placed into a *[NO GROUP]* category.
+
+### Options {-}
+
+**Scale values**: Enter the values shown along the scales' axis.
+
+**Precision**: Enter the number of decimal places shown for the scale values.
+
+**Scale header**: Enter the header shown above the scales.
+
+**Data header**: Enter the header shown above the scores.
+
+**Showcase score**: Check this option to make most of the graph translucent, except for the areas of the scales where the scores fall.
+This draws attention to the parts of the scales that have scores in them.
+
+### Scales {-}
+
+The **Scales** page defines the scales that the scores are read against (e.g., the ranges of letter grades).
+Use the `r keys("Add")` and `r keys("Remove")` buttons to change the list of scales.
+
+Each scale has a **Header** and a list of **Blocks**.
+Each block has the following:
+
+- **Label**: The block's label (e.g., *F (fail)*).
+- **Length**: How much of the scale the block covers.
+- **Color**: The block's color.
+
+\newpage
+
+## W-Curve Plot {#sec-wcurve-dlg}
+
+*Social Sciences*
+
+A W-curve plot shows how each observation's measurement changes over a series of time intervals (e.g., students' sense of belonging across semesters or years).
+The dataset should have one row per observation per time interval, holding the measurement, the interval, and the observation's name.
+
+### Variables {-}
+
+**Y (sentiment)**: The measurement being tracked (e.g., a sense of belonging or a satisfaction score).
+
+**X (time interval)**: The period that the measurement was taken in (e.g., the semester or year).
+Values should start at 1 and usually go up to 4, although up to 12 is supported.
+
+**Grouping**: The name or ID of each observation (e.g., a student).
+Each one is drawn as its own line.
+
+### Options {-}
+
+**Time interval label**: Enter the label for the time intervals (e.g., *semester* or *year*).
+
+### Showcasing {-}
+
+**Ghost opacity**: Enter the opacity of the lines that are not showcased.
+
+**Showcase lines**: Add the observations to highlight, while the others are shown faded.
+
+## Linear Regression Roadmap {#sec-lr-roadmap-dlg}
+
+*Social Sciences*
+
+A linear regression roadmap shows the results of a linear regression as a road leading to a goal.
+Predictors that help are placed along the way, and those that hinder are shown as obstacles.
+The dataset should have one row per predictor from the regression, with its name, coefficient, and (optionally) p-value.
+
+### Variables {-}
+
+**Predictor**: The name of each independent variable from the regression.
+
+**Coefficient**: The coefficient of each predictor.
+Positive values are drawn as positive influencers and negative values as negative ones.
+
+**p-value** (optional): The p-value of each predictor.
+Predictors with a p-value above the **p-value threshold** are left off the road.
+
+### Options {-}
+
+**Dependent variable description**: Enter a description of the dependent variable (i.e., the goal at the end of the road).
+
+**Show predictors**: Select which predictors to show (**All**, **Positive only**, or **Negative only**).
+
+**Marker labels**: Select how each predictor is labeled (**Name only**, **Name and value**, or **Name and absolute value**).
+
+**p-value threshold**: Enter the highest p-value that a predictor can have to be included.
+
+**Road color**, **Lane separator**, **Road stop theme**, and **Add explanatory caption**: These are the same as the [**Pro & Con Roadmap**](#sec-procon-roadmap-dlg) options.
+
+\newpage
+
+## Win/Loss Sparkline {#sec-win-loss-sparkline-dlg}
+
+*Sports*
+
+A win/loss sparkline shows the outcome of every game in a season as a compact row of marks, with home games, shutouts, and streaks easy to spot.
+The dataset should have one row per game, with the season it belongs to and codes for its outcome, whether it was a shutout, and whether it was a home game.
+
+### Variables {-}
+
+**Season**: The label of the row that each game is placed in (e.g., the season or team).
+
+**Won/Lost**: The outcome of each game (won, lost, or tied).
+A blank cell marks a game that was canceled or a scrimmage.
+It is skipped when finding streaks and other statistics.
+
+**Shutout**: Whether the game was a shutout.
+
+**Home game**: Whether the game was played at home.
+
+**Postseason** (optional): Whether the game was a postseason game.
+
+::: {.notesection data-latex=""}
+Games are placed in the order that they appear in the dataset.
+:::
+
+### Options {-}
+
+**Highlight best records**: Check this option to highlight the best season record(s) and the longest winning streak(s).
+These are determined across all the seasons.

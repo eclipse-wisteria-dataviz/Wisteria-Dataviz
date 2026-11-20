@@ -1,0 +1,152 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Statistical Process Control Graphs {#sec-graphs-spc}
+
+The graphs in this chapter are available from the `r keys("SPC")` button in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Ishikawa Diagram {#sec-ishikawa-dlg}
+
+An Ishikawa (fishbone) diagram shows the possible causes of a problem, grouped into categories [@ishikawa].
+The dataset should have one categorical column of causes for each branch, and optionally a column of sub-causes for any cause.
+
+**Dataset**: Select the dataset holding the causes.
+Causes can also be typed in directly, so a dataset is optional.
+
+**Effect**: Enter the problem (i.e., effect) that the diagram is analyzing.
+
+### Branches {-}
+
+**Categories**: Select a standard set of branch categories to start with:
+
+- **8 Ms (manufacturing)**: Manpower, Machine, Material, Method, Measurement, Mother Nature, Management, and Maintenance [@bradley].
+- **8 Ps (marketing)**: Product, Price, Place, Promotion, People, Process, Physical Evidence, and Performance [@bradley].
+- **5 Ss (service)**: Surroundings, Suppliers, Systems, Skills, and Safety [@dudbridge].
+
+Each branch has the following options:
+
+- **Label**: The branch's category name.
+- **Mode**: Where the branch's causes come from:
+  - **In column**: The causes are read from a column in the dataset.
+  - **Constants**: The causes are typed in.
+    Separate the causes with spaces, and put quotes around a cause that contains a space (e.g., *"Worn belts"*).
+- **Cause**: The column (or typed causes) for the branch.
+- **Sub-causes...**: Click this button to assign sub-causes to the branch's causes.
+- **Remove**: Click this button to remove the branch.
+
+**Add Branch**: Click this button to add another branch.
+
+### Display {-}
+
+**Show empty branches**: Check this option to show branches that do not have any causes.
+
+**Show branch labels**: Check this option to show the branches' labels.
+
+**Show cause counts**: Check this option to show how many causes each branch has (e.g., *Manpower (3)*).
+
+**Monochrome**: Check this option to draw the diagram in the text color (and shades of it), rather than in a color for each branch.
+
+**Fish style**: Select how the diagram's spine is drawn:
+
+- **None**: No head, tail, eye, or mouth is drawn.
+- **Fish**: A fish with a simple line for the mouth.
+- **Shark**: A notched mouth with teeth.
+- **Skeleton**: The bones of a fish, with an outlined skull and tail and vertebrae along the spine.
+
+### CEDAC Cards {-}
+
+**CEDAC card style**: Select a style to draw the causes as CEDAC (cause-and-effect diagram with the addition of cards) cards [@fukuda]:
+
+- **None**: The cause is plain text above its line.
+- **Sticky Note**: The cause is drawn on a sticky note (pink for a problem, green for an idea).
+- **Index Card**: The cause is drawn on a ruled index card.
+
+When a card style is used, a cause is read as a problem followed by its ideas, separated by *|*.
+For example: *Frequent stops | Replace worn bearings | \*\* Schedule service*.
+Without a card style, the *|* is part of the text.
+
+An idea can start with a status marker, as on a CEDAC board:
+
+- `*` (or no marker): Of interest, but maybe not practical yet.
+- `**`: In preparation (i.e., needs some planning before it can be tested).
+- `***`: Under test.
+- `!`: Tested and selected, so it will become the new standard.
+- `-`: Tested and rejected.
+
+\newpage
+
+## Run Chart {#sec-run-chart-dlg}
+
+A run chart shows measurements in the order they were taken, with a median line, to reveal trends, shifts, and other patterns over time.
+The dataset should have one row per measurement, in the order that they were collected.
+
+### Variables {-}
+
+**Value**: The measurement being tracked over time.
+
+**Sample** (optional): Identifies which sample each row belongs to.
+A new sample starts whenever the value changes from the previous row.
+A numeric column must contain whole numbers.
+This is needed when collecting rows into samples by a variable.
+
+**Stage** (optional): Divides the chart into stages (e.g., before and after a change).
+A new stage starts whenever the value changes from the previous row.
+Each stage gets its own median and its own rule check.
+
+**Label** (optional): The text shown along the x axis (e.g., a date or batch name).
+This does not change the order or spacing of the points.
+
+::: {.notesection data-latex=""}
+The order of the rows is the order of the points, and rows are never sorted.
+A missing value is left as a gap in the line and is not used in the median.
+:::
+
+### Samples {-}
+
+**Collect**: Select how rows are collected into points:
+
+- **Each row is a point**: Every row is plotted as its own point.
+- **Rows sharing the Sample value**: Consecutive rows with the same **Sample** value are combined into one point.
+- **A fixed number of rows per sample**: Every *n* rows are combined into one point.
+  Enter *n* in **Rows per sample**.
+
+**Plot**: Select whether each sample is plotted as its **Sample mean** or **Sample median**.
+
+**Show individual observations**: Check this option to also draw the individual values within each sample.
+
+**Observation opacity**: Enter the opacity of the individual observations.
+
+### Median {-}
+
+**Show median line**: Check this option to draw the median line.
+
+**Split the chart into stages (a median for each)**: Check this option to use the **Stage** variable to calculate a separate median for each stage.
+
+**Compute the median from the first (baseline) samples** (or **observations**, if rows are not collected into samples): Check this option to calculate the median from only the first points, and enter how many to use.
+This is useful for comparing later points against a baseline period.
+
+### Rules {-}
+
+Rules find non-random patterns in the plotted points.
+Points that are part of a pattern are circled, with a different color for each rule.
+
+**Rule set**: Select the set of rules to use:
+
+- **Perla (fixed lengths)**: The rules selected below, using fixed run lengths [@perla-provost-murray; @nelson].
+- **Anhøj (based on the number of points)**: Tests for an unusually long run and unusually few crossings of the median line, with limits based on the number of points [@anhoej-olesen].
+
+The following rules are only available with the **Perla** rule set.
+Check each rule to use, and enter its run length where applicable:
+
+- **Shift (points on one side of the median)**: A run of points all above (or all below) the median.
+  The default length is 6 [@perla-provost-murray].
+- **Trend (points all rising or all falling)**: A run of points that are all increasing (or all decreasing).
+  The default length is 5 [@perla-provost-murray].
+- **Alternating (points going up and down)**: A run of points that alternate up and down.
+  The default length is 14 [@nelson].
+- **Too few or too many runs about the median**: The number of runs (i.e., series of points on one side of the median) is unusually low or high [@swed-eisenhart].

@@ -1,0 +1,346 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Statistical Graphs {#sec-graphs-statistical}
+
+The graphs in this chapter are available from the `r keys("Statistical")` button in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Histogram {#sec-histogram-dlg}
+
+A histogram shows how the values of a measurement are distributed by sorting them into bins and counting how many fall into each one.
+The dataset should have one row per observation, holding the measurement and (optionally) the group that the observation belongs to.
+
+### Variables {-}
+
+**Continuous**: The measurement whose distribution is shown.
+Its values are sorted into bins, and the bars show how many fall into each one.
+
+**Grouping** (optional): Splits each bar into stacked segments, one per unique value (e.g., the proportion of each gender within a bin).
+
+### Binning {-}
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Binning method
+:::
+
+**Unique values**: Each unique value gets its own bin.
+
+**By range**: Values are sorted into ranges.
+The bin sizes and ranges keep the values' floating-point precision.
+
+**By integer range**: Values are sorted into ranges, where the bin sizes and ranges are integers.
+This is the most common way of binning.
+::::
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Rounding
+:::
+
+Select how floating-point values are rounded when being sorted into bins:
+
+**Round**: Rounds values up or down, based on their fractional part.
+
+**Round down**: Rounds values down (e.g., 4.3 and 4.9 are both sorted as 4).
+
+**Round up**: Rounds values up (e.g., 4.1 and 4.9 are both sorted as 5).
+
+**No rounding**: Values are sorted exactly as they are.
+::::
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Interval display
+:::
+
+**Cutpoints**: Places the bars between the axis lines, so that the ranges of the bins are shown on the sides of the bars.
+
+**Midpoints**: Places the bars on top of the axis lines, so that the bin's range (for integer ranges) or its midpoint is shown beneath the bar.
+::::
+
+**Bin labels**: Select the label shown on each bar:
+
+- **Value**: The number of items in the bin.
+- **Percentage**: The percentage of items in the bin.
+- **Value & percentage**: Both the number and percentage of items in the bin.
+- **No labels**: Labels are not shown.
+- **Name**, **Name & value**, **Name & percentage**: The bin's name, optionally with its number or percentage of items.
+
+**Show full range of values**: Check this option to include a place on the axis for every bin, even ones without any items.
+Unchecking this will put all the bars together, but the axis may have uneven steps.
+This only applies when binning by unique values.
+
+**Use neat intervals**: Check this option to round the bins' ranges to multiples of 5, 10, etc.
+This only applies when binning by integer range.
+
+**Suggested bin count (0 = auto)**: Enter the number of bins to create when binning by ranges.
+Enter 0 to have the program select the bin count.
+
+**Maximum bin count (0 = default)**: Enter the maximum number of bins.
+If binning by unique values and there are more unique values than this, then the values will be binned by range instead.
+
+**Start first bin at**: Enter the value that the first bin starts at.
+If no values fall into this bin, then an empty slot for it is still included, so that the axis begins at the requested value.
+
+### Showcasing {-}
+
+Showcasing draws attention to specific bins by making the other bins translucent (i.e., "ghosted").
+
+**Ghost opacity**: Enter the opacity of the bins that are not showcased.
+A value of 0 is fully transparent, whereas 255 is fully opaque.
+
+**Hide labels on non-showcased bars**: Check this option to remove the labels from the ghosted bars.
+
+**Showcase bins**: Add the bins to showcase.
+
+\newpage
+
+## Box Plot {#sec-box-plot-dlg}
+
+A box plot shows the spread of a measurement, including its median, quartiles, and outliers.
+It can show a single box or one box per group.
+The dataset should have one row per observation, holding the measurement and (optionally) the group that the observation belongs to.
+
+### Variables {-}
+
+**Continuous**: The measurement whose distribution is shown (e.g., test scores).
+
+**Group** (optional): Splits the measurements into separate boxes, one per unique value.
+Without it, a single box is shown.
+
+### Options {-}
+
+**Box effect**: Select how the boxes are drawn:
+
+- **Solid**: A solid color.
+- **Glassy**: A glass effect.
+- **Fade from Bottom to Top**: A color gradient, from the bottom to the top (or left to right).
+- **Fade from Top to Bottom**: A color gradient, from the top to the bottom (or right to left).
+- **Stipple Image**: Filled with a repeating image.
+  Click `r keys("Images...")` to select the image.
+- **Stipple Shape**: Filled with a repeating shape.
+  Click `r keys("Shape...")` to select the shape.
+- **Watercolor**: The box is warped and looks like it was filled in with watercolor paint (or a marker).
+- **Thick Watercolor**: The same as **Watercolor**, but with a second coat of paint, making it appear thicker.
+- **Common Image**: A portion of a larger image, shared by all the boxes.
+  Click `r keys("Images...")` to select the image.
+- **Image**: An image scaled down to fit the box.
+  Click `r keys("Images...")` to select the images.
+- **Marker**: A felt-marker look, where the outline is rough and slightly uneven and the interior is filled with diagonal hatching.
+- **Pencil**: A hand-drawn look, where the outline is a wobbly pencil line and the interior is filled with dense diagonal hatching.
+
+**Show all points**: Check this option to show all the data points on the boxes and whiskers.
+If unchecked, then only the outliers are shown.
+
+**Show labels**: Check this option to show labels on the middle points, the upper and lower quartiles, and the whiskers.
+
+**Show midpoint connection**: Check this option to draw a line connecting the middle points of each box.
+This only applies to plots with multiple boxes.
+
+\newpage
+
+## Stem-and-Leaf Plot {#sec-stem-and-leaf-dlg}
+
+A stem-and-leaf plot shows the distribution of a measurement while keeping every individual value.
+It can also compare two groups back to back.
+The dataset should have one row per observation, holding the value and (optionally) which of two groups the observation belongs to.
+
+### Variables {-}
+
+**Continuous**: The values to display.
+Each one is split into a stem and a leaf.
+
+**Grouping** (optional): Compares two groups side by side on a shared stem.
+This column must have exactly two unique values.
+
+## Heat Map {#sec-heat-map-dlg}
+
+A heat map shows a measurement as a grid of colored cells, so that high and low values stand out.
+The cells can be shown as one block or as one row per group.
+The dataset should have one row per cell, holding the measurement and (optionally) the group whose row the cell belongs to.
+
+### Variables {-}
+
+**Continuous**: The measurement that is color mapped.
+Each row becomes one cell, colored by its value.
+
+**Group** (optional): Arranges the cells into a separate row for each unique value (e.g., one row per student).
+
+### Options {-}
+
+These options only apply when a group is used.
+
+**Group column count**: Enter the number of columns to split the groups' rows into (1–5).
+
+**Show group headers**: Check this option to show a header above each column.
+
+**Group header prefix**: Enter the text shown at the start of each column's header.
+
+::: {.notesection data-latex=""}
+For the color scheme, the first colors are mapped to the lower values and the last colors are mapped to the higher values.
+A missing measurement is shown as a transparent cell with a red X in the middle.
+:::
+
+\newpage
+
+## Scatter Plot {#sec-scatter-plot-dlg}
+
+A scatter plot shows the relationship between two measurements, with one point per observation.
+An optional regression line can be drawn for each group.
+The dataset should have one row per observation, holding its X value, its Y value, and optionally the group that it belongs to.
+
+### Variables {-}
+
+**X (independent)**: The measurement plotted along the x axis (e.g., hours studied).
+
+**Y (dependent)**: The measurement plotted along the y axis (e.g., an exam score).
+
+**Grouping** (optional): Draws a separate series of points, with its own regression line, for each unique value.
+
+### Options {-}
+
+**Show regression lines**: Check this option to draw a regression line for each group.
+
+**Show confidence bands**: Check this option to draw a confidence band around each regression line.
+
+**Confidence level**: Enter the confidence level of the bands (e.g., 0.95).
+
+::: {.notesection data-latex=""}
+If either the X or Y value is missing, then the point is left out of both the plot and the regression calculation.
+:::
+
+## Bubble Plot {#sec-bubble-plot-dlg}
+
+A bubble plot is like a scatter plot, but with each point sized by a third measurement.
+The dataset should have one row per observation, holding its X value, Y value, and size value, and optionally the group that it belongs to.
+
+### Variables {-}
+
+**X (independent)**: The measurement plotted along the x axis (e.g., a city's population).
+
+**Y (dependent)**: The measurement plotted along the y axis (e.g., an average income).
+
+**Size (area)**: The measurement that controls how large each bubble is.
+The bubbles are scaled by area, with the smallest value getting the smallest bubble.
+
+**Grouping** (optional): Draws a separate series of bubbles, with its own regression line, for each unique value.
+
+### Options {-}
+
+**Show regression lines**, **Show confidence bands**, and **Confidence level**: The same as the [**Scatter Plot**](#sec-scatter-plot-dlg) options.
+
+**Min bubble radius**: Enter the radius of the smallest bubble.
+
+**Max bubble radius**: Enter the radius of the largest bubble.
+
+\newpage
+
+## Chernoff Faces Plot {#sec-chernoff-dlg}
+
+A Chernoff faces plot draws each observation as a face, with each variable controlling a facial feature.
+Similar observations look alike, and outliers stand out.
+The dataset should have one row per face, with a numeric column for each feature to vary.
+Values are scaled to the range of their column.
+
+### Variables {-}
+
+Assign a column to each feature that you want to vary.
+Features that are not assigned keep their default look, so only assign the variables you want to compare.
+
+- **Face width**: Narrow to wide.
+- **Face height**: Short to tall.
+- **Eye size**: Small to large.
+- **Eye position**: Low to high on the face.
+- **Eyebrow slant**: Angled down to angled up.
+- **Pupil position**: Looking left to looking right.
+- **Nose size**: Small to large.
+- **Mouth width**: Narrow to wide.
+- **Mouth curvature**: Frown to smile.
+- **Face color**: Pale to saturated, within the skin color range.
+- **Ear size**: Small to large.
+- **Hair style** (categorical): Each category is given its own hair style, in the order that the categories first appear.
+  This overrides the **Hair style** selected below.
+- **Hair addition** (categorical): Each category is given its own addition (e.g., a beard or mustache on male faces, a flower or star on female faces).
+
+### Appearance {-}
+
+**Gender**: Select whether the faces are drawn as **Female** or **Male**.
+
+**Hair style**: Select the hair style for the faces (e.g., *Comb-over*, *Flat top*, or *Long & curly*).
+
+**Skin color**: Select the two colors that define the range of skin colors.
+The **Face color** variable maps its values within this range.
+
+**Eye color**: Select the color of the eyes.
+
+**Hair color**: Select the color of the hair.
+
+**Lipstick color**: Select the color of the lipstick (female faces only).
+
+**Show labels (from ID column)**: Check this option to label each face (beneath it) with the dataset's ID column.
+
+**Use enhanced legend** (on the **Legend** page): Check this option to use a legend that includes a face graphic with its features labeled.
+
+::: {.notesection data-latex=""}
+At most 36 faces (a 6 × 6 grid) are drawn, so filter or aggregate larger datasets first.
+A missing feature value is drawn as the midpoint of that feature, and a row with every feature missing is not drawn.
+:::
+
+\newpage
+
+## Wilmarth Bridge Plot {#sec-wilmarth-bridge-dlg}
+
+A Wilmarth bridge plot shows observations fading out of a study over time as a grid of characters.
+The tapering silhouette traces the survival curve.
+The dataset should have one row per observation, with the period it entered the study and the period it exited.
+
+### Variables {-}
+
+**Label**: Identifies each observation, which is drawn as one column of cells.
+Rows sharing a label are combined into a single observation.
+
+**Entry** (optional): The period that the observation entered the study.
+If not provided, then the first period is used.
+This must be the same type (number or date) as **Exit**.
+
+**Exit**: The last period that the observation was observed, whether its event occurred or its follow-up simply ended.
+
+**Status** (optional): Whether the exit was an event or a censoring.
+A missing value is treated as an event.
+
+**Intermediate event** (optional): Marks an event that happens partway through the study.
+Cells from that point on are drawn in a different color.
+
+### Options {-}
+
+**Fade effect**: Select how an observation's ink weakens over its lifetime:
+
+- **None**: Constant ink.
+- **Remaining lifetime**: An observation is palest during the period just before it exits the study.
+- **Elapsed time**: Every row is fainter than the one above it, so the whole grid washes out from top to bottom.
+
+**Cell display**: Select how each observation's cells are drawn:
+
+- **Labels**: Each cell shows the observation's label.
+- **Dots (anonymized)**: Each cell shows a generic dot, which saves space and hides the observations' identities.
+
+**Survival statistics**: Select the survival statistics to show alongside the grid:
+
+- **None**: No statistics are shown.
+- **At-risk count**: The number of observations still at risk at each period.
+- **Survival percent**: The Kaplan-Meier survival estimate at each period.
+- **Both**: Both the at-risk count and the survival percent.
+
+**Terminal row label**: Enter a label to add an extra row after the last observed period, confirming the study's endpoint.
+Leave this empty to not include the row.
+The row is only drawn if every observation had an event (i.e., none are censored).
+
+**Intermediate event color**: Select the color used for an observation's cells from its intermediate event onward.
+
+**Show censored markers**: Check this option to mark censored observations with an arrow past their final cell.

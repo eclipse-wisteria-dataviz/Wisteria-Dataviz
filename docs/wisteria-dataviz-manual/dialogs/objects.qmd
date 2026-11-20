@@ -1,0 +1,292 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Pages & Objects {#sec-pages-objects}
+
+This chapter describes the dialogs for pages and for the items on the **Objects** tab.
+Along with the options described here, each object's editor includes the shared [**Placement**](#sec-editor-placement) and [**Accessibility**](#sec-editor-accessibility) pages.
+
+## Page {#sec-page-dlg}
+
+The **Page** dialog adds a page to the project or edits the current one.
+To open it, click the `r keys("Add")` or `r keys("Edit")` button in the **Pages** section of the **Home** tab.
+
+**Name**: Enter the page's name.
+
+**Layer**: Enter the layer that the page belongs to.
+When exporting to SVG, pages can be shown or hidden by layer (see [**Layer controls**](#sec-export-svg)).
+Leave this empty for the page to always be visible.
+
+:::: {.optionssection data-latex=""}
+::: {.optionssectiontitle data-latex=""}
+Position
+:::
+
+These options are only shown when adding a page.
+
+**Insert before**: Inserts the new page before the current page.
+
+**Insert after**: Inserts the new page after the current page.
+::::
+
+**Rows**: Enter the number of rows in the page's grid.
+
+**Columns**: Enter the number of columns in the page's grid.
+
+The page's grid is shown next to these options.
+Drag items from the gallery onto the grid's cells to add them to the page, or select an item in the grid to delete it.
+(The **Axis** item requires two or more graphs to already be on the page.)
+
+### Appearance {-}
+
+**Watermark**: Enter the text of a watermark to draw across the page.
+
+**Watermark color**: Select the color of the watermark.
+
+**Background color**: Select the page's background color.
+
+**Background image**: Select an image to draw across the page's background.
+Click `r keys("Clear")` to remove it.
+
+**Image opacity**: Enter the opacity of the background image.
+A value of 0 is fully transparent, whereas 255 is fully opaque.
+
+**Reset page numbering**: Check this option to restart the page numbering at 1 on this page when printed.
+
+\newpage
+
+## Label {#sec-label-dlg}
+
+A label is a block of text drawn on a page (e.g., a title or a note).
+To insert one, click the `r keys("Label")` button in the **Objects** section of the **Objects** tab.
+
+### Label {-}
+
+**Text**: Enter the label's text.
+
+### Font {-}
+
+**Font**: Select the label's font.
+
+**Font color**: Select the color of the text.
+
+**Include background color**: Check this option to fill the label's background, and select the color.
+
+**Alignment**: Select how the text is aligned (**Left**, **Right**, **Center**, **Justified**, or **Justified (at word)**).
+
+**Line spacing**: Enter the space between the lines of text.
+
+### Appearance {-}
+
+**Orientation**: Select whether the text is drawn **Horizontal** or **Vertical**.
+
+**Visual style**: Select a decorative style for the label's background (e.g., *Index card* or *Lined paper*).
+Select **None** to not use a style.
+
+**Box shape**: Select the shape of the label's box.
+The word balloon shapes draw the label as a speech balloon, with its tail pointing in the selected direction.
+
+**Box sizing**: Select how the label fits within its cell:
+
+- **Fill the entire area**: The label fills its cell.
+- **Shrink height to content**: The label is only as tall as its text.
+- **Shrink width to content**: The label is only as wide as its text.
+- **Shrink to content**: The label is only as large as its text.
+
+### Header {-}
+
+**Treat first line as header**: Check this option to format the first line of the text as a header.
+
+**Font**, **Color**, and **Alignment**: Select the header's font, color, and alignment.
+
+**Relative scaling**: Enter the size of the header, relative to the rest of the text.
+
+### Shapes {-}
+
+**Left Image**: Select an image to draw to the left of the text.
+Click `r keys("Clear")` to remove it.
+
+**Top Image**: Select an image to draw above the text.
+
+**Top Shapes**: Add shapes to draw above the text.
+
+**Top offset (image/shapes)**: Enter the space between the top image (or shapes) and the text.
+
+\newpage
+
+## KPI Card {#sec-kpi-card-dlg}
+
+A KPI (key performance indicator) card shows a big number with a caption beneath it (e.g., *1,204* above *Fall Enrollment*).
+To insert one, click the `r keys("KPI Card")` button in the **Objects** section of the **Objects** tab.
+
+A KPI card is a [label](#sec-label-dlg), with the number drawn as its bold header (at three times the size of the caption) and the caption as its text.
+Along with the **KPI Card** page, its editor includes the label's **Shapes** page, so that an image or shapes can be added above the number.
+
+::: {.notesection data-latex=""}
+This dialog is only used to insert a KPI card.
+To edit an existing KPI card, select it and click `r keys("Edit")`, which opens the [**Label**](#sec-label-dlg) dialog.
+:::
+
+### Content {-}
+
+**Big number**: Enter the value to display (e.g., *1,204*, *$45.2K*, or *-5%*).
+This is entered as text, so it can include any formatting, symbols, or abbreviations that you want shown.
+
+**Number color**: Select the color of the big number.
+The default is black.
+
+**Caption**: Enter the text shown beneath the number (e.g., *Fall Enrollment* or *Less than target*).
+This is optional.
+
+**Caption color**: Select the color of the caption.
+The default is black.
+
+::: {.tipsection data-latex=""}
+The big number and caption can include the project's constants (added from the **Constants** section of the **Data** tab), written in double braces (e.g., `{{PercentFemale}}`).
+These are replaced with the constants' values, so the card updates when the constants change.
+:::
+
+### Layout {-}
+
+**Preset**: Select the card's style:
+
+- **Standard**: Plain text, with no background.
+  The card fills its cell.
+- **Index Card**: The text is drawn on an index card, which shrinks to the width of the text.
+
+With either preset, the card is centered (horizontally and vertically) within its cell.
+This overrides the alignment options on the **Placement** page.
+
+**Number alignment**: Select how the big number is aligned (**Left**, **Right**, **Center**, **Justified**, or **Justified (at word)**).
+The default is **Center**.
+
+**Caption alignment**: Select how the caption is aligned.
+The default is **Center**.
+
+## Image {#sec-image-dlg}
+
+An image is a picture file drawn on a page.
+To insert an image, click the `r keys("Image")` button in the **Objects** section of the **Objects** tab.
+
+**Image files**: Select the image(s) to insert.
+If multiple images are selected, then they are stitched together into one image.
+
+**Stitch direction**: Select whether multiple images are stitched together **Horizontal** or **Vertical**.
+
+### Size {-}
+
+**Override default size**: Check this option to enter the image's size yourself.
+
+**Width** and **Height**: Enter the image's size.
+
+**Resize method**: Select how the image can be resized to fit its cell:
+
+- **Downscale or upscale**: The image can be shrunk or enlarged.
+- **Downscale only**: The image can only be shrunk.
+- **Upscale only**: The image can only be enlarged.
+- **No resize**: The image is drawn at its original size.
+
+### Effect {-}
+
+**Effect**: Select an effect to apply to the image (**None**, **Grayscale**, **Blur horizontal**, **Blur vertical**, **Sepia**, **Frosted glass**, **Oil painting**, or **Color balance**).
+
+\newpage
+
+## Shape {#sec-shape-dlg}
+
+A shape is a predefined icon (e.g., a star or an arrow) drawn on a page.
+To insert a shape, click the `r keys("Shape")` button in the **Objects** section of the **Objects** tab.
+
+**Shape**: Select the shape to draw (e.g., *Circle*, *Star*, *Graduation cap*, or *Warning road sign*).
+
+### Size {-}
+
+**Width** and **Height**: Enter the size of the shape.
+
+### Outline {-}
+
+**Color**: Select the color of the shape's outline.
+
+**Style**: Select the outline's style (**Solid**, **Dot**, **Long dash**, **Short dash**, or **Dot dash**).
+
+### Fill {-}
+
+Select the color and pattern to fill the shape with (e.g., **Transparent**, **Cross hatch**, or **Vertical hatch**).
+
+### Label {-}
+
+**Text**: Enter text to draw on the shape.
+
+### Fillable {-}
+
+**Make shape fillable**: Check this option to draw the shape as partially filled.
+The lower portion of the shape (its filled percentage) is drawn normally, and the rest is drawn translucent.
+
+**Fill percent**: Enter how much of the shape is filled.
+
+### Repeat {-}
+
+**Count**: Enter the number of times to draw the shape.
+
+### Alignment {-}
+
+**Horizontal**: Select how the shape is aligned horizontally (**Left aligned**, **Centered**, or **Right aligned**).
+
+**Vertical**: Select how the shape is aligned vertically (**Top aligned**, **Centered**, or **Bottom aligned**).
+
+## Common Axis {#sec-common-axis-dlg}
+
+A common axis is a single axis shared by several graphs in the same row (or column) of a page.
+To insert one, click the `r keys("Axis")` button in the **Objects** section of the **Objects** tab.
+This requires two or more graphs to already be on the page.
+
+When a common axis is created:
+
+- The axis is copied from the tallest graph's left axis (or the widest graph's bottom axis).
+- That axis's settings and scale are applied to the other graphs.
+- The graphs' own axis labels are turned off, since the common axis serves this purpose.
+
+**Axis type**: Select the type of axis to create (**Bottom X**, **Top X**, **Left Y**, or **Right Y**).
+
+**Connected Graphs**: Check the graphs that the axis is shared with.
+
+**Use common perpendicular axis**: Check this option to also give the graphs the same range on their other axis.
+For example, with a common x axis, all the graphs' y axes will use the lowest and highest values across all the graphs.
+This is useful for further homogenizing the graphs.
+
+The axis's appearance can be customized on the [**Axis**](#sec-editor-axes) page.
+
+## Spacers & Dividers {#sec-spacers-dividers}
+
+The `r keys("Spacer")` button inserts an empty item, which is useful for adding space between items on a page.
+
+The `r keys("Divider")` button inserts a horizontal or vertical line (single or double) between items.
+
+\newpage
+
+## Filtered Graph {#sec-filtered-graph-dlg}
+
+A filtered graph shows one of a set of graphs, based on a value in a column.
+In an exported HTML dashboard, a menu lets the viewer switch between the values.
+To insert one, click the `r keys("Filtered")` button in the **Graphs** section of the **Analyses** tab.
+
+**Dataset**: Select the dataset to filter.
+
+**Filter by**: Select the column whose values the graph is filtered by.
+
+**Show by default**: Select the value that is shown in the program and in most exports.
+
+**Graph**: Select the type of graph to create.
+Its editor will then be shown to set up the graph.
+
+::: {.notesection data-latex=""}
+Filtering only works in exported HTML dashboards.
+Filtered graphs that use the same dataset and column are linked together.
+The value chosen here will also be shown on the other linked graphs, including those on other pages.
+:::
+
+To change the value shown on a filtered graph in the program, select the graph and click the `r keys("Filter")` button in the **Sources** section of the **Data** tab.

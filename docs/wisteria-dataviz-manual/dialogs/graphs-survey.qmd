@@ -1,0 +1,133 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Survey Graphs {#sec-graphs-survey}
+
+The graphs in this chapter are available from the `r keys("Survey")` button in the **Graphs** section of the **Analyses** tab.
+Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
+
+## Likert Chart {#sec-likert-dlg}
+
+A Likert chart shows how respondents answered survey questions on an agreement scale.
+The responses are drawn as bars diverging from the neutral point into negative and positive responses.
+The dataset should have one row per respondent, with a column for each question holding that respondent's answer coded as a whole number.
+
+::: {.tipsection data-latex=""}
+Import the question columns as integers, and leave the missing data code as 0.
+Then, assign a label to each response value so that the legend can describe them.
+:::
+
+### Variables {-}
+
+**Questions**: The survey questions, each one a column of responses.
+Every question must use the same scale, and the number of points in that scale is deduced from the responses.
+The responses are coded as follows:
+
+- **0**: No response (a missing value is also counted as no response).
+- **1**: The most negative response.
+- **2** and up: The responses in between, up to the most positive one.
+
+Select the questions in the order that they should appear.
+
+**Group** (optional): Splits each question's responses into one bar per group (e.g., by gender).
+
+### Options {-}
+
+**Show response counts**: Check this option to show the number of responses next to each question.
+
+**Show percentages**: Check this option to show the percentages on the bars.
+
+**Show section headers**: Check this option to show headers above the response sections (e.g., *Positive* above the positive responses).
+
+**Adjust bar widths to respondent size**: Check this option to make each bar's width reflect its number of respondents.
+
+**Negative color**: Select the color of the negative responses.
+
+**Positive color**: Select the color of the positive responses.
+
+**Neutral color**: Select the color of the neutral responses.
+
+**No-response color**: Select the color of the responses with no answer.
+
+**Positive label**: Enter the header for the positive responses.
+
+**Negative label**: Enter the header for the negative responses.
+
+**No-response label**: Enter the header for the responses with no answer.
+
+**Question brackets**: Add brackets to title a range of related questions.
+Each bracket has a **Title**, a **Start question**, and an **End question**.
+
+\newpage
+
+## Word Cloud {#sec-word-cloud-dlg}
+
+A word cloud shows words sized by how often they occur, so that the most common ones stand out.
+The dataset should have a column of words, either with one row per occurrence or one row per word with a column of its frequency.
+
+### Variables {-}
+
+**Word**: The words to display.
+If no weight column is used, then each word is sized by how many times it appears.
+
+**Weight** (optional): The frequency count of the word in the same row.
+Use this when the words have already been tallied.
+
+### Options {-}
+
+**Minimum frequency**: Enter the lowest frequency that a word must have to be included.
+This is useful for leaving out rare words.
+
+**Maximum frequency**: Enter the highest frequency that a word can have to be included.
+This is useful for leaving out very common words.
+
+**Maximum words**: Enter the maximum number of words to show.
+Only the most frequent words are included.
+
+\newpage
+
+## Pro & Con Roadmap {#sec-procon-roadmap-dlg}
+
+A pro & con roadmap shows positive and negative sentiments as stops along a road, sized by how often each one was mentioned or by its total.
+The dataset should have one column of positive sentiments and one column of negative sentiments.
+Each can be paired with a column of totals; otherwise, the labels are counted.
+
+### Variables {-}
+
+**Positive (pros)**: The positive sentiments (e.g., strengths or advantages).
+Repeated labels are counted by frequency unless a values column is provided.
+
+**Positive values** (optional): Pre-calculated totals for each positive sentiment, used instead of counting how often it appears.
+
+**Negative (cons)**: The negative sentiments (e.g., weaknesses or drawbacks).
+Repeated labels are counted by frequency, unless a values column is provided.
+
+**Negative values** (optional): Pre-calculated totals for each negative sentiment, used instead of counting how often it appears.
+
+::: {.notesection data-latex=""}
+The positive and negative columns do not need to line up row by row, as each column is aggregated on its own.
+If the same label appears in both columns, then only its net total is shown, on the side with the larger count.
+Labels that cancel out are left off.
+:::
+
+### Options {-}
+
+**Minimum count**: Enter the lowest count (or total) that a sentiment must have to be included.
+
+**Positive label**: Enter the label describing the positive sentiments.
+
+**Negative label**: Enter the label describing the negative sentiments.
+
+**Marker labels**: Select how each stop is labeled (**Name only**, **Name and value**, or **Name and absolute value**).
+
+**Road color**: Select the color of the road.
+
+**Lane separator**: Select how the road's lanes are separated (**Single line**, **Double line**, or **None**).
+
+**Road stop theme**: Select how the stops are drawn (**Location markers** or **Road signs**).
+
+**Add explanatory caption**: Check this option to add a caption explaining how to read the roadmap.

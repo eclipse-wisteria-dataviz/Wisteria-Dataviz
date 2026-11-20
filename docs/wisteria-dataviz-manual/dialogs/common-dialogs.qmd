@@ -1,0 +1,64 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Common Dialogs {#sec-common-dialogs}
+
+The dialogs in this chapter are shown from several places in the program.
+
+## Select Variables {#sec-select-variables-dlg}
+
+The **Select Variables** dialog chooses which columns from a dataset a graph or transformation should use.
+For example, a graph may need a list of questions and an optional grouping variable.
+
+**Variables**: This list shows the dataset's columns that have not been selected yet.
+Each column's icon shows its data type:
+
+- **Continuous**: Floating-point numbers or a wide range of integers.
+- **Categorical**: Text.
+- **Discrete**: Integers that represent codes (e.g., *1* = *Agree*).
+- **Date**: Dates.
+- **Dichotomous (Categorical)**: Text with exactly two distinct values.
+- **Dichotomous (Discrete)**: Integers with exactly two distinct values.
+
+To the right of the **Variables** list are one or more lists for the variables the graph needs (e.g., **Questions** or **Grouping**).
+Lists marked **(optional)** can be left empty.
+
+To move a variable into a list, select it and click the right-arrow button next to that list.
+To move a variable back out of a list, select it and click the left-arrow button.
+You can also double-click a variable to move it into the next appropriate empty variable list.
+
+::: {.notesection data-latex=""}
+Some lists only accept one variable, and some only accept certain data types.
+A warning will be shown if you try to move a variable into a list that cannot accept it.
+Also, a variable must be moved into every required list before you can click `r keys("OK")`.
+:::
+
+## Sort Columns {#sec-sort-columns-dlg}
+
+The **Sort Columns** dialog sorts a list by one or more of its columns.
+
+**Sort by**: The first row in this grid is the column that the list is sorted by.
+
+**...then by**: The following rows are the columns used to sort rows that have the same value in the previous column.
+
+Double-click a field in the grid to add or edit a sort criterion.
+For each criterion, select the **Column** to sort by and its **Order**:
+
+- **Smallest to Largest**: Sorts the column in ascending order.
+- **Largest to Smallest**: Sorts the column in descending order.
+
+## View Item {#sec-view-item-dlg}
+
+The **View Item** dialog shows the contents of a row from a list.
+To open it, double-click a row in a list (or select the row and press `r keys("Enter")`).
+
+Each of the row's values is shown next to its **Column Name**.
+The values cannot be edited, but they can be selected so that portions of their text can be copied.
+
+**Copy**: Click this button to copy the selected values to the clipboard.
+
+**Close**: Click this button to close the dialog.
