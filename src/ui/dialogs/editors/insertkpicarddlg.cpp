@@ -23,6 +23,10 @@ namespace Wisteria::UI
         : InsertGraphDlg(canvas, reportBuilder, parent, caption, id, pos, size, style, editMode,
                          GraphDlgIncludeNone)
         {
+        if (editMode == EditMode::Insert)
+            {
+            SetLockScaling(true);
+            }
         CreateControls();
         FinalizeControls();
 
@@ -528,6 +532,15 @@ namespace Wisteria::UI
             kpiCard->GetLabel() = m_baseLabel.value();
             }
         auto& label = kpiCard->GetLabel();
+
+        if (GetLockScaling())
+            {
+            label.LockBoundingBoxScaling();
+            }
+        else
+            {
+            label.UnlockBoundingBoxScaling();
+            }
 
         // number
         auto numberFont{ m_numberFontPicker->GetSelectedFont() };

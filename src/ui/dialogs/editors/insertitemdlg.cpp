@@ -760,14 +760,7 @@ namespace Wisteria::UI
         // for scaling, use the original value cached when the item was placed on the
         // canvas, since the canvas overwrites GetScaling() with its own scaling
         m_scalingSpin->SetValue(item.GetGraphItemInfo().GetOriginalCanvasScaling());
-        if (const auto* label = dynamic_cast<const GraphItems::Label*>(&item))
-            {
-            m_lockScaling = label->IsBoundingBoxScalingLocked();
-            }
-        else
-            {
-            m_lockScaling = false;
-            }
+        m_lockScaling = item.IsBoundingBoxScalingLocked();
 
         // canvas margins
         m_marginTop = item.GetTopCanvasMargin();
