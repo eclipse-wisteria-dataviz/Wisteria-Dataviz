@@ -78,8 +78,9 @@ namespace Wisteria::UI
                 {
                 continue;
                 }
-            const wxString catName{ wxGetTranslation(
-                catNode->GetAttribute(L"name", wxString{}).Strip(wxString::both)) };
+            const wxString catName{
+                catNode->GetAttribute(L"name", wxString{}).Strip(wxString::both)
+            };
 
             // merge with a category of the same name (e.g., from a previously loaded file)
             auto catPos = std::ranges::find_if(m_categories, [&catName](const auto& cat)
@@ -112,7 +113,7 @@ namespace Wisteria::UI
                     phrase.Trim(true).Trim(false);
                     if (!phrase.empty())
                         {
-                        item.m_phrases.push_back(wxGetTranslation(phrase));
+                        item.m_phrases.push_back(phrase);
                         }
                     }
 
