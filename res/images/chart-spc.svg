@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
   <defs>
+    <linearGradient id="bandGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#70ad47;stop-opacity:0.35"/>
+      <stop offset="50%" style="stop-color:#70ad47;stop-opacity:0.55"/>
+      <stop offset="100%" style="stop-color:#70ad47;stop-opacity:0.35"/>
+    </linearGradient>
     <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
       <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
     </filter>
   </defs>
 
   <g filter="url(#dropShadow)">
-    <!-- Control chart: center line and control limits -->
-    <line x1="24" y1="56" x2="232" y2="56" stroke="#ce2029" stroke-width="5" stroke-dasharray="14,8"/>
-    <line x1="24" y1="200" x2="232" y2="200" stroke="#ce2029" stroke-width="5" stroke-dasharray="14,8"/>
-    <line x1="24" y1="128" x2="232" y2="128" stroke="#6b7a8f" stroke-width="5"/>
+    <!-- Control chart: in-control band, control limits, and center line -->
+    <rect x="24" y="56" width="208" height="144" fill="url(#bandGrad)"/>
+    <line x1="24" y1="56" x2="232" y2="56" stroke="#e0383f" stroke-width="7" stroke-dasharray="16,8"/>
+    <line x1="24" y1="200" x2="232" y2="200" stroke="#e0383f" stroke-width="7" stroke-dasharray="16,8"/>
+    <line x1="24" y1="128" x2="232" y2="128" stroke="#909090" stroke-width="6"/>
 
     <!-- Process measurements -->
-    <polyline points="40,140 76,104 112,150 148,98 184,142 220,70"
-              fill="none" stroke="#4a7fb5" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="40" cy="140" r="9" fill="#2f5f8f"/>
-    <circle cx="76" cy="104" r="9" fill="#2f5f8f"/>
-    <circle cx="112" cy="150" r="9" fill="#2f5f8f"/>
-    <circle cx="148" cy="98" r="9" fill="#2f5f8f"/>
-    <circle cx="184" cy="142" r="9" fill="#2f5f8f"/>
-    <circle cx="220" cy="70" r="9" fill="#ce2029"/>
+    <polyline points="40,140 76,104 112,150 148,98 184,142 220,40"
+              fill="none" stroke="#5b9bd5" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <g stroke="#ffffff" stroke-width="3">
+      <circle cx="40" cy="140" r="11" fill="#3a7bbf"/>
+      <circle cx="76" cy="104" r="11" fill="#3a7bbf"/>
+      <circle cx="112" cy="150" r="11" fill="#3a7bbf"/>
+      <circle cx="148" cy="98" r="11" fill="#3a7bbf"/>
+      <circle cx="184" cy="142" r="11" fill="#3a7bbf"/>
+      <circle cx="220" cy="40" r="12" fill="#e0383f"/>
+    </g>
   </g>
 </svg>
