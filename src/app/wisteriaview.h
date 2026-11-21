@@ -33,7 +33,8 @@
 namespace Wisteria::UI
     {
     class DatasetGridTable;
-    }
+    class TellMeCtrl;
+    } // namespace Wisteria::UI
 
 class WisteriaDoc;
 
@@ -657,6 +658,7 @@ class WisteriaView final : public wxView
     wxDocChildFrame* m_frame{ nullptr };
     wxSplitterWindow* m_splitter{ nullptr };
     wxAuiToolBar* m_quickToolbar{ nullptr };
+    Wisteria::UI::TellMeCtrl* m_tellMeCtrl{ nullptr };
     Wisteria::UI::SideBar* m_sideBar{ nullptr };
     wxPanel* m_workArea{ nullptr };
     wxRibbonButtonBar* m_datasetButtonBar{ nullptr };

@@ -11,6 +11,7 @@
 
 #include "../base/enums.h"
 #include <set>
+#include <vector>
 #include <wx/filename.h>
 #include <wx/gdicmn.h>
 #include <wx/print.h>
@@ -209,6 +210,20 @@ class AppSettings
         m_collapsedGalleryGroups = std::move(groups);
         }
 
+    // Tell Me options
+    //-------------------------
+
+    /// @returns Tell Me's recently used feature IDs, newest first.
+    [[nodiscard]]
+    const std::vector<wxString>& GetRecentTellMeIds() const noexcept
+        {
+        return m_recentTellMeIds;
+        }
+
+    /// @brief Sets Tell Me's recently used feature IDs.
+    /// @param ids The IDs, newest first.
+    void SetRecentTellMeIds(std::vector<wxString> ids) { m_recentTellMeIds = std::move(ids); }
+
   private:
     wxString m_settingsFilePath;
     bool m_appWindowMaximized{ true };
@@ -224,6 +239,7 @@ class AppSettings
     bool m_projectAutoRefresh{ false };
 
     std::set<Wisteria::GalleryGroup> m_collapsedGalleryGroups;
+    std::vector<wxString> m_recentTellMeIds;
     };
 
 #endif // WISTERIA_APPSETTINGS_H

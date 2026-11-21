@@ -12,6 +12,7 @@
 #include "../reporting/reportprintout.h"
 #include "../reporting/svgreportprintout.h"
 #include "../ui/controls/datasetgridtable.h"
+#include "../ui/controls/tellmectrl.h"
 #include "../ui/dialogs/datasetimportdlg.h"
 #include "../ui/dialogs/editors/filterablegraphdlg.h"
 #include "../ui/dialogs/editors/insert_bullet_chart_dlg.h"
@@ -207,7 +208,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame = new wxDocChildFrame(doc, this, wxGetApp().GetMainFrame(), wxID_ANY, title,
                                   wxDefaultPosition, windowSize, wxDEFAULT_FRAME_STYLE);
 
-    const std::array<wxAcceleratorEntry, 7> entries = {
+    std::vector<wxAcceleratorEntry> entries{
         wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F1, wxID_HELP),
         wxAcceleratorEntry(wxACCEL_CTRL, L'O', wxID_OPEN),
         wxAcceleratorEntry(wxACCEL_CTRL, L'S', ID_SAVE_PROJECT),
@@ -216,7 +217,50 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         wxAcceleratorEntry(wxACCEL_CTRL, L'V', wxID_PASTE),
         wxAcceleratorEntry(wxACCEL_NORMAL, WXK_F5, ID_REFRESH_ALL)
     };
+#if defined(__WXOSX__)
+    // Option+Q types a character on macOS, so use Control+Option+Q
+    entries.emplace_back(wxACCEL_RAW_CTRL | wxACCEL_ALT, L'Q', ID_TELL_ME);
+#else
+    entries.emplace_back(wxACCEL_ALT, L'Q', ID_TELL_ME);
+#endif
     m_frame->SetAcceleratorTable(wxAcceleratorTable(entries.size(), entries.data()));
+    m_frame->Bind(
+        wxEVT_MENU,
+        [this]([[maybe_unused]]
+               wxCommandEvent& event)
+        {
+            if (m_tellMeCtrl != nullptr)
+                {
+                m_tellMeCtrl->SetFocus();
+                m_tellMeCtrl->SelectAll();
+                m_tellMeCtrl->ShowResults();
+                }
+        },
+        ID_TELL_ME);
+
+    // enabled states for commands sent from outside the ribbon (e.g., Tell Me),
+    // matching UpdateDatasetButtonStates() and UpdateGraphButtonStates()
+    const std::initializer_list<std::pair<wxWindowID, std::function<bool()>>> commandStates{
+        { ID_EDIT_DATASET, [this]() { return IsDatasetSelected(); } },
+        { ID_EDIT_DATASET_FILE, [this]()
+          { return IsDatasetSelected() && GetSelectedDatasetLocalFilePath().has_value(); } },
+        { ID_DELETE_DATASET, [this]() { return IsDatasetSelected(); } },
+        { ID_EDIT_PAGE, [this]() { return IsPageSelected(); } },
+        { ID_DELETE_PAGE, [this]() { return IsPageSelected(); } },
+        { ID_REARRANGE_PAGES, [this]() { return m_pages.size() >= 2; } },
+        { wxID_COPY, [this]() { return IsCanvasItemSelected(); } },
+        { wxID_PASTE, [this]() { return IsPageSelected(); } },
+        { ID_EDIT_ITEM, [this]() { return IsCanvasItemSelected(); } },
+        { ID_DELETE_ITEM, [this]() { return IsCanvasItemSelected(); } },
+        { ID_GOTO_DATASOURCE, [this]() { return IsGraphSelected(); } },
+        { ID_FILTER_CHOICES, [this]() { return GetSelectedFilterableGraph() != nullptr; } }
+    };
+    for (const auto& [commandId, isEnabled] : commandStates)
+        {
+        m_frame->Bind(
+            wxEVT_UPDATE_UI, [isEnabled](wxUpdateUIEvent& event) { event.Enable(isEnabled()); },
+            commandId);
+        }
 
 #if defined(__WXOSX__)
     // macOS always shows a native menu bar, which mirrors the project's ribbon
@@ -266,7 +310,14 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_quickToolbar->AddTool(wxID_PRINT, _(L"Print the selected window"),
                             wxArtProvider::GetBitmapBundle(wxART_PRINT, wxART_BUTTON));
     m_quickToolbar->Realize();
-    sizer->Add(m_quickToolbar, wxSizerFlags{}.Expand());
+
+    // quick access toolbar and Tell Me share the row above the ribbon
+    auto* quickAccessSizer = new wxBoxSizer(wxHORIZONTAL);
+    quickAccessSizer->Add(m_quickToolbar, wxSizerFlags{ 1 }.Expand());
+    m_tellMeCtrl =
+        new Wisteria::UI::TellMeCtrl(panel, wxID_ANY, nullptr, m_frame->FromDIP(wxSize{ 300, -1 }));
+    quickAccessSizer->Add(m_tellMeCtrl, wxSizerFlags{}.CentreVertical().Border(wxRIGHT));
+    sizer->Add(quickAccessSizer, wxSizerFlags{}.Expand());
 
     auto* ribbon = wxGetApp().CreateRibbon(panel, doc);
     sizer->Add(ribbon, wxSizerFlags{}.Expand());

@@ -104,8 +104,8 @@ namespace Wisteria::UI
                 item.m_helpTopic =
                     itemNode->GetAttribute(L"help", wxString{}).Strip(wxString::both);
 
-                wxStringTokenizer tokenizer(itemNode->GetAttribute(L"phrases", wxString{}), L";",
-                                            wxTOKEN_STRTOK);
+                wxStringTokenizer tokenizer{ itemNode->GetAttribute(L"phrases", wxString{}), L";",
+                                             wxTOKEN_STRTOK };
                 while (tokenizer.HasMoreTokens())
                     {
                     wxString phrase{ tokenizer.GetNextToken() };
@@ -125,6 +125,11 @@ namespace Wisteria::UI
                     {
                     wxLogDebug(L"Tell Me: duplicate feature ID '%s' skipped.", item.m_id);
                     continue;
+                    }
+                if (!m_actions.contains(item.m_id) && item.m_helpTopic.empty())
+                    {
+                    wxLogDebug(L"Tell Me: feature ID '%s' has no registered action or help topic.",
+                               item.m_id);
                     }
 
                 auto& items = m_categories[catIndex].m_items;
@@ -353,7 +358,7 @@ namespace Wisteria::UI
     std::vector<wxString> TellMeRegistry::TokenizeQuery(const wxString& query)
         {
         std::vector<wxString> tokens;
-        wxStringTokenizer tokenizer(query.Lower(), L" \t\r\n", wxTOKEN_STRTOK);
+        wxStringTokenizer tokenizer{ query.Lower(), L" \t\r\n", wxTOKEN_STRTOK };
         while (tokenizer.HasMoreTokens())
             {
             tokens.push_back(tokenizer.GetNextToken());

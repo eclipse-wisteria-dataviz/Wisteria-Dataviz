@@ -673,6 +673,9 @@ stage_file(${WISTERIA_APP} "LICENSE")
 # Datasets
 stage_directory(${WISTERIA_APP} "datasets" "datasets" CLEAN)
 
+# Tell Me entries
+stage_file(${WISTERIA_APP} "res/tellme.xml")
+
 # Menu bar resources (used on macOS)
 if(APPLE)
     stage_file(${WISTERIA_APP} "res/menus/main-menubar.xrc" "menus")

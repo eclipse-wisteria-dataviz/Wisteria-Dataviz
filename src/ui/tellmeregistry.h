@@ -115,8 +115,7 @@ namespace Wisteria::UI
         /// @returns @c true if the XML was loaded.
         bool LoadXml(const wxString& filePath);
 
-        /// @brief Removes all loaded categories and features.
-        /// @note Registered actions are kept.
+        /// @brief Removes all loaded categories and features, but keeps registered actions.
         void ClearItems()
             {
             m_categories.clear();

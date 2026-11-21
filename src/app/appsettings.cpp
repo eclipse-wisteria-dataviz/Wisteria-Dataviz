@@ -101,7 +101,7 @@ bool AppSettings::LoadSettingsFile(const wxString& filePath)
         else if (child->GetName() == L"object-gallery")
             {
             m_collapsedGalleryGroups.clear();
-            wxStringTokenizer tokenizer(child->GetAttribute(L"collapsed-groups"), L",");
+            wxStringTokenizer tokenizer{ child->GetAttribute(L"collapsed-groups"), L"," };
             while (tokenizer.HasMoreTokens())
                 {
                 long groupId{ 0 };
@@ -109,6 +109,15 @@ bool AppSettings::LoadSettingsFile(const wxString& filePath)
                     {
                     m_collapsedGalleryGroups.insert(static_cast<Wisteria::GalleryGroup>(groupId));
                     }
+                }
+            }
+        else if (child->GetName() == L"tell-me")
+            {
+            m_recentTellMeIds.clear();
+            wxStringTokenizer tokenizer{ child->GetAttribute(L"recent"), L"," };
+            while (tokenizer.HasMoreTokens())
+                {
+                m_recentTellMeIds.push_back(tokenizer.GetNextToken());
                 }
             }
         }
@@ -170,6 +179,19 @@ bool AppSettings::SaveSettingsFile(const wxString& filePath)
         }
     galleryNode->AddAttribute(L"collapsed-groups", collapsedGroupsCsv);
     root->AddChild(galleryNode);
+
+    auto* tellMeNode = new wxXmlNode(wxXML_ELEMENT_NODE, L"tell-me");
+    wxString recentIdsCsv;
+    for (const auto& id : m_recentTellMeIds)
+        {
+        if (!recentIdsCsv.empty())
+            {
+            recentIdsCsv += L",";
+            }
+        recentIdsCsv += id;
+        }
+    tellMeNode->AddAttribute(L"recent", recentIdsCsv);
+    root->AddChild(tellMeNode);
 
     if (!doc.Save(filePath))
         {

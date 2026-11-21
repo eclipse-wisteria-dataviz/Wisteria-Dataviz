@@ -320,6 +320,15 @@ class WisteriaApp final : public Wisteria::UI::BaseApp
     // binds the Developer tab's commands to the main frame
     void BindScriptCommands();
 
+    /// @returns The names of the application's command IDs (as used in the
+    ///     menu bar resources and the Tell Me XML), and their IDs.
+    [[nodiscard]]
+    static const std::vector<std::pair<const wchar_t*, wxWindowID>>& GetCommandIdNames();
+
+    /// @brief Connects Tell Me's features to the application's commands
+    ///     and loads the feature file.
+    void RegisterTellMeFeatures();
+
 #if defined(__WXOSX__)
     /// @brief Seeds XRC's string-to-ID table with the application's command IDs,
     ///     so that the menu bar resources can refer to them by name.
@@ -578,6 +587,9 @@ constexpr wxWindowID ID_SCRIPT_WINDOW{ wxID_HIGHEST + 276 };
 // Help tab ribbon buttons
 constexpr wxWindowID ID_HELP_MANUAL{ wxID_HIGHEST + 277 };
 constexpr wxWindowID ID_RELEASE_NOTES{ wxID_HIGHEST + 278 };
+
+// focuses the Tell Me search box
+constexpr wxWindowID ID_TELL_ME{ wxID_HIGHEST + 279 };
 
 wxDECLARE_APP(WisteriaApp);
 

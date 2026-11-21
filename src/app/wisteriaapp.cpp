@@ -96,106 +96,141 @@ wxBitmapBundle WisteriaArtProvider::CreateBitmapBundle(const wxArtID& id, const 
                wxArtProvider::CreateBitmapBundle(id, client, size);
     }
 
+//-------------------------------------------
+const std::vector<std::pair<const wchar_t*, wxWindowID>>& WisteriaApp::GetCommandIdNames()
+    {
+    static const std::vector<std::pair<const wchar_t*, wxWindowID>> COMMAND_IDS{
+        // main frame
+        { L"ID_OPTIONS", ID_OPTIONS },
+        { L"ID_LOG_TAB_SAVE", ID_LOG_TAB_SAVE },
+        { L"ID_LOG_TAB_PRINT", ID_LOG_TAB_PRINT },
+        { L"ID_LOG_TAB_COPY", ID_LOG_TAB_COPY },
+        { L"ID_LOG_TAB_SELECT_ALL", ID_LOG_TAB_SELECT_ALL },
+        { L"ID_LOG_TAB_SORT", ID_LOG_TAB_SORT },
+        { L"ID_LOG_TAB_CLEAR", ID_LOG_TAB_CLEAR },
+        { L"ID_LOG_TAB_REFRESH", ID_LOG_TAB_REFRESH },
+        { L"ID_LOG_TAB_REALTIME_UPDATE", ID_LOG_TAB_REALTIME_UPDATE },
+        { L"ID_LOG_TAB_VERBOSE", ID_LOG_TAB_VERBOSE },
+        { L"ID_HELP_MANUAL", ID_HELP_MANUAL },
+        { L"ID_RELEASE_NOTES", ID_RELEASE_NOTES },
+
+        // project frames
+        { L"ID_SAVE_PROJECT", ID_SAVE_PROJECT },
+        { L"ID_SAVE_PROJECT_AS", ID_SAVE_PROJECT_AS },
+        { L"ID_REFRESH_ALL", ID_REFRESH_ALL },
+        { L"ID_AUTO_REFRESH", ID_AUTO_REFRESH },
+        { L"ID_INSERT_PAGE", ID_INSERT_PAGE },
+        { L"ID_EDIT_PAGE", ID_EDIT_PAGE },
+        { L"ID_DELETE_PAGE", ID_DELETE_PAGE },
+        { L"ID_REARRANGE_PAGES", ID_REARRANGE_PAGES },
+        { L"ID_INSERT_DATASET", ID_INSERT_DATASET },
+        { L"ID_EDIT_DATASET", ID_EDIT_DATASET },
+        { L"ID_EDIT_DATASET_FILE", ID_EDIT_DATASET_FILE },
+        { L"ID_DELETE_DATASET", ID_DELETE_DATASET },
+        { L"ID_SUBSET_DATASET", ID_SUBSET_DATASET },
+        { L"ID_JOIN_DATASET", ID_JOIN_DATASET },
+        { L"ID_PIVOT_WIDER", ID_PIVOT_WIDER },
+        { L"ID_PIVOT_LONGER", ID_PIVOT_LONGER },
+        { L"ID_ADD_CONSTANT", ID_ADD_CONSTANT },
+        { L"ID_DELETE_CONSTANT", ID_DELETE_CONSTANT },
+        { L"ID_GOTO_DATASOURCE", ID_GOTO_DATASOURCE },
+        { L"ID_FILTER_CHOICES", ID_FILTER_CHOICES },
+        { L"ID_NEW_FILTERED_GRAPH", ID_NEW_FILTERED_GRAPH },
+        { L"ID_NEW_LABEL", ID_NEW_LABEL },
+        { L"ID_NEW_KPI_CARD", ID_NEW_KPI_CARD },
+        { L"ID_NEW_IMAGE", ID_NEW_IMAGE },
+        { L"ID_NEW_SHAPE", ID_NEW_SHAPE },
+        { L"ID_NEW_COMMON_AXIS", ID_NEW_COMMON_AXIS },
+        { L"ID_NEW_SPACER", ID_NEW_SPACER },
+        { L"ID_NEW_DIVIDER_HORIZONTAL_SINGLE", ID_NEW_DIVIDER_HORIZONTAL_SINGLE },
+        { L"ID_NEW_DIVIDER_HORIZONTAL_DOUBLE", ID_NEW_DIVIDER_HORIZONTAL_DOUBLE },
+        { L"ID_NEW_DIVIDER_VERTICAL_SINGLE", ID_NEW_DIVIDER_VERTICAL_SINGLE },
+        { L"ID_NEW_DIVIDER_VERTICAL_DOUBLE", ID_NEW_DIVIDER_VERTICAL_DOUBLE },
+        { L"ID_EDIT_ITEM", ID_EDIT_ITEM },
+        { L"ID_DELETE_ITEM", ID_DELETE_ITEM },
+        { L"ID_VIEW_LOG_REPORT", ID_VIEW_LOG_REPORT },
+        { L"ID_SCRIPT_WINDOW", ID_SCRIPT_WINDOW },
+        { L"ID_PROJECT_SETTINGS", ID_PROJECT_SETTINGS },
+        { L"ID_HTML_EXPORT", ID_HTML_EXPORT },
+        { L"ID_SVG_EXPORT", ID_SVG_EXPORT },
+        { L"ID_PDF_EXPORT", ID_PDF_EXPORT },
+        { L"ID_PPTX_EXPORT", ID_PPTX_EXPORT },
+        { L"ID_ODP_EXPORT", ID_ODP_EXPORT },
+
+        // graphs
+        { L"ID_NEW_BARCHART", ID_NEW_BARCHART },
+        { L"ID_NEW_PIECHART", ID_NEW_PIECHART },
+        { L"ID_NEW_LINEPLOT", ID_NEW_LINEPLOT },
+        { L"ID_NEW_MULTI_SERIES_LINEPLOT", ID_NEW_MULTI_SERIES_LINEPLOT },
+        { L"ID_NEW_TABLE", ID_NEW_TABLE },
+        { L"ID_NEW_SANKEY_DIAGRAM", ID_NEW_SANKEY_DIAGRAM },
+        { L"ID_NEW_WAFFLE_CHART", ID_NEW_WAFFLE_CHART },
+        { L"ID_NEW_RACETRACK_CHART", ID_NEW_RACETRACK_CHART },
+        { L"ID_NEW_NIGHTINGALE_ROSE_CHART", ID_NEW_NIGHTINGALE_ROSE_CHART },
+        { L"ID_NEW_DUBOIS_SPIRAL_CHART", ID_NEW_DUBOIS_SPIRAL_CHART },
+        { L"ID_NEW_DUELING_PIE_CHART", ID_NEW_DUELING_PIE_CHART },
+        { L"ID_NEW_PICTOGRAPH", ID_NEW_PICTOGRAPH },
+        { L"ID_NEW_CHOROPLETH_MAP", ID_NEW_CHOROPLETH_MAP },
+        { L"ID_NEW_GANTT", ID_NEW_GANTT },
+        { L"ID_NEW_CANDLESTICK", ID_NEW_CANDLESTICK },
+        { L"ID_NEW_BULLET_CHART", ID_NEW_BULLET_CHART },
+        { L"ID_NEW_WATERFALL_CHART", ID_NEW_WATERFALL_CHART },
+        { L"ID_NEW_FUNNEL_CHART", ID_NEW_FUNNEL_CHART },
+        { L"ID_NEW_HISTOGRAM", ID_NEW_HISTOGRAM },
+        { L"ID_NEW_BOXPLOT", ID_NEW_BOXPLOT },
+        { L"ID_NEW_STEMANDLEAF", ID_NEW_STEMANDLEAF },
+        { L"ID_NEW_HEATMAP", ID_NEW_HEATMAP },
+        { L"ID_NEW_SCATTERPLOT", ID_NEW_SCATTERPLOT },
+        { L"ID_NEW_BUBBLEPLOT", ID_NEW_BUBBLEPLOT },
+        { L"ID_NEW_CHERNOFFPLOT", ID_NEW_CHERNOFFPLOT },
+        { L"ID_NEW_WILMARTH_BRIDGE_PLOT", ID_NEW_WILMARTH_BRIDGE_PLOT },
+        { L"ID_NEW_ISHIKAWA_DIAGRAM", ID_NEW_ISHIKAWA_DIAGRAM },
+        { L"ID_NEW_RUN_CHART", ID_NEW_RUN_CHART },
+        { L"ID_NEW_LIKERT", ID_NEW_LIKERT },
+        { L"ID_NEW_WORD_CLOUD", ID_NEW_WORD_CLOUD },
+        { L"ID_NEW_PROCON_ROADMAP", ID_NEW_PROCON_ROADMAP },
+        { L"ID_NEW_SCALE_CHART", ID_NEW_SCALE_CHART },
+        { L"ID_NEW_WCURVE", ID_NEW_WCURVE },
+        { L"ID_NEW_LR_ROADMAP", ID_NEW_LR_ROADMAP },
+        { L"ID_NEW_WIN_LOSS_SPARKLINE", ID_NEW_WIN_LOSS_SPARKLINE },
+    };
+    return COMMAND_IDS;
+    }
+
+//-------------------------------------------
+void WisteriaApp::RegisterTellMeFeatures()
+    {
+    auto& registry = GetTellMeRegistry();
+    for (const auto& [name, id] : GetCommandIdNames())
+        {
+        registry.RegisterCommand(name, id);
+        }
+
+    const std::initializer_list<std::pair<const wchar_t*, wxWindowID>> stockIds{
+        { L"wxID_NEW", wxID_NEW },    { L"wxID_OPEN", wxID_OPEN },   { L"wxID_PRINT", wxID_PRINT },
+        { L"wxID_COPY", wxID_COPY },  { L"wxID_PASTE", wxID_PASTE }, { L"wxID_HELP", wxID_HELP },
+        { L"wxID_ABOUT", wxID_ABOUT }
+    };
+    for (const auto& [name, id] : stockIds)
+        {
+        registry.RegisterCommand(name, id);
+        }
+
+    LoadTellMeFile(L"tellme.xml");
+    if (m_appSettings != nullptr)
+        {
+        registry.SetRecentIds(m_appSettings->GetRecentTellMeIds());
+        }
+    }
+
 #if defined(__WXOSX__)
 //-------------------------------------------
 void WisteriaApp::RegisterMenuBarItemIds()
     {
-    const auto seedId = [](const char* name, const wxWindowID id)
-    { wxXmlResource::GetXRCID(wxString::FromAscii(name), id); };
-
-    // main frame
-    seedId("ID_OPTIONS", ID_OPTIONS);
-    seedId("ID_LOG_TAB_SAVE", ID_LOG_TAB_SAVE);
-    seedId("ID_LOG_TAB_PRINT", ID_LOG_TAB_PRINT);
-    seedId("ID_LOG_TAB_COPY", ID_LOG_TAB_COPY);
-    seedId("ID_LOG_TAB_SELECT_ALL", ID_LOG_TAB_SELECT_ALL);
-    seedId("ID_LOG_TAB_SORT", ID_LOG_TAB_SORT);
-    seedId("ID_LOG_TAB_CLEAR", ID_LOG_TAB_CLEAR);
-    seedId("ID_LOG_TAB_REFRESH", ID_LOG_TAB_REFRESH);
-    seedId("ID_LOG_TAB_REALTIME_UPDATE", ID_LOG_TAB_REALTIME_UPDATE);
-    seedId("ID_LOG_TAB_VERBOSE", ID_LOG_TAB_VERBOSE);
-    seedId("ID_HELP_MANUAL", ID_HELP_MANUAL);
-    seedId("ID_RELEASE_NOTES", ID_RELEASE_NOTES);
-
-    // project frames
-    seedId("ID_SAVE_PROJECT", ID_SAVE_PROJECT);
-    seedId("ID_SAVE_PROJECT_AS", ID_SAVE_PROJECT_AS);
-    seedId("ID_REFRESH_ALL", ID_REFRESH_ALL);
-    seedId("ID_AUTO_REFRESH", ID_AUTO_REFRESH);
-    seedId("ID_INSERT_PAGE", ID_INSERT_PAGE);
-    seedId("ID_EDIT_PAGE", ID_EDIT_PAGE);
-    seedId("ID_DELETE_PAGE", ID_DELETE_PAGE);
-    seedId("ID_REARRANGE_PAGES", ID_REARRANGE_PAGES);
-    seedId("ID_INSERT_DATASET", ID_INSERT_DATASET);
-    seedId("ID_EDIT_DATASET", ID_EDIT_DATASET);
-    seedId("ID_EDIT_DATASET_FILE", ID_EDIT_DATASET_FILE);
-    seedId("ID_DELETE_DATASET", ID_DELETE_DATASET);
-    seedId("ID_SUBSET_DATASET", ID_SUBSET_DATASET);
-    seedId("ID_JOIN_DATASET", ID_JOIN_DATASET);
-    seedId("ID_PIVOT_WIDER", ID_PIVOT_WIDER);
-    seedId("ID_PIVOT_LONGER", ID_PIVOT_LONGER);
-    seedId("ID_ADD_CONSTANT", ID_ADD_CONSTANT);
-    seedId("ID_DELETE_CONSTANT", ID_DELETE_CONSTANT);
-    seedId("ID_GOTO_DATASOURCE", ID_GOTO_DATASOURCE);
-    seedId("ID_FILTER_CHOICES", ID_FILTER_CHOICES);
-    seedId("ID_NEW_FILTERED_GRAPH", ID_NEW_FILTERED_GRAPH);
-    seedId("ID_NEW_LABEL", ID_NEW_LABEL);
-    seedId("ID_NEW_KPI_CARD", ID_NEW_KPI_CARD);
-    seedId("ID_NEW_IMAGE", ID_NEW_IMAGE);
-    seedId("ID_NEW_SHAPE", ID_NEW_SHAPE);
-    seedId("ID_NEW_COMMON_AXIS", ID_NEW_COMMON_AXIS);
-    seedId("ID_NEW_SPACER", ID_NEW_SPACER);
-    seedId("ID_NEW_DIVIDER_HORIZONTAL_SINGLE", ID_NEW_DIVIDER_HORIZONTAL_SINGLE);
-    seedId("ID_NEW_DIVIDER_HORIZONTAL_DOUBLE", ID_NEW_DIVIDER_HORIZONTAL_DOUBLE);
-    seedId("ID_NEW_DIVIDER_VERTICAL_SINGLE", ID_NEW_DIVIDER_VERTICAL_SINGLE);
-    seedId("ID_NEW_DIVIDER_VERTICAL_DOUBLE", ID_NEW_DIVIDER_VERTICAL_DOUBLE);
-    seedId("ID_EDIT_ITEM", ID_EDIT_ITEM);
-    seedId("ID_DELETE_ITEM", ID_DELETE_ITEM);
-    seedId("ID_VIEW_LOG_REPORT", ID_VIEW_LOG_REPORT);
-    seedId("ID_SCRIPT_WINDOW", ID_SCRIPT_WINDOW);
-    seedId("ID_PROJECT_SETTINGS", ID_PROJECT_SETTINGS);
-    seedId("ID_HTML_EXPORT", ID_HTML_EXPORT);
-    seedId("ID_SVG_EXPORT", ID_SVG_EXPORT);
-    seedId("ID_PDF_EXPORT", ID_PDF_EXPORT);
-    seedId("ID_PPTX_EXPORT", ID_PPTX_EXPORT);
-    seedId("ID_ODP_EXPORT", ID_ODP_EXPORT);
-
-    // graphs
-    seedId("ID_NEW_BARCHART", ID_NEW_BARCHART);
-    seedId("ID_NEW_PIECHART", ID_NEW_PIECHART);
-    seedId("ID_NEW_LINEPLOT", ID_NEW_LINEPLOT);
-    seedId("ID_NEW_MULTI_SERIES_LINEPLOT", ID_NEW_MULTI_SERIES_LINEPLOT);
-    seedId("ID_NEW_TABLE", ID_NEW_TABLE);
-    seedId("ID_NEW_SANKEY_DIAGRAM", ID_NEW_SANKEY_DIAGRAM);
-    seedId("ID_NEW_WAFFLE_CHART", ID_NEW_WAFFLE_CHART);
-    seedId("ID_NEW_RACETRACK_CHART", ID_NEW_RACETRACK_CHART);
-    seedId("ID_NEW_NIGHTINGALE_ROSE_CHART", ID_NEW_NIGHTINGALE_ROSE_CHART);
-    seedId("ID_NEW_DUBOIS_SPIRAL_CHART", ID_NEW_DUBOIS_SPIRAL_CHART);
-    seedId("ID_NEW_DUELING_PIE_CHART", ID_NEW_DUELING_PIE_CHART);
-    seedId("ID_NEW_PICTOGRAPH", ID_NEW_PICTOGRAPH);
-    seedId("ID_NEW_CHOROPLETH_MAP", ID_NEW_CHOROPLETH_MAP);
-    seedId("ID_NEW_GANTT", ID_NEW_GANTT);
-    seedId("ID_NEW_CANDLESTICK", ID_NEW_CANDLESTICK);
-    seedId("ID_NEW_BULLET_CHART", ID_NEW_BULLET_CHART);
-    seedId("ID_NEW_WATERFALL_CHART", ID_NEW_WATERFALL_CHART);
-    seedId("ID_NEW_FUNNEL_CHART", ID_NEW_FUNNEL_CHART);
-    seedId("ID_NEW_HISTOGRAM", ID_NEW_HISTOGRAM);
-    seedId("ID_NEW_BOXPLOT", ID_NEW_BOXPLOT);
-    seedId("ID_NEW_STEMANDLEAF", ID_NEW_STEMANDLEAF);
-    seedId("ID_NEW_HEATMAP", ID_NEW_HEATMAP);
-    seedId("ID_NEW_SCATTERPLOT", ID_NEW_SCATTERPLOT);
-    seedId("ID_NEW_BUBBLEPLOT", ID_NEW_BUBBLEPLOT);
-    seedId("ID_NEW_CHERNOFFPLOT", ID_NEW_CHERNOFFPLOT);
-    seedId("ID_NEW_WILMARTH_BRIDGE_PLOT", ID_NEW_WILMARTH_BRIDGE_PLOT);
-    seedId("ID_NEW_ISHIKAWA_DIAGRAM", ID_NEW_ISHIKAWA_DIAGRAM);
-    seedId("ID_NEW_RUN_CHART", ID_NEW_RUN_CHART);
-    seedId("ID_NEW_LIKERT", ID_NEW_LIKERT);
-    seedId("ID_NEW_WORD_CLOUD", ID_NEW_WORD_CLOUD);
-    seedId("ID_NEW_PROCON_ROADMAP", ID_NEW_PROCON_ROADMAP);
-    seedId("ID_NEW_SCALE_CHART", ID_NEW_SCALE_CHART);
-    seedId("ID_NEW_WCURVE", ID_NEW_WCURVE);
-    seedId("ID_NEW_LR_ROADMAP", ID_NEW_LR_ROADMAP);
-    seedId("ID_NEW_WIN_LOSS_SPARKLINE", ID_NEW_WIN_LOSS_SPARKLINE);
+    for (const auto& [name, id] : GetCommandIdNames())
+        {
+        wxXmlResource::GetXRCID(name, id);
+        }
     }
 
 //-------------------------------------------
@@ -279,6 +314,7 @@ bool WisteriaApp::OnInit()
     Wisteria::Settings::SetReportEditingEnabled(true);
     GetResourceManager().LoadArchive(FindResourceFile(L"res.wad"));
     wxArtProvider::Push(new WisteriaArtProvider{});
+    RegisterTellMeFeatures();
 
 #if defined(__WXOSX__)
     // macOS always shows a native menu bar, so the ribbon's commands are mirrored
@@ -1531,6 +1567,7 @@ int WisteriaApp::OnExit()
     {
     if (m_appSettings != nullptr)
         {
+        GetAppSettings()->SetRecentTellMeIds(GetTellMeRegistry().GetRecentIds());
         GetAppSettings()->SaveSettingsFile();
         }
 
