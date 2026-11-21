@@ -1,5 +1,7 @@
 #include "../../src/ui/tellmeregistry.h"
 #include <catch2/catch_test_macros.hpp>
+#include <wx/file.h>
+#include <wx/filename.h>
 #include <wx/sstream.h>
 
 using namespace Wisteria::UI;
@@ -65,6 +67,25 @@ TEST_CASE("Tell Me registry loads XML", "[tellmeregistry]")
     CHECK(registry.GetItem(2, 0).m_helpTopic == L"online/bar.html");
     CHECK_FALSE(registry.FindItem(L"empty").has_value());
     CHECK_FALSE(registry.FindItem(L"missing").has_value());
+    }
+
+TEST_CASE("Tell Me registry loads XML from a file", "[tellmeregistry]")
+    {
+    const wxString filePath{ wxFileName::CreateTempFileName(L"tellme") };
+    REQUIRE_FALSE(filePath.empty());
+        {
+        wxFile file{ filePath, wxFile::write };
+        REQUIRE(file.IsOpened());
+        REQUIRE(file.Write(FEATURE_XML, wxConvUTF8));
+        }
+
+    TellMeRegistry registry;
+    CHECK(registry.LoadXml(filePath));
+    CHECK(registry.GetCategories().size() == 3);
+    CHECK(registry.FindItem(L"bar").has_value());
+    wxRemoveFile(filePath);
+
+    CHECK_FALSE(registry.LoadXml(wxString{ L"missing-tellme-file.xml" }));
     }
 
 TEST_CASE("Tell Me registry rejects bad XML", "[tellmeregistry]")

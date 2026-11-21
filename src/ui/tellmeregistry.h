@@ -20,6 +20,8 @@
 #include <wx/stream.h>
 #include <wx/wx.h>
 
+class wxXmlDocument;
+
 namespace Wisteria::UI
     {
     /// @brief A feature loaded from a Tell Me XML file.
@@ -107,6 +109,12 @@ namespace Wisteria::UI
         /// @returns @c true if the XML was loaded.
         bool LoadXml(wxInputStream& stream);
 
+        /// @brief Loads categories and features from a Tell Me XML file.
+        /// @details Loaded items are appended to any already loaded.
+        /// @param filePath The path to the XML file.
+        /// @returns @c true if the XML was loaded.
+        bool LoadXml(const wxString& filePath);
+
         /// @brief Removes all loaded categories and features.
         /// @note Registered actions are kept.
         void ClearItems()
@@ -182,6 +190,7 @@ namespace Wisteria::UI
             std::optional<wxWindowID> m_commandId;
             };
 
+        bool LoadDocument(const wxXmlDocument& doc);
         [[nodiscard]]
         static std::vector<wxString> TokenizeQuery(const wxString& query);
         [[nodiscard]]

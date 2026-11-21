@@ -8,6 +8,7 @@
 
 #include "tellmeregistry.h"
 #include <algorithm>
+#include <wx/filename.h>
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
@@ -45,7 +46,24 @@ namespace Wisteria::UI
             wxLogWarning(L"Unable to load Tell Me XML.");
             return false;
             }
+        return LoadDocument(doc);
+        }
 
+    //---------------------------------------------------
+    bool TellMeRegistry::LoadXml(const wxString& filePath)
+        {
+        wxXmlDocument doc;
+        if (!wxFileName::FileExists(filePath) || !doc.Load(filePath))
+            {
+            wxLogWarning(L"Unable to load Tell Me XML file '%s'.", filePath);
+            return false;
+            }
+        return LoadDocument(doc);
+        }
+
+    //---------------------------------------------------
+    bool TellMeRegistry::LoadDocument(const wxXmlDocument& doc)
+        {
         const auto* root = doc.GetRoot();
         if (root == nullptr || root->GetName() != L"tellme")
             {
