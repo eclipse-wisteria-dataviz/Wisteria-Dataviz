@@ -33,7 +33,9 @@ namespace Wisteria::UI
         wxString m_iconPath;
         /// @brief Help topic to open (used when no action is registered).
         wxString m_helpTopic;
-        /// @brief Phrases that describe the item. The first one is its display name.
+        /// @brief The item's display name.
+        wxString m_name;
+        /// @brief Other phrases that search for the item.
         std::vector<wxString> m_phrases;
         };
 
@@ -53,11 +55,12 @@ namespace Wisteria::UI
         size_t m_categoryIndex{ 0 };
         /// @brief Index of the feature within its category.
         size_t m_itemIndex{ 0 };
-        /// @brief Index of the best-matching phrase.
-        size_t m_phraseIndex{ 0 };
+        /// @brief Index of the best-matching search phrase,
+        ///     or @c std::nullopt if the display name matched best.
+        std::optional<size_t> m_phraseIndex;
         /// @brief The match score (higher is better).
         int m_score{ 0 };
-        /// @brief Matched (start, length) ranges in the item's display name (its first phrase),
+        /// @brief Matched (start, length) ranges in the item's display name,
         ///     sorted and non-overlapping.
         std::vector<std::pair<size_t, size_t>> m_highlights;
         };

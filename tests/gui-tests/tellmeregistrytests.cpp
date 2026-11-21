@@ -11,19 +11,19 @@ static const wxString FEATURE_XML{
     L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
     L"<tellme>"
     L"  <category name=\"Insert Graph\">"
-    L"    <item id=\"bar\" icon=\"images/bar.svg\" phrases=\"Bar chart; Insert bar chart ;;Column chart\"/>"
-    L"    <item id=\"line\" icon=\"images/line.svg\" phrases=\"Line plot;Insert line chart\"/>"
-    L"    <item id=\"pie\" phrases=\"Pie chart\"/>"
-    L"    <item id=\"unregistered\" phrases=\"Chart without an action\"/>"
-    L"    <item phrases=\"No ID\"/>"
-    L"    <item id=\"empty\" phrases=\" ; \"/>"
+    L"    <item id=\"bar\" icon=\"images/bar.svg\" name=\" Bar chart \" phrases=\" Insert bar chart ;;Column chart\"/>"
+    L"    <item id=\"line\" icon=\"images/line.svg\" name=\"Line plot\" phrases=\"Insert line chart\"/>"
+    L"    <item id=\"pie\" name=\"Pie chart\"/>"
+    L"    <item id=\"unregistered\" name=\"Chart without an action\"/>"
+    L"    <item name=\"No ID\"/>"
+    L"    <item id=\"empty\" name=\" \" phrases=\"Phrases without a name\"/>"
     L"  </category>"
     L"  <category name=\"Data\">"
-    L"    <item id=\"import\" phrases=\"Import data;Open a dataset\"/>"
-    L"    <item id=\"bar\" phrases=\"Duplicate ID\"/>"
+    L"    <item id=\"import\" name=\"Import data\" phrases=\"Open a dataset\"/>"
+    L"    <item id=\"bar\" name=\"Duplicate ID\"/>"
     L"  </category>"
     L"  <category name=\"Help\">"
-    L"    <item id=\"help-bar\" help=\"online/bar.html\" phrases=\"Bar chart help\"/>"
+    L"    <item id=\"help-bar\" help=\"online/bar.html\" name=\"Bar chart help\"/>"
     L"  </category>"
     L"</tellme>"
 };
@@ -47,7 +47,7 @@ TEST_CASE("Tell Me registry loads XML", "[tellmeregistry]")
     CHECK(categories[1].m_name == L"Data");
     CHECK(categories[2].m_name == L"Help");
 
-    // features with no ID or no phrases are skipped
+    // features with no ID or no name are skipped
     REQUIRE(categories[0].m_items.size() == 4);
     // duplicate IDs are skipped
     REQUIRE(categories[1].m_items.size() == 1);
@@ -58,11 +58,13 @@ TEST_CASE("Tell Me registry loads XML", "[tellmeregistry]")
     CHECK(barPos->second == 0);
     const auto& bar = registry.GetItem(barPos->first, barPos->second);
     CHECK(bar.m_iconPath == L"images/bar.svg");
+    CHECK(bar.m_name == L"Bar chart");
     // phrases are trimmed and empty ones dropped
-    REQUIRE(bar.m_phrases.size() == 3);
-    CHECK(bar.m_phrases[0] == L"Bar chart");
-    CHECK(bar.m_phrases[1] == L"Insert bar chart");
-    CHECK(bar.m_phrases[2] == L"Column chart");
+    REQUIRE(bar.m_phrases.size() == 2);
+    CHECK(bar.m_phrases[0] == L"Insert bar chart");
+    CHECK(bar.m_phrases[1] == L"Column chart");
+    // search phrases are optional
+    CHECK(registry.GetItem(0, 2).m_phrases.empty());
 
     CHECK(registry.GetItem(2, 0).m_helpTopic == L"online/bar.html");
     CHECK_FALSE(registry.FindItem(L"empty").has_value());
@@ -103,7 +105,7 @@ TEST_CASE("Tell Me registry merges categories across files", "[tellmeregistry]")
     TellMeRegistry registry;
     LoadTestRegistry(registry);
     wxStringInputStream extra{
-        L"<tellme><category name=\"Data\"><item id=\"export\" phrases=\"Export data\"/>"
+        L"<tellme><category name=\"Data\"><item id=\"export\" name=\"Export data\"/>"
         L"</category></tellme>"
     };
     REQUIRE(registry.LoadXml(extra));
@@ -150,12 +152,13 @@ TEST_CASE("Tell Me registry search", "[tellmeregistry]")
 
     SECTION("One result per feature, using its best phrase")
         {
-        // "bar chart" and "insert bar chart" both match; the prefix match wins
+        // The name "Bar chart" and the phrase "Insert bar chart" both match.
+        // The name's prefix match wins.
         const auto results = registry.Search(L"bar");
         REQUIRE(results.m_bestMatch.has_value());
         const auto& best = results.m_bestMatch.value();
         CHECK(registry.GetItem(best.m_categoryIndex, best.m_itemIndex).m_id == L"bar");
-        CHECK(best.m_phraseIndex == 0);
+        CHECK_FALSE(best.m_phraseIndex.has_value());
         CHECK(best.m_score == 80);
         for (const auto& [catIndex, group] : results.m_groups)
             {
@@ -194,7 +197,7 @@ TEST_CASE("Tell Me registry search", "[tellmeregistry]")
         REQUIRE(results.m_bestMatch.has_value());
         const auto& best = results.m_bestMatch.value();
         // "Bar chart": "bar" and "ba" overlap at 0, "chart" at 4
-        REQUIRE(best.m_phraseIndex == 0);
+        REQUIRE_FALSE(best.m_phraseIndex.has_value());
         REQUIRE(best.m_highlights.size() == 2);
         CHECK(best.m_highlights[0] == std::pair<size_t, size_t>{ 0, 3 });
         CHECK(best.m_highlights[1] == std::pair<size_t, size_t>{ 4, 5 });
@@ -207,14 +210,14 @@ TEST_CASE("Tell Me registry search", "[tellmeregistry]")
         const auto& best = results.m_bestMatch.value();
         CHECK(registry.GetItem(best.m_categoryIndex, best.m_itemIndex).m_id == L"bar");
         // "Insert bar chart" matched, but only "bar" is in "Bar chart"
-        CHECK(best.m_phraseIndex == 1);
+        CHECK(best.m_phraseIndex == std::optional<size_t>{ 0 });
         REQUIRE(best.m_highlights.size() == 1);
         CHECK(best.m_highlights[0] == std::pair<size_t, size_t>{ 0, 3 });
 
         // a synonym that shares no words with the display name highlights nothing
         const auto synonym = registry.Search(L"column");
         REQUIRE(synonym.m_bestMatch.has_value());
-        CHECK(synonym.m_bestMatch->m_phraseIndex == 2);
+        CHECK(synonym.m_bestMatch->m_phraseIndex == std::optional<size_t>{ 1 });
         CHECK(synonym.m_bestMatch->m_highlights.empty());
         }
 

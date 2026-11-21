@@ -104,6 +104,7 @@ namespace Wisteria::UI
                 item.m_iconPath = itemNode->GetAttribute(L"icon", wxString{}).Strip(wxString::both);
                 item.m_helpTopic =
                     itemNode->GetAttribute(L"help", wxString{}).Strip(wxString::both);
+                item.m_name = itemNode->GetAttribute(L"name", wxString{}).Strip(wxString::both);
 
                 wxStringTokenizer tokenizer{ itemNode->GetAttribute(L"phrases", wxString{}), L";",
                                              wxTOKEN_STRTOK };
@@ -117,9 +118,9 @@ namespace Wisteria::UI
                         }
                     }
 
-                if (item.m_id.empty() || item.m_phrases.empty())
+                if (item.m_id.empty() || item.m_name.empty())
                     {
-                    wxLogDebug(L"Tell Me: skipping feature missing an ID or phrases.");
+                    wxLogDebug(L"Tell Me: skipping feature missing an ID or name.");
                     continue;
                     }
                 if (m_itemLookup.contains(item.m_id))
@@ -237,7 +238,12 @@ namespace Wisteria::UI
             joinedQuery += token;
             }
 
-        // best-matching phrase for each runnable feature
+        // the display name, or the search phrase at the given index
+        const auto matchedText = [](const TellMeItemInfo& item,
+                                    const std::optional<size_t>& phraseIndex) -> const wxString&
+        { return phraseIndex.has_value() ? item.m_phrases[phraseIndex.value()] : item.m_name; };
+
+        // best-matching name or phrase for each runnable feature
         std::vector<TellMeMatch> matches;
         for (size_t catIndex = 0; catIndex < m_categories.size(); ++catIndex)
             {
@@ -250,18 +256,18 @@ namespace Wisteria::UI
                     continue;
                     }
                 std::optional<TellMeMatch> bestPhraseMatch;
-                for (size_t phraseIndex = 0; phraseIndex < item.m_phrases.size(); ++phraseIndex)
-                    {
-                    const auto score =
-                        ScorePhrase(item.m_phrases[phraseIndex], tokens, joinedQuery);
+                const auto scoreText = [&](const std::optional<size_t>& phraseIndex)
+                {
+                    const wxString& text{ matchedText(item, phraseIndex) };
+                    const auto score = ScorePhrase(text, tokens, joinedQuery);
                     if (!score.has_value())
                         {
-                        continue;
+                        return;
                         }
                     if (!bestPhraseMatch.has_value() || score.value() > bestPhraseMatch->m_score ||
                         (score.value() == bestPhraseMatch->m_score &&
-                         item.m_phrases[phraseIndex].length() <
-                             item.m_phrases[bestPhraseMatch->m_phraseIndex].length()))
+                         text.length() <
+                             matchedText(item, bestPhraseMatch->m_phraseIndex).length()))
                         {
                         TellMeMatch phraseMatch;
                         phraseMatch.m_categoryIndex = catIndex;
@@ -270,11 +276,16 @@ namespace Wisteria::UI
                         phraseMatch.m_score = score.value();
                         bestPhraseMatch = std::move(phraseMatch);
                         }
+                };
+                scoreText(std::nullopt);
+                for (size_t phraseIndex = 0; phraseIndex < item.m_phrases.size(); ++phraseIndex)
+                    {
+                    scoreText(phraseIndex);
                     }
                 if (bestPhraseMatch.has_value())
                     {
-                    // the display name is shown, even if a different phrase matched
-                    bestPhraseMatch->m_highlights = HighlightTokens(item.m_phrases.front(), tokens);
+                    // the display name is shown, even if a search phrase matched
+                    bestPhraseMatch->m_highlights = HighlightTokens(item.m_name, tokens);
                     matches.push_back(std::move(bestPhraseMatch.value()));
                     }
                 }
@@ -286,10 +297,10 @@ namespace Wisteria::UI
             }
 
         // rank by score, then by shorter phrase (stable, so ties keep XML order)
-        const auto phraseLength = [this](const TellMeMatch& match)
+        const auto phraseLength = [this, &matchedText](const TellMeMatch& match)
         {
-            return GetItem(match.m_categoryIndex, match.m_itemIndex)
-                .m_phrases[match.m_phraseIndex]
+            return matchedText(GetItem(match.m_categoryIndex, match.m_itemIndex),
+                               match.m_phraseIndex)
                 .length();
         };
         std::ranges::stable_sort(matches,

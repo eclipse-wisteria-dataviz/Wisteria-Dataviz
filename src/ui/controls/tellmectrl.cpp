@@ -339,7 +339,7 @@ namespace Wisteria::UI
         const auto& item = GetRegistry()->GetItem(match.m_categoryIndex, match.m_itemIndex);
         ResultRow row;
         row.m_type = RowType::Item;
-        row.m_text = item.m_phrases.front();
+        row.m_text = item.m_name;
         row.m_itemId = item.m_id;
         row.m_icon = GetIcon(item.m_iconPath);
         row.m_highlights = match.m_highlights;
