@@ -3,12 +3,16 @@
 ## {{< var PROGRAM_NAME >}} 1.2.3 {-}
 ***
 
+### Enhancements {-}
+
 - Added KPI Card
 - Choropleth now supports median
 - Added **Tell Me** search box for finding and running commands
 
 ## {{< var PROGRAM_NAME >}} 1.2.2 {-}
 ***
+
+### Enhancements {-}
 
 - Added Run Chart
 - Added Ishikawa Diagram
@@ -37,12 +41,16 @@
 ## {{< var PROGRAM_NAME >}} 1.2.1 {-}
 ***
 
+### Enhancements {-}
+
 - Major improvements to stand-alone application
 - Added styling option to pie charts to make them look like:
   - Glazed donuts
 
 ## {{< var PROGRAM_NAME >}} 1.2.0 {-}
 ***
+
+### Enhancements {-}
 
 - Alpha release of stand-alone application (`WisteriaDV` target)
 - Added Chernoff Faces Plot
@@ -56,12 +64,17 @@
   - Star
 - Improved *Excel* importer performance
 - Likert chart now implicitly uses default response labels on legend (if none are found in dataset)
-- Fixed group-label display in heatmaps when data are not sorted by groups
 - Added new dataset join operations (inner join and new left joins)
 - Added SVG accessibility support
 
+### Bug Fixes {-}
+
+- Fixed group-label display in heatmaps when data are not sorted by groups
+
 ## {{< var PROGRAM_NAME >}} 1.1.0 {-}
 ***
+
+### Enhancements {-}
 
 - Added Scatter Plot
 - Added Bubble Plot
@@ -90,24 +103,33 @@
 ## {{< var PROGRAM_NAME >}} 1.0.7 {-}
 ***
 
+### Enhancements {-}
+
 - Added styling options to pie charts to make them look like:
   - Clock faces
   - Cheese pizzas
   - Pepperoni pizzas
   - Coffee rings
-- Fixed pie chart `UseColorLabels()` function
 - Added feature to waffle chart to override the number of rows in the waffle
 - Compatibility change: `IconShape::Dollar` has been renamed to \
   `IconShape::HundredDollarBill`
+
+### Bug Fixes {-}
+
+- Fixed pie chart `UseColorLabels()` function
 - Fixed **Save** option not working in canvas context menu
 
 ## {{< var PROGRAM_NAME >}} 1.0.6 {-}
 ***
 
+### Enhancements {-}
+
 - Improved image scaling when loaded via JSON file
 
 ## {{< var PROGRAM_NAME >}} 1.0.5 {-}
 ***
+
+### Enhancements {-}
 
 - Added Waffle Chart
 - Added new shapes:
@@ -121,6 +143,8 @@
 ## {{< var PROGRAM_NAME >}} 1.0.4 {-}
 ***
 
+### Enhancements {-}
+
 - Added support for tied games to Win/Loss Sparkline
 - Made legend for Win/Loss Sparkline more dynamic
 - Improved layout of images embedded in reports
@@ -132,30 +156,32 @@
 ## {{< var PROGRAM_NAME >}} 1.0.3 {-}
 ***
 
+### Enhancements {-}
+
 - Added Win/Loss Sparkline
 - Expanded W-Curve plot to handle 12 levels
 - Reference lines can now show their labels on the axes
 - Shapes can now be added above a label
 - Made color of canvas watermark customizable
-- Fixed annotations to support floating-point positioning
 - Improved layout of watermarks and rotated text
 - Improved deduction of discrete columns when importing data
 - Exposed more functionality to JSON syntax
 - Expanded and improved the documentation
 
+### Bug Fixes {-}
+
+- Fixed annotations to support floating-point positioning
+
 ## {{< var PROGRAM_NAME >}} 1.0.2 {-}
 ***
+
+### Enhancements {-}
 
 - Added Multi-series Line Plot
   (this allows for plotting multiple data series on a line plot)
 - Added sword and Immaculate Heart with sword shapes
-- Likert Charts
-  - Now uses guillemets instead of Unicode arrows
-    (this fixes display issues where some fonts don't support those characters)
-  - Arrow icons are now customizable for Likert Charts
-  - Fixed bar labels erroneously being shown
+- Arrow icons are now customizable for Likert Charts
 - Added showcasing option to Lix Gauge
-- Fixed axis brackets in Lix Gauge to be a consistent color
 - Added showcasing option to German Lix Gauge
 - Improved auto-contrasting graphs with black backgrounds
 - All shapes now support non-opaque brushes
@@ -163,8 +189,18 @@
 - Added `Tint()` function
 - Optimizations for bar sorting (bar charts)
 
+### Bug Fixes {-}
+
+- Likert Charts
+  - Now uses guillemets instead of Unicode arrows
+    (this fixes display issues where some fonts don't support those characters)
+  - Fixed bar labels erroneously being shown
+- Fixed axis brackets in Lix Gauge to be a consistent color
+
 ## {{< var PROGRAM_NAME >}} 1.0.1 {-}
 ***
+
+### Enhancements {-}
 
 - Added Scale Chart
 - Added INFLESZ Scale
@@ -176,23 +212,15 @@
 - Shapes:
   - Added dollar bill and monitor shapes
   - Force car shape to always be dark blue
-  - Fixed appearance of some shapes for horizontal bars
   - Improve appearance of some shapes
 - Bar charts:
   - Apply opacity to showcased bars' stipple shapes
   - Added option to bar chart showcasing to keep the labels on ghosted bars
   - Bar chart bin labels will now use the precision that the parallel axis uses
-  - Fixed sorting bars with a set of defined labels
-  - Fixed decals in vertical bar charts
-  - Fixed bar chart blocks getting rounded down to integers
   - Improve bar labels to not overlap so often
   - Improve making space for larger bin labels
-  - Don't return suffix label for bin labels if not displayed
   - Vertically center bar block decals in vertical bar charts
-  - Allow finding bar blocks when scale is reversed
   - Added reverse arrow bar shape (bar charts)
-- Fixed W-Curve Plot axis labels not being readable
-- Fixed `AdjustRangeToLabels()` to work with reversed scale
 - Don't automatically add margins to common axes
 - Ghost middle labels on pie slice if slice is ghosted
 - Added ghosting support to:
@@ -206,10 +234,24 @@
 - Use reverse arrow on Gantt chart if axis is reversed
 - Added currency formatting support to Axes (Windows only)
 - Added `Wisteria::GetLibraryVersionInfo()`
+
+### Bug Fixes {-}
+
+- Fixed appearance of some shapes for horizontal bars
+- Bar charts:
+  - Fixed sorting bars with a set of defined labels
+  - Fixed decals in vertical bar charts
+  - Fixed bar chart blocks getting rounded down to integers
+  - Don't return suffix label for bin labels if not displayed
+  - Allow finding bar blocks when scale is reversed
+- Fixed W-Curve Plot axis labels not being readable
+- Fixed `AdjustRangeToLabels()` to work with reversed scale
 - Fixed doxygen not being included in `ALL` *CMake* build
 
 ## {{< var PROGRAM_NAME >}} 1.0 {-}
 ***
+
+### Enhancements {-}
 
 - Added JSON syntax for building multi-page reports
 - Added numerous vector-based shapes to use as stipples and icons
@@ -217,6 +259,8 @@
 
 ## {{< var PROGRAM_NAME >}} 0.9.1 {-}
 ***
+
+### Enhancements {-}
 
 - Added Linear Regression Roadmap
 - Added Pros & Cons Roadmap
@@ -226,10 +270,13 @@
 - Added common axis builder helper class
 - Line plots can now use categorical or continuous columns for x-axis values
 - Added support for aligning pie chart labels flush left or right against the plotting area
-- Fixed pie charts being drawn outside of their plot area under certain circumstances
 - Setting background color of canvas titles now stretches them across the canvas,
   resulting in a banner appearance
 - Improved layout of legends appearing above or below a graph
+
+### Bug Fixes {-}
+
+- Fixed pie charts being drawn outside of their plot area under certain circumstances
 
 ## {{< var PROGRAM_NAME >}} 0.9 {-}
 ***
