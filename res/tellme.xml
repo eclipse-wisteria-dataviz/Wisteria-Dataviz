@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Tell Me ("What would you like to do?") entries.
+     Each item's ID is a command name registered by the application,
+     or a help topic (help="...") opened from the help folder.
+     The name is the item's display name and should start with a verb (e.g., "Insert bar chart").
+     Phrases are optional search synonyms, separated by semicolons.
+     A description is optional text shown under the name (with a larger icon). It is not searched. -->
+<tellme>
+  <category name="Actions">
+    <!-- graphs -->
+    <item id="ID_NEW_BARCHART" icon="images/barchart.svg"
+          name="Insert bar chart"
+          description="Compare values across categories"
+          phrases="Bar chart;Column chart;Horizontal bar chart;Stacked bar chart;Grouped bar chart"/>
+    <item id="ID_NEW_PIECHART" icon="images/piechart.svg"
+          name="Insert pie chart"
+          description="Show how parts make up a whole"
+          phrases="Pie chart;Donut chart;Doughnut chart"/>
+    <item id="ID_NEW_LINEPLOT" icon="images/lineplot.svg"
+          name="Insert line plot"
+          description="Show trends over time"
+          phrases="Line plot;Line chart;Line graph;Trend line;Time series"/>
+    <item id="ID_NEW_MULTI_SERIES_LINEPLOT" icon="images/lineplot.svg"
+          name="Insert multi-series line plot"
+          description="Compare trends for several groups"
+          phrases="Multiple line series;Compare lines"/>
+    <item id="ID_NEW_TABLE" icon="images/table.svg"
+          name="Insert table"
+          description="Show data in rows and columns"
+          phrases="Table;Data table;Crosstab"/>
+    <item id="ID_NEW_SANKEY_DIAGRAM" icon="images/sankey.svg"
+          name="Insert Sankey diagram"
+          description="Show how amounts flow between groups"
+          phrases="Sankey diagram;Flow diagram"/>
+    <item id="ID_NEW_WAFFLE_CHART" icon="images/waffle.svg"
+          name="Insert waffle chart"
+          description="Show proportions as a grid of squares"
+          phrases="Waffle chart;Square pie chart"/>
+    <item id="ID_NEW_RACETRACK_CHART" icon="images/racetrack.svg"
+          name="Insert race track chart"
+          description="Compare values as circular lanes"
+          phrases="Race track chart;Racetrack chart;Radial bar chart"/>
+    <item id="ID_NEW_NIGHTINGALE_ROSE_CHART" icon="images/rose.svg"
+          name="Insert Nightingale rose chart"
+          description="Compare values as wedges around a circle"
+          phrases="Rose chart;Coxcomb chart;Polar area chart"/>
+    <item id="ID_NEW_DUBOIS_SPIRAL_CHART" icon="images/dubois-spiral.svg"
+          name="Insert Du Bois spiral chart"
+          description="Show values as one path ending in a spiral"
+          phrases="Spiral chart"/>
+    <item id="ID_NEW_DUELING_PIE_CHART" icon="images/dueling-pie.svg"
+          name="Insert dueling pie chart"
+          description="Compare how two groups divide the same categories"
+          phrases="Dueling pie chart;Compare two pie charts"/>
+    <item id="ID_NEW_PICTOGRAPH" icon="images/pictograph.svg"
+          name="Insert pictograph"
+          description="Show values as sized icons"
+          phrases="Pictograph;Icon chart;Pictogram"/>
+    <item id="ID_NEW_CHOROPLETH_MAP" icon="images/choropleth.svg"
+          name="Insert choropleth map"
+          description="Shade regions of a map by value"
+          phrases="Map;Geographic map;Shaded map;Country map;State map;Region map"/>
+    <item id="ID_NEW_WORD_CLOUD" icon="images/wordcloud.svg"
+          name="Insert word cloud"
+          description="Show how often words appear"
+          phrases="Word cloud;Tag cloud;Word frequency;Text frequency"/>
+    <item id="ID_NEW_FILTERED_GRAPH" icon="images/filtered-graph.svg"
+          name="Insert filtered graph"
+          description="Build a graph for each value of a column"
+          phrases="Filtered graph;Graph for each value;Filter a graph"/>
+    <item id="ID_NEW_GANTT" icon="images/gantt.svg"
+          name="Insert Gantt chart"
+          description="Show tasks and their schedules"
+          phrases="Gantt chart;Project schedule;Timeline"/>
+    <item id="ID_NEW_CANDLESTICK" icon="images/candlestick.svg"
+          name="Insert candlestick plot"
+          description="Show daily prices over time"
+          phrases="Candlestick chart;Stock chart;OHLC chart"/>
+    <item id="ID_NEW_BULLET_CHART" icon="images/bulletchart.svg"
+          name="Insert bullet chart"
+          description="Compare KPIs against their targets"
+          phrases="Bullet chart;Target chart"/>
+    <item id="ID_NEW_WATERFALL_CHART" icon="images/waterfallchart.svg"
+          name="Insert waterfall chart"
+          description="Show how gains and losses add up"
+          phrases="Waterfall chart;Bridge chart"/>
+    <item id="ID_NEW_FUNNEL_CHART" icon="images/funnel.svg"
+          name="Insert funnel chart"
+          description="Show how values narrow through stages"
+          phrases="Funnel chart;Sales funnel"/>
+    <item id="ID_NEW_HISTOGRAM" icon="images/histogram.svg"
+          name="Insert histogram"
+          description="Show how values are distributed"
+          phrases="Histogram;Distribution;Frequency chart;Bins;Bell curve"/>
+    <item id="ID_NEW_BOXPLOT" icon="images/boxplot.svg"
+          name="Insert box plot"
+          description="Show quartiles, spread, and outliers"
+          phrases="Box plot;Box and whisker plot;Quartiles;Outliers"/>
+    <item id="ID_NEW_STEMANDLEAF" icon="images/stem-leaf.svg"
+          name="Insert stem-and-leaf plot"
+          description="Show a distribution using the digits of values"
+          phrases="Stem-and-leaf plot;Stem and leaf plot;Stem plot"/>
+    <item id="ID_NEW_HEATMAP" icon="images/heatmap.svg"
+          name="Insert heat map"
+          description="Show values as a grid of colors"
+          phrases="Heat map;Heatmap;Calendar heat map;Matrix"/>
+    <item id="ID_NEW_SCATTERPLOT" icon="images/scatterplot.svg"
+          name="Insert scatter plot"
+          description="Show the relationship between two variables"
+          phrases="Scatter plot;Scatterplot;Correlation;Regression line"/>
+    <item id="ID_NEW_BUBBLEPLOT" icon="images/bubbleplot.svg"
+          name="Insert bubble plot"
+          description="Show three variables using sized points"
+          phrases="Bubble plot;Bubble chart"/>
+    <item id="ID_NEW_CHERNOFFPLOT" icon="images/chernoffplot.svg"
+          name="Insert Chernoff faces plot"
+          description="Show multivariate data as faces"
+          phrases="Chernoff faces"/>
+    <item id="ID_NEW_WILMARTH_BRIDGE_PLOT" icon="images/wilmarth-bridge.svg"
+          name="Insert Wilmarth bridge plot"
+          description="Show how observations drop out over time"
+          phrases="Wilmarth bridge plot;Bridge plot;Wilmarth plot"/>
+    <item id="ID_NEW_RUN_CHART" icon="images/runchart.svg"
+          name="Insert run chart"
+          description="Track a process measure over time"
+          phrases="Run chart;Statistical process control;Control chart"/>
+    <item id="ID_NEW_ISHIKAWA_DIAGRAM" icon="images/ishikawa.svg"
+          name="Insert Ishikawa diagram"
+          description="Map the causes of a problem"
+          phrases="Fishbone diagram;Cause and effect diagram"/>
+    <item id="ID_NEW_LIKERT" icon="images/likert7.svg"
+          name="Insert Likert chart"
+          description="Show Likert-scale survey responses"
+          phrases="Likert chart;Survey responses;Agree disagree"/>
+    <item id="ID_NEW_PROCON_ROADMAP" icon="images/roadmap.svg"
+          name="Insert pro and con roadmap"
+          description="Compare the pros and cons of a subject"
+          phrases="Pros and cons;Strengths and weaknesses"/>
+    <item id="ID_NEW_SCALE_CHART" icon="images/scale.svg"
+          name="Insert scale chart"
+          description="Show scores against a numeric scale"
+          phrases="Scale chart;Grade scale"/>
+    <item id="ID_NEW_WCURVE" icon="images/wcurve.svg"
+          name="Insert W-curve plot"
+          description="Show responses across semesters or years"
+          phrases="W-curve"/>
+    <item id="ID_NEW_LR_ROADMAP" icon="images/roadmap.svg"
+          name="Insert linear regression roadmap"
+          description="Show predictors from a linear regression"
+          phrases="Regression roadmap;Predictors"/>
+    <item id="ID_NEW_WIN_LOSS_SPARKLINE" icon="images/sparkline.svg"
+          name="Insert win/loss sparkline"
+          description="Show wins and losses in a small chart"
+          phrases="Sparkline;Season record"/>
+
+    <!-- objects -->
+    <item id="ID_NEW_LABEL" icon="images/label.svg"
+          name="Insert label"
+          description="Add text to the page"
+          phrases="Label;Add text;Title"/>
+    <item id="ID_NEW_KPI_CARD" icon="images/kpi-card.svg"
+          name="Insert KPI card"
+          description="Show a key number from a column"
+          phrases="KPI card;Key performance indicator;Big number;Metric;Scorecard"/>
+    <item id="ID_NEW_IMAGE" icon="images/image.svg"
+          name="Insert image"
+          description="Add a picture to the page"
+          phrases="Image;Add a picture;Logo"/>
+    <item id="ID_NEW_SHAPE" icon="images/shape.svg"
+          name="Insert shape"
+          description="Add a shape or icon to the page"
+          phrases="Shape;Add an icon"/>
+    <item id="ID_NEW_COMMON_AXIS" icon="images/axis.svg"
+          name="Insert common axis"
+          description="Share one axis between graphs"
+          phrases="Axis;Shared axis"/>
+    <item id="ID_NEW_SPACER" icon="images/spacer.svg"
+          name="Insert spacer"
+          description="Add empty space to the page"
+          phrases="Spacer;Add blank space"/>
+    <item id="ID_NEW_DIVIDER_HORIZONTAL_SINGLE" icon="images/divider-horizontal-single.svg"
+          name="Insert horizontal divider"
+          description="Separate items with a horizontal line"
+          phrases="Horizontal line;Separator line"/>
+    <item id="ID_NEW_DIVIDER_HORIZONTAL_DOUBLE" icon="images/divider-horizontal-double.svg"
+          name="Insert double horizontal divider"
+          description="Separate items with a double horizontal line"
+          phrases="Double horizontal line"/>
+    <item id="ID_NEW_DIVIDER_VERTICAL_SINGLE" icon="images/divider-vertical-single.svg"
+          name="Insert vertical divider"
+          description="Separate items with a vertical line"
+          phrases="Vertical line"/>
+    <item id="ID_NEW_DIVIDER_VERTICAL_DOUBLE" icon="images/divider-vertical-double.svg"
+          name="Insert double vertical divider"
+          description="Separate items with a double vertical line"
+          phrases="Double vertical line"/>
+    <item id="ID_EDIT_ITEM" icon="images/edit.svg"
+          name="Edit selected item"
+          description="Change the options of the selected item"
+          phrases="Edit the selected graph;Change graph options"/>
+    <item id="ID_DELETE_ITEM" icon="images/delete.svg"
+          name="Delete selected item"
+          description="Remove the selected item from the page"
+          phrases="Remove the selected graph"/>
+    <item id="wxID_COPY" icon="images/copy.svg"
+          name="Copy selected item"
+          description="Copy the selected item"
+          phrases="Copy"/>
+    <item id="wxID_PASTE" icon="images/paste.svg"
+          name="Paste copied item"
+          description="Paste a copied item onto the page"
+          phrases="Paste"/>
+
+    <!-- pages -->
+    <item id="ID_INSERT_PAGE" icon="images/page-add.svg"
+          name="Add page"
+          description="Add a new page to the project"
+          phrases="Insert page;New page"/>
+    <item id="ID_EDIT_PAGE" icon="images/page-edit.svg"
+          name="Edit page"
+          description="Change the page's layout and grid"
+          phrases="Change page layout;Page grid;Rows and columns;Layout"/>
+    <item id="ID_DELETE_PAGE" icon="images/page-delete.svg"
+          name="Delete page"
+          description="Remove the selected page"
+          phrases="Remove page"/>
+    <item id="ID_REARRANGE_PAGES" icon="images/sort.svg"
+          name="Rearrange pages"
+          description="Change the order of the pages"
+          phrases="Reorder pages;Move page;Sort pages"/>
+    <item id="ID_REFRESH_ALL" icon="images/reload.svg"
+          name="Refresh all"
+          description="Reload the data and redraw every page"
+          phrases="Reload the project;Update graphs"/>
+    <item id="ID_AUTO_REFRESH" icon="images/realtime.svg"
+          name="Toggle auto refresh"
+          description="Reload the project when its data files change"
+          phrases="Turn on auto refresh;Turn off auto refresh;Auto refresh;Reload when data changes;Watch dataset files"/>
+
+    <!-- data -->
+    <item id="ID_INSERT_DATASET" icon="images/data-add.svg"
+          name="Import dataset"
+          description="Load data from a file"
+          phrases="Add dataset;Import data;Open a spreadsheet;Load CSV;Load Excel file;Open data;Load ODS file"/>
+    <item id="ID_EDIT_DATASET" icon="images/data-import.svg"
+          name="Edit dataset import options"
+          description="Change how the dataset is imported"
+          phrases="Change dataset import;Column types"/>
+    <item id="ID_EDIT_DATASET_FILE" icon="images/data-edit.svg"
+          name="Edit dataset file"
+          description="Open the dataset's file in its editor"
+          phrases="Open the dataset in its editor"/>
+    <item id="ID_DELETE_DATASET" icon="images/data-delete.svg"
+          name="Delete dataset"
+          description="Remove the selected dataset"
+          phrases="Remove dataset"/>
+    <item id="ID_SUBSET_DATASET" icon="images/subset.svg"
+          name="Subset dataset"
+          description="Create a dataset from filtered rows"
+          phrases="Filter rows;Subset data"/>
+    <item id="ID_JOIN_DATASET" icon="images/join.svg"
+          name="Join datasets"
+          description="Combine two datasets by matching columns"
+          phrases="Merge datasets;Left join;Combine data"/>
+    <item id="ID_PIVOT_WIDER" icon="images/pivot-wider.svg"
+          name="Pivot dataset wider"
+          description="Spread rows into columns"
+          phrases="Pivot wider;Unstack data;Spread columns"/>
+    <item id="ID_PIVOT_LONGER" icon="images/pivot-longer.svg"
+          name="Pivot dataset longer"
+          description="Gather columns into rows"
+          phrases="Pivot longer;Stack data;Gather columns"/>
+    <item id="ID_ADD_CONSTANT" icon="images/constants-add.svg"
+          name="Add constant"
+          description="Define a value to reuse in the project"
+          phrases="Insert constant;Define a variable"/>
+    <item id="ID_DELETE_CONSTANT" icon="images/constants-delete.svg"
+          name="Delete constant"
+          description="Remove a project constant"
+          phrases="Remove constant"/>
+    <item id="ID_GOTO_DATASOURCE" icon="images/data.svg"
+          name="Go to data source"
+          description="Show the dataset behind the selected graph"
+          phrases="Show the graph's dataset;Jump to data"/>
+
+    <!-- export and print -->
+    <item id="ID_PDF_EXPORT" icon="images/pdf.svg"
+          name="Export to PDF"
+          description="Save the pages as a PDF file"
+          phrases="Save as PDF"/>
+    <item id="ID_PPTX_EXPORT" icon="images/powerpoint.svg"
+          name="Export to PowerPoint"
+          description="Save the pages as PowerPoint slides"
+          phrases="Save as PPTX;Create a presentation;Slides"/>
+    <item id="ID_ODP_EXPORT" icon="images/odp.svg"
+          name="Export to OpenDocument presentation"
+          description="Save the pages as LibreOffice Impress slides"
+          phrases="Save as ODP;LibreOffice Impress"/>
+    <item id="ID_HTML_EXPORT" icon="images/dashboard.svg"
+          name="Export to HTML dashboard"
+          description="Save the pages as a web dashboard"
+          phrases="Save as web page;Dashboard"/>
+    <item id="ID_SVG_EXPORT" icon="images/report.svg"
+          name="Export to SVG"
+          description="Save the pages as SVG images"
+          phrases="Save as SVG;Vector graphics;Save as image"/>
+    <item id="wxID_PRINT" icon="images/print.svg"
+          name="Print project"
+          description="Print the project's pages"
+          phrases="Print;Print pages"/>
+
+    <!-- project -->
+    <item id="ID_SAVE_PROJECT" icon="images/file-save.svg"
+          name="Save project"
+          description="Save changes to the project"
+          phrases="Save"/>
+    <item id="ID_SAVE_PROJECT_AS" icon="images/file-save.svg"
+          name="Save project as"
+          description="Save the project under a new name"
+          phrases="Save a copy"/>
+    <item id="wxID_NEW" icon="images/wisteria.svg"
+          name="Create new project"
+          description="Start a new project"
+          phrases="New project"/>
+    <item id="wxID_OPEN" icon="images/file-open.svg"
+          name="Open project"
+          description="Open an existing project"
+          phrases="Open a file"/>
+    <item id="ID_PROJECT_SETTINGS" icon="images/project-settings.svg"
+          name="Edit project settings"
+          description="Change the project's name, watermark, and more"
+          phrases="Project properties;Watermark"/>
+    <item id="ID_OPTIONS" icon="images/project-settings.svg"
+          name="Edit program options"
+          description="Change the program's settings"
+          phrases="Options;Program settings;Preferences"/>
+    <item id="ID_VIEW_LOG_REPORT" icon="images/log-book.svg"
+          name="View log report"
+          description="Show the program's messages and warnings"
+          phrases="Log;Show errors and warnings"/>
+    <item id="ID_LOG_TAB_CLEAR" icon="images/clear.svg"
+          name="Clear log report"
+          description="Remove all messages from the log"
+          phrases="Clear log;Empty the log"/>
+    <item id="ID_LOG_TAB_REFRESH" icon="images/reload.svg"
+          name="Refresh log report"
+          description="Show the latest log messages"
+          phrases="Refresh log;Reload log"/>
+    <item id="ID_LOG_TAB_REALTIME_UPDATE" icon="images/realtime.svg"
+          name="Toggle log auto refresh"
+          description="Update the log as messages arrive"
+          phrases="Auto refresh log;Update log in real time"/>
+    <item id="ID_LOG_TAB_VERBOSE" icon="images/edit.svg"
+          name="Toggle verbose logging"
+          description="Include detailed messages in the log"
+          phrases="Verbose logging;Detailed log;Debug log"/>
+    <item id="ID_SCRIPT_WINDOW" icon="images/dev-tools.svg"
+          name="Open developer tools"
+          description="Write and run Lua scripts"
+          phrases="Script workbench;Run a Lua script;Lua;Scripting;Console"/>
+  </category>
+  <category name="Help">
+    <item id="wxID_HELP" icon="images/electronic-help.svg"
+          name="Open help"
+          description="Open the program's help"
+          phrases="Help;Documentation"/>
+    <item id="ID_HELP_MANUAL" icon="images/help.svg"
+          name="Read the manual"
+          description="Open the full user manual"
+          phrases="Manual;User guide"/>
+    <item id="ID_RELEASE_NOTES" icon="images/paper-notes.svg"
+          name="View release notes"
+          description="See what changed in this version"
+          phrases="Release notes;What's new"/>
+    <item id="wxID_ABOUT" icon="images/wisteria.svg"
+          name="View version information"
+          description="Show the version and license"
+          phrases="About;Version;License;Program information"/>
+    <item id="help-intro" icon="images/help.svg"
+          help="online/overviews/intro.html"
+          name="Get started"
+          description="Learn the basics of the program"
+          phrases="Introduction;Tutorial"/>
+    <item id="help-program" icon="images/help.svg"
+          help="online/overviews/program.html"
+          name="Get help on the program interface"
+          description="Learn about the ribbon and main window"
+          phrases="Ribbon;Getting started"/>
+    <item id="help-common-dialogs" icon="images/help.svg"
+          help="online/dialogs/common-dialogs.html"
+          name="Get help on common dialogs"
+          description="Learn about options shared by dialogs"/>
+    <item id="help-editor-common-pages" icon="images/help.svg"
+          help="online/dialogs/editor-common-pages.html"
+          name="Get help on graph titles, axes, and legends"
+          description="Learn about options shared by graph editors"
+          phrases="Axis options help;Legend help"/>
+    <item id="help-import-dataset" icon="images/help.svg"
+          help="online/dialogs/import-dataset.html"
+          name="Get help on importing data"
+          description="Learn how to import a dataset"
+          phrases="How do I import a dataset"/>
+    <item id="help-transformations" icon="images/help.svg"
+          help="online/dialogs/transformations.html"
+          name="Get help on data transformations"
+          description="Learn how to subset, join, and pivot data"
+          phrases="How do I pivot or join data"/>
+    <item id="help-graphs-basic" icon="images/help.svg"
+          help="online/dialogs/graphs-basic.html"
+          name="Get help on basic graphs"
+          description="Learn about bar charts, pie charts, and more"
+          phrases="How do I make a bar chart"/>
+    <item id="help-graphs-business" icon="images/help.svg"
+          help="online/dialogs/graphs-business.html"
+          name="Get help on business graphs"
+          description="Learn about Gantt, funnel, and waterfall charts"/>
+    <item id="help-graphs-statistical" icon="images/help.svg"
+          help="online/dialogs/graphs-statistical.html"
+          name="Get help on statistical graphs"
+          description="Learn about histograms, box plots, and more"/>
+    <item id="help-graphs-spc" icon="images/help.svg"
+          help="online/dialogs/graphs-spc.html"
+          name="Get help on SPC graphs"
+          description="Learn about run charts and Ishikawa diagrams"
+          phrases="Statistical process control help"/>
+    <item id="help-graphs-survey" icon="images/help.svg"
+          help="online/dialogs/graphs-survey.html"
+          name="Get help on survey graphs"
+          description="Learn about Likert charts, word clouds, and more"/>
+    <item id="help-graphs-education-social-sports" icon="images/help.svg"
+          help="online/dialogs/graphs-education-social-sports.html"
+          name="Get help on education, social sciences, and sports graphs"
+          description="Learn about scale charts, W-curves, and more"/>
+    <item id="help-objects" icon="images/help.svg"
+          help="online/dialogs/objects.html"
+          name="Get help on labels, images, and shapes"
+          description="Learn about the objects you can add to a page"
+          phrases="KPI card help;Divider help;Spacer help;Common axis help"/>
+    <item id="help-exporting" icon="images/help.svg"
+          help="online/dialogs/exporting.html"
+          name="Get help on exporting"
+          description="Learn how to export to PDF, slides, and more"
+          phrases="How do I export"/>
+    <item id="help-project-settings" icon="images/help.svg"
+          help="online/dialogs/project-settings.html"
+          name="Get help on project settings"
+          description="Learn about a project's settings"/>
+    <item id="help-program-options" icon="images/help.svg"
+          help="online/program-options.html"
+          name="Get help on program options"
+          description="Learn about the program's settings"/>
+  </category>
+</tellme>
