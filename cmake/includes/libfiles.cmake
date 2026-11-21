@@ -186,6 +186,7 @@ SET(WISTERIA_SRC
     src/ui/dialogs/radioboxdlg.cpp
     src/ui/dialogs/svgexportdlg.cpp
     src/ui/dialogs/variableselectdlg.cpp
+    src/ui/tellmeregistry.cpp
     src/util/fileutil.cpp
     src/util/formulaformat.cpp
     src/util/hardwareinfo.cpp

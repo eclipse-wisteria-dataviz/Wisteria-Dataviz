@@ -58,6 +58,7 @@ SET(TEST_SRC_FILES
     stemandleafplotrendertests.cpp
     subsettests.cpp
     tablerendertests.cpp
+    tellmeregistrytests.cpp
     testableframe.cpp
     testingmain.cpp
     testzip.cpp

@@ -141,6 +141,7 @@ SET(WISTERIA_SRC
     ../../src/ui/controls/searchpanel.cpp
     ../../src/ui/controls/sidebar.cpp
     ../../src/ui/controls/sidebarbook.cpp
+    ../../src/ui/controls/tellmectrl.cpp
     ../../src/ui/controls/thumbnail.cpp
     ../../src/ui/dialogs/aboutdlg.cpp
     ../../src/ui/dialogs/archivedlg.cpp
@@ -174,6 +175,7 @@ SET(WISTERIA_SRC
     ../../src/ui/dialogs/variableselectdlg.cpp
     ../../src/ui/dialogs/warningmessagesdlg.cpp
     ../../src/ui/mainframe.cpp
+    ../../src/ui/tellmeregistry.cpp
     ../../src/util/downloadfile.cpp
     ../../src/util/fileutil.cpp
     ../../src/util/formulaformat.cpp
