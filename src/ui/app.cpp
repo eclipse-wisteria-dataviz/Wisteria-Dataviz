@@ -41,6 +41,29 @@ namespace Wisteria::UI
         // call this to tell the library to call our OnFatalException()
         wxHandleFatalExceptions();
 #endif
+        // Tell Me help topics open from the main frame's help folder
+        m_tellMeRegistry.SetHelpHandler(
+            [this]([[maybe_unused]]
+                   wxWindow* frame,
+                   const wxString& topic)
+            {
+                if (GetMainFrame() != nullptr)
+                    {
+                    GetMainFrame()->DisplayHelp(topic);
+                    }
+            });
+        }
+
+    //----------------------------------------------------------
+    bool BaseApp::LoadTellMeFile(const wxString& subFile)
+        {
+        const wxString filePath{ FindResourceFile(subFile) };
+        if (filePath.empty())
+            {
+            wxLogWarning(L"Tell Me file '%s' not found.", subFile);
+            return false;
+            }
+        return m_tellMeRegistry.LoadXml(filePath);
         }
 
     //----------------------------------------------------------

@@ -17,6 +17,7 @@
 #include "../util/logfile.h"
 #include "../util/resource_manager.h"
 #include "mainframe.h"
+#include "tellmeregistry.h"
 #include <map>
 #include <memory>
 #include <wx/cmdline.h>
@@ -296,6 +297,26 @@ namespace Wisteria::UI
             return m_resManager;
             }
 
+        /// @returns Tell Me's registry of searchable features and their actions.
+        [[nodiscard]]
+        TellMeRegistry& GetTellMeRegistry() noexcept
+            {
+            return m_tellMeRegistry;
+            }
+
+        /// @private
+        [[nodiscard]]
+        const TellMeRegistry& GetTellMeRegistry() const noexcept
+            {
+            return m_tellMeRegistry;
+            }
+
+        /// @brief Loads a Tell Me XML file from the application's resource directory
+        ///     into the feature registry.
+        /// @param subFile The file to load (e.g., "tellme.xml").
+        /// @returns @c true if the file was loaded.
+        bool LoadTellMeFile(const wxString& subFile);
+
         /// @brief Loads a bitmap (with provided size in DIPs) from provided path to be compatible
         ///      with the UI.
         /// @param path The path to the SVG file.
@@ -339,6 +360,7 @@ namespace Wisteria::UI
         LogFile* m_logFile{ nullptr };
         bool m_appendDailyLog{ false };
         ResourceManager m_resManager;
+        TellMeRegistry m_tellMeRegistry;
         wxLocale* m_locale{ nullptr };
         std::unique_ptr<LuaInterpreter> m_luaRunner;
 
