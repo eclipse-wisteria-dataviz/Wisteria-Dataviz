@@ -8,6 +8,7 @@
 
 #include "tellmeregistry.h"
 #include <algorithm>
+#include <cwctype>
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
@@ -383,7 +384,7 @@ namespace Wisteria::UI
     //---------------------------------------------------
     bool TellMeRegistry::IsWordStart(const wxString& text, const size_t position)
         {
-        return position == 0 || !wxIsalnum(text[position - 1]);
+        return position == 0 || !std::iswalnum(static_cast<wint_t>(text[position - 1].GetValue()));
         }
 
     //---------------------------------------------------
