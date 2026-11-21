@@ -37,6 +37,12 @@ namespace Wisteria::UI
             }
 
       private:
+        constexpr static int HEADER_HEIGHT{ 24 };
+        constexpr static int ROW_HEIGHT{ 30 };
+        constexpr static int DESCRIPTION_ROW_HEIGHT{ 48 };
+        constexpr static int ICON_SIZE{ 16 };
+        constexpr static int LARGE_ICON_SIZE{ 32 };
+
         void OnDrawItem(wxDC& dc, const wxRect& rect, size_t n) const final;
         wxCoord OnMeasureItem(size_t n) const final;
 
@@ -50,7 +56,10 @@ namespace Wisteria::UI
             {
             return 0;
             }
-        return FromDIP(m_owner->m_rows[n].m_type == RowType::Header ? 24 : 30);
+        const auto& row = m_owner->m_rows[n];
+        return FromDIP(row.m_type == RowType::Header ? HEADER_HEIGHT :
+                       !row.m_description.empty()    ? DESCRIPTION_ROW_HEIGHT :
+                                                       ROW_HEIGHT);
         }
 
     //---------------------------------------------------
@@ -75,21 +84,50 @@ namespace Wisteria::UI
             return;
             }
 
+        // rows with a description get a larger icon and a second line of text
+        const bool hasDescription{ !row.m_description.empty() };
+        const int iconSize{ hasDescription ? LARGE_ICON_SIZE : ICON_SIZE };
+
         wxCoord xPos{ rect.GetX() + padding };
         if (row.m_icon.IsOk())
             {
-            const wxBitmap icon{ row.m_icon.GetBitmapFor(this) };
+            wxBitmap icon{ row.m_icon.GetBitmap(
+                wxSize{ wxRound(iconSize * GetDPIScaleFactor()),
+                        wxRound(iconSize * GetDPIScaleFactor()) }) };
+            icon.SetScaleFactor(GetContentScaleFactor());
             dc.DrawBitmap(icon, xPos,
                           rect.GetY() + (rect.GetHeight() - icon.GetLogicalHeight()) / 2, true);
             }
-        xPos += FromDIP(16) + padding;
+        xPos += FromDIP(iconSize) + padding;
 
-        dc.SetTextForeground(
-            !row.m_enabled ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) :
-            IsSelected(n)  ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) :
-                             wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT));
+        const wxColour grayTextColor{ wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT) };
+        const wxColour textColor{ !row.m_enabled ?
+                                      grayTextColor :
+                                  IsSelected(n) ?
+                                      wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) :
+                                      wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT) };
+        dc.SetTextForeground(textColor);
         dc.SetFont(normalFont);
-        const wxCoord textY{ rect.GetY() + (rect.GetHeight() - dc.GetCharHeight()) / 2 };
+        const wxCoord nameHeight{ dc.GetCharHeight() };
+        wxCoord textY{ rect.GetY() + (rect.GetHeight() - nameHeight) / 2 };
+
+        if (hasDescription)
+            {
+            dc.SetFont(normalFont.Smaller());
+            const wxCoord descriptionHeight{ dc.GetCharHeight() };
+            const wxCoord lineGap{ FromDIP(2) };
+            textY =
+                rect.GetY() + (rect.GetHeight() - (nameHeight + lineGap + descriptionHeight)) / 2;
+
+            // long descriptions are cut off with an ellipsis
+            const wxString description{ wxControl::Ellipsize(
+                row.m_description, dc, wxELLIPSIZE_END,
+                std::max(rect.GetRight() - xPos - padding, 0), wxELLIPSIZE_FLAGS_NONE) };
+            dc.SetTextForeground(IsSelected(n) && row.m_enabled ? textColor : grayTextColor);
+            dc.DrawText(description, xPos, textY + nameHeight + lineGap);
+            dc.SetTextForeground(textColor);
+            dc.SetFont(normalFont);
+            }
 
         // draw the text in segments, bolding the parts that matched the query
         const auto drawSegment = [&dc, &xPos, textY](const wxString& segment, const wxFont& font)
@@ -340,6 +378,7 @@ namespace Wisteria::UI
         ResultRow row;
         row.m_type = RowType::Item;
         row.m_text = item.m_name;
+        row.m_description = item.m_description;
         row.m_itemId = item.m_id;
         row.m_icon = GetIcon(item.m_iconPath);
         row.m_highlights = match.m_highlights;

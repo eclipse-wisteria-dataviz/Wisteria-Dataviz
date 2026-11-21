@@ -35,6 +35,8 @@ namespace Wisteria::UI
         wxString m_helpTopic;
         /// @brief The item's display name.
         wxString m_name;
+        /// @brief Optional text shown under the display name (not searched).
+        wxString m_description;
         /// @brief Other phrases that search for the item.
         std::vector<wxString> m_phrases;
         };

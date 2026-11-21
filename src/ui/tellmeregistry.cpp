@@ -105,6 +105,8 @@ namespace Wisteria::UI
                 item.m_helpTopic =
                     itemNode->GetAttribute(L"help", wxString{}).Strip(wxString::both);
                 item.m_name = itemNode->GetAttribute(L"name", wxString{}).Strip(wxString::both);
+                item.m_description =
+                    itemNode->GetAttribute(L"description", wxString{}).Strip(wxString::both);
 
                 wxStringTokenizer tokenizer{ itemNode->GetAttribute(L"phrases", wxString{}), L";",
                                              wxTOKEN_STRTOK };

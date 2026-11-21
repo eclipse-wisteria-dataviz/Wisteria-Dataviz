@@ -12,7 +12,7 @@ static const wxString FEATURE_XML{
     L"<tellme>"
     L"  <category name=\"Insert Graph\">"
     L"    <item id=\"bar\" icon=\"images/bar.svg\" name=\" Bar chart \" phrases=\" Insert bar chart ;;Column chart\"/>"
-    L"    <item id=\"line\" icon=\"images/line.svg\" name=\"Line plot\" phrases=\"Insert line chart\"/>"
+    L"    <item id=\"line\" icon=\"images/line.svg\" name=\"Line plot\" phrases=\"Insert line chart\" description=\" Show trends over time \"/>"
     L"    <item id=\"pie\" name=\"Pie chart\"/>"
     L"    <item id=\"unregistered\" name=\"Chart without an action\"/>"
     L"    <item name=\"No ID\"/>"
@@ -63,8 +63,10 @@ TEST_CASE("Tell Me registry loads XML", "[tellmeregistry]")
     REQUIRE(bar.m_phrases.size() == 2);
     CHECK(bar.m_phrases[0] == L"Insert bar chart");
     CHECK(bar.m_phrases[1] == L"Column chart");
-    // search phrases are optional
+    // search phrases and descriptions are optional
     CHECK(registry.GetItem(0, 2).m_phrases.empty());
+    CHECK(bar.m_description.empty());
+    CHECK(registry.GetItem(0, 1).m_description == L"Show trends over time");
 
     CHECK(registry.GetItem(2, 0).m_helpTopic == L"online/bar.html");
     CHECK_FALSE(registry.FindItem(L"empty").has_value());
@@ -241,6 +243,11 @@ TEST_CASE("Tell Me registry search", "[tellmeregistry]")
             total += group.size();
             }
         CHECK(total <= 2);
+        }
+
+    SECTION("Descriptions are not searched")
+        {
+        CHECK_FALSE(registry.Search(L"trends").m_bestMatch.has_value());
         }
 
     SECTION("Features without an action are not searched")

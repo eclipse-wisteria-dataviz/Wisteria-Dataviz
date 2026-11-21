@@ -89,6 +89,7 @@ namespace Wisteria::UI
             {
             RowType m_type{ RowType::Header };
             wxString m_text;
+            wxString m_description;
             wxString m_itemId;
             wxBitmapBundle m_icon;
             std::vector<std::pair<size_t, size_t>> m_highlights;
