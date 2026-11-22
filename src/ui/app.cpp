@@ -110,6 +110,15 @@ namespace Wisteria::UI
         // (rather than a shared system folder), so look there before the locale loads it
         wxFileTranslationsLoader::AddCatalogLookupPathPrefix(
             wxStandardPaths::Get().GetDataDir() + wxFILE_SEP_PATH + DONTTRANSLATE(L"locale"));
+            // packages remove spaces from the app's data folder name, so look there also
+            {
+            const NoAppInfoAppend noAppInfo;
+            wxString appFolderNameNoSpaces{ GetAppName() };
+            appFolderNameNoSpaces.Replace(L" ", wxString{}, true);
+            wxFileTranslationsLoader::AddCatalogLookupPathPrefix(
+                wxStandardPaths::Get().GetDataDir() + wxFILE_SEP_PATH + appFolderNameNoSpaces +
+                wxFILE_SEP_PATH + DONTTRANSLATE(L"locale"));
+            }
         m_locale = new wxLocale(wxLANGUAGE_DEFAULT, wxLOCALE_LOAD_DEFAULT);
         wxUILocale::UseDefault();
 
