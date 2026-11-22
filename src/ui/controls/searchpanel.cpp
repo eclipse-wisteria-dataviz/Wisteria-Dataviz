@@ -17,7 +17,8 @@
 namespace Wisteria::UI
     {
     //---------------------------------------------------
-    SearchPanel::SearchPanel(wxWindow* parent, wxWindowID id) : wxWindow(parent, id)
+    SearchPanel::SearchPanel(wxWindow* parent, wxWindowID id, const bool includeCloseButton)
+        : wxWindow(parent, id), m_includeCloseButton(includeCloseButton)
         {
         auto* mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -39,6 +40,17 @@ namespace Wisteria::UI
 
         mainSizer->AddSpacer(wxSizerFlags::GetDefaultBorder());
 
+        if (m_includeCloseButton)
+            {
+            mainSizer->AddStretchSpacer();
+            auto* closeButton =
+                new wxBitmapButton(this, ControlIDs::ID_SEARCH_CLOSE,
+                                   wxArtProvider::GetBitmapBundle(wxART_CLOSE, wxART_BUTTON),
+                                   wxDefaultPosition, wxDefaultSize, wxBORDER_NONE);
+            closeButton->SetToolTip(_(L"Close the search bar"));
+            mainSizer->Add(closeButton, wxSizerFlags{}.CentreVertical().Border(wxRIGHT));
+            }
+
         SetSizerAndFit(mainSizer);
 
         // search options menu
@@ -57,6 +69,11 @@ namespace Wisteria::UI
         Bind(wxEVT_SEARCH, &SearchPanel::OnSearch, this, ControlIDs::ID_SEARCH_TEXT_ENTRY);
         Bind(wxEVT_BUTTON, &SearchPanel::OnSearchButton, this, ControlIDs::ID_SEARCH_NEXT);
         Bind(wxEVT_BUTTON, &SearchPanel::OnSearchButton, this, ControlIDs::ID_SEARCH_PREVIOUS);
+        Bind(
+            wxEVT_BUTTON,
+            [this]([[maybe_unused]]
+                   wxCommandEvent& event) { Dismiss(); },
+            ControlIDs::ID_SEARCH_CLOSE);
         Bind(wxEVT_CHAR_HOOK,
              [this](wxKeyEvent& event)
              {
@@ -73,6 +90,10 @@ namespace Wisteria::UI
                          wxTheClipboard->Close();
                          }
                      m_search->SetFocus();
+                     }
+                 else if (m_includeCloseButton && event.GetKeyCode() == WXK_ESCAPE)
+                     {
+                     Dismiss();
                      }
                  else
                      {
@@ -102,8 +123,50 @@ namespace Wisteria::UI
     //---------------------------------------------------
     void SearchPanel::Activate()
         {
+        // remember what had the focus, so that it can be restored when this is closed
+        auto* focusedWindow = wxWindow::FindFocus();
+        if (focusedWindow != nullptr && !IsDescendant(focusedWindow))
+            {
+            m_previousFocus = focusedWindow;
+            }
+        if (!IsShown())
+            {
+            Show();
+            GetParent()->Layout();
+            }
         m_search->SelectAll();
         m_search->SetFocus();
+        }
+
+    //---------------------------------------------------
+    void SearchPanel::Dismiss()
+        {
+        // move the focus before hiding, so that it isn't left on a hidden control
+        if (IsDescendant(wxWindow::FindFocus()))
+            {
+            auto* topLevelWindow = wxGetTopLevelParent(this);
+            if (m_previousFocus && m_previousFocus->IsShownOnScreen())
+                {
+                m_previousFocus->SetFocus();
+                }
+            else if (auto* dialog = dynamic_cast<wxDialog*>(topLevelWindow); dialog != nullptr)
+                {
+                // a dialog's SetFocus() does nothing if one of its children has the focus
+                dialog->SetFocusIgnoringChildren();
+                }
+            else
+                {
+                topLevelWindow->SetFocus();
+                }
+            }
+        m_previousFocus.Release();
+
+        Hide();
+        GetParent()->Layout();
+
+        wxFindDialogEvent closeEvent(wxEVT_FIND_CLOSE, GetId());
+        closeEvent.SetEventObject(this);
+        GetParent()->ProcessWindowEvent(closeEvent);
         }
 
     //---------------------------------------------------

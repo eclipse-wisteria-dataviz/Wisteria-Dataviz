@@ -13,6 +13,7 @@
 #define SEARCH_PANEL_H
 
 #include <wx/srchctrl.h>
+#include <wx/weakref.h>
 #include <wx/wx.h>
 
 namespace Wisteria::UI
@@ -24,9 +25,11 @@ namespace Wisteria::UI
       public:
         /// @brief Constructor.
         /// @param parent The parent window that handles the search events.
-        ///     The parent should handle @c wxEVT_FIND_NEXT to process this control's events.
+        ///     The parent should handle @c wxEVT_FIND to process this control's events.
         /// @param id The control's ID.
-        SearchPanel(wxWindow* parent, wxWindowID id);
+        /// @param includeCloseButton @c true to include a close button.\n
+        ///     This (or the Escape key) will hide the panel and Activate() will show it again.
+        SearchPanel(wxWindow* parent, wxWindowID id, bool includeCloseButton = false);
         /// @private
         SearchPanel() = delete;
         /// @private
@@ -51,8 +54,12 @@ namespace Wisteria::UI
         /// @returns @c true upon success.
         bool SetBackgroundColour(const wxColour& color) final;
 
-        /// @brief Gives the control the focus.
+        /// @brief Shows the control (if hidden) and gives it the focus.
         void Activate();
+        /// @brief Hides the control and (if it has the focus) returns the focus
+        ///     to where it was prior to calling Activate().
+        /// @note The control's parent can handle @c wxEVT_FIND_CLOSE to respond to this.
+        void Dismiss();
         /// @brief Issues a search event.
         /// @param event The event.
         /// @note The control's parent should handle @c wxEVT_COMMAND_FIND to trap
@@ -64,7 +71,8 @@ namespace Wisteria::UI
             {
             ID_SEARCH_TEXT_ENTRY = wxID_HIGHEST,
             ID_SEARCH_NEXT,
-            ID_SEARCH_PREVIOUS
+            ID_SEARCH_PREVIOUS,
+            ID_SEARCH_CLOSE
             };
 
         void OnSearchButton(const wxCommandEvent& event);
@@ -73,6 +81,8 @@ namespace Wisteria::UI
         wxMenuItem* m_matchCaseItem{ nullptr };
         wxMenuItem* m_wholeWordItem{ nullptr };
         wxArrayString m_previousSearches;
+        wxWeakRef<wxWindow> m_previousFocus;
+        bool m_includeCloseButton{ false };
         };
     } // namespace Wisteria::UI
 
