@@ -79,6 +79,11 @@ class WisteriaView final : public wxView
         return m_graphs;
         }
 
+    /// @returns The canvas of the graph selected in the Graphs section,
+    ///     or @c nullptr if a graph from the Graphs section isn't selected.
+    [[nodiscard]]
+    Wisteria::Canvas* GetSelectedGraphCanvas() const noexcept;
+
     /// @brief Finds a page by its GUID.
     /// @param guid The GUID of the page to look for.
     /// @returns The index of the page, or @c std::nullopt if not found.

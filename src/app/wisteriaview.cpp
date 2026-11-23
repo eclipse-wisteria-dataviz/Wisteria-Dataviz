@@ -412,6 +412,20 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnOdpExport, this, ID_ODP_EXPORT);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnOdpExport, this, ID_ODP_EXPORT);
 
+    // the backstage's graph export, which the graph's canvas saves as an image
+    m_frame->Bind(
+        wxEVT_MENU,
+        [this]([[maybe_unused]]
+               wxCommandEvent& event)
+        {
+            if (auto* canvas = GetSelectedGraphCanvas(); canvas != nullptr)
+                {
+                wxCommandEvent saveEvent(wxEVT_MENU, wxID_SAVE);
+                canvas->ProcessWindowEvent(saveEvent);
+                }
+        },
+        ID_BACKSTAGE_EXPORT_GRAPH);
+
     // bind project settings button
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnProjectSettings, this,
                   ID_PROJECT_SETTINGS);
@@ -3550,6 +3564,12 @@ Wisteria::Canvas* WisteriaView::GetActiveCanvas() const noexcept
         {
         return page;
         }
+    return GetSelectedGraphCanvas();
+    }
+
+//-------------------------------------------
+Wisteria::Canvas* WisteriaView::GetSelectedGraphCanvas() const noexcept
+    {
     for (auto* canvas : m_graphs)
         {
         if (canvas != nullptr && canvas->IsShown())

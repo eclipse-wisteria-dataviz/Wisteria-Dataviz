@@ -2310,6 +2310,44 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
             _(L"Transitions, highlighting, and a slideshow can be included.") } }
     };
 
+    // adds a bulleted list describing an export
+    const auto addExportBullets =
+        [margin](wxWindow* bulletParent, wxSizer* sizer, const std::vector<wxString>& bullets)
+    {
+        for (const auto& bullet : bullets)
+            {
+            auto* bulletSizer = new wxBoxSizer(wxHORIZONTAL);
+            bulletSizer->Add(new wxStaticText(bulletParent, wxID_ANY, wxString{ L"•" }),
+                             wxSizerFlags{}.Top().Border(wxRIGHT, margin / 3));
+            auto* bulletText = new wxStaticText(bulletParent, wxID_ANY, bullet);
+            bulletText->Wrap(bulletParent->FromDIP(420));
+            bulletSizer->Add(bulletText, wxSizerFlags{ 1 }.Top());
+            sizer->Add(bulletSizer, wxSizerFlags{}.Border(wxBOTTOM, margin / 4));
+            }
+    };
+
+    // the graph selected in the Graphs section, which is only shown when there is one
+    auto* graphExportSizer = new wxBoxSizer(wxVERTICAL);
+    graphExportSizer->Add(new wxBackstageHeading(exportPage, wxID_ANY, _(L"Selected Graph"),
+                                                 wxBackstageHeadingStyle::Section),
+                          wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    auto* graphExportDetails = new wxBoxSizer(wxVERTICAL);
+    auto* graphExportButton =
+        new wxBackstageButton(exportPage, ID_BACKSTAGE_EXPORT_GRAPH, _(L"Export Graph"),
+                              GetResourceManager().GetSVG(L"images/chart-basic.svg"));
+    graphExportButton->SetIconSize(wxSize{ 64, 64 });
+    graphExportDetails->Add(graphExportButton, wxSizerFlags{}.Border(wxBOTTOM, margin / 2));
+    addExportBullets(exportPage, graphExportDetails,
+                     { _(L"Exports the selected graph to an image file."),
+                       _(L"Choose from PNG, JPG, SVG, PDF, and other formats.") });
+    graphExportSizer->Add(graphExportDetails, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    exportSizer->Add(graphExportSizer, wxSizerFlags{}.Expand());
+
+    // the project-level exports, which only need a heading when the graph's export is shown
+    auto* projectExportHeading = new wxBackstageHeading(exportPage, wxID_ANY, _(L"Project"),
+                                                        wxBackstageHeadingStyle::Section);
+    exportSizer->Add(projectExportHeading, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+
     auto* exportColumns = new wxBoxSizer(wxHORIZONTAL);
     auto* exportTypesSizer = new wxBoxSizer(wxVERTICAL);
     auto* exportBook = new wxSimplebook(exportPage);
@@ -2332,16 +2370,7 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
                                   GetResourceManager().GetSVG(exportType.m_iconPath));
         exportButton->SetIconSize(wxSize{ 64, 64 });
         detailSizer->Add(exportButton, wxSizerFlags{}.Border(wxBOTTOM, margin / 2));
-        for (const auto& bullet : exportType.m_bullets)
-            {
-            auto* bulletSizer = new wxBoxSizer(wxHORIZONTAL);
-            bulletSizer->Add(new wxStaticText(detailPanel, wxID_ANY, wxString{ L"•" }),
-                             wxSizerFlags{}.Top().Border(wxRIGHT, margin / 3));
-            auto* bulletText = new wxStaticText(detailPanel, wxID_ANY, bullet);
-            bulletText->Wrap(detailPanel->FromDIP(420));
-            bulletSizer->Add(bulletText, wxSizerFlags{ 1 }.Top());
-            detailSizer->Add(bulletSizer, wxSizerFlags{}.Border(wxBOTTOM, margin / 4));
-            }
+        addExportBullets(detailPanel, detailSizer, exportType.m_bullets);
         detailPanel->SetSizer(detailSizer);
         exportBook->AddPage(detailPanel, exportType.m_name);
         }
@@ -2383,6 +2412,47 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
     exportSizer->Add(exportColumns, wxSizerFlags{ 1 }.Expand());
     exportPage->SetSizer(exportSizer);
     selectExportType(0);
+
+    backstage->Bind(
+        wxEVT_BUTTON,
+        [backstage](wxCommandEvent&)
+        {
+            wxCommandEvent exportEvent{ wxEVT_MENU, ID_BACKSTAGE_EXPORT_GRAPH };
+            backstage->ProcessWindowEvent(exportEvent);
+        },
+        ID_BACKSTAGE_EXPORT_GRAPH);
+
+    // shows the graph's export (and the project heading below it) only if a graph is selected
+    const auto refreshGraphExport =
+        [doc, exportPage, exportSizer, graphExportSizer, projectExportHeading]()
+    {
+        const auto* view = dynamic_cast<WisteriaView*>(doc->GetFirstView());
+        const bool hasGraph = (view != nullptr && view->GetSelectedGraphCanvas() != nullptr);
+        exportSizer->Show(graphExportSizer, hasGraph, true);
+        exportSizer->Show(projectExportHeading, hasGraph);
+        exportPage->Layout();
+    };
+    refreshGraphExport();
+
+    // a different graph (or none) may be selected since the page was last shown
+    backstage->Bind(
+        wxEVT_BACKSTAGE_CLICKED,
+        [refreshGraphExport](wxNotifyEvent& event)
+        {
+            refreshGraphExport();
+            event.Skip();
+        },
+        ID_BACKSTAGE_EXPORT);
+    // the backstage reopens on the page it was closed on, which may be this one
+    backstage->Bind(wxEVT_SHOW,
+                    [refreshGraphExport](wxShowEvent& event)
+                    {
+                        if (event.IsShown())
+                            {
+                            refreshGraphExport();
+                            }
+                        event.Skip();
+                    });
 
     // Info page
     auto* infoPage = backstage->AddPage(ID_BACKSTAGE_INFO);
@@ -2486,6 +2556,16 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
             event.Skip();
         },
         ID_BACKSTAGE_INFO);
+    // the backstage reopens on the page it was closed on, which may be this one
+    backstage->Bind(wxEVT_SHOW,
+                    [refreshInfo](wxShowEvent& event)
+                    {
+                        if (event.IsShown())
+                            {
+                            refreshInfo();
+                            }
+                        event.Skip();
+                    });
 
     copyPathButton->Bind(wxEVT_BUTTON,
                          [doc](wxCommandEvent&)

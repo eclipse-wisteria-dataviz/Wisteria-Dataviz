@@ -498,6 +498,9 @@ constexpr wxWindowID ID_BACKSTAGE_PRINT{ wxID_HIGHEST + 117 };
 constexpr wxWindowID ID_BACKSTAGE_PRINT_NOW{ wxID_HIGHEST + 118 };
 constexpr wxWindowID ID_BACKSTAGE_EXPORT{ wxID_HIGHEST + 119 };
 constexpr wxWindowID ID_BACKSTAGE_COPY_PATH{ wxID_HIGHEST + 120 };
+// Sent as a @c wxEVT_MENU event from the backstage's Export page.
+// Exports the graph shown from the Graphs section.
+constexpr wxWindowID ID_BACKSTAGE_EXPORT_GRAPH{ wxID_HIGHEST + 121 };
 constexpr wxWindowID ID_BACKSTAGE_INFO{ wxID_HIGHEST + 122 };
 constexpr wxWindowID ID_BACKSTAGE_CLOSE{ wxID_HIGHEST + 123 };
 constexpr wxWindowID ID_BACKSTAGE_SETTINGS{ wxID_HIGHEST + 124 };

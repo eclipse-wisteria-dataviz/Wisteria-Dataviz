@@ -22,6 +22,13 @@ The following formats are available:
 Each format has its own options dialog, which is described below.
 Your selections in these dialogs are saved with the project.
 
+## Exporting a Graph {#sec-export-graph}
+
+If a graph from the [**Graphs**](#sec-graphs-section) section is selected, then the **Export** page also has a **Selected Graph** section.
+This section is shown above the project's export formats, which are listed under **Project**.
+Click **Export Graph** to save the graph as an image.
+You will be asked for the image format (e.g., PNG, SVG, or PDF), and then where to save the file.
+
 ## Pages to Export {#sec-export-page-selection}
 
 If a project has more than one page, then a list of its pages is shown before the export options.
