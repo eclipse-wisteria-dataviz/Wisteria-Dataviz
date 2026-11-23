@@ -154,7 +154,7 @@ namespace Wisteria::UI
                 // a dialog's SetFocus() does nothing if one of its children has the focus
                 dialog->SetFocusIgnoringChildren();
                 }
-            else
+            else if (topLevelWindow != nullptr)
                 {
                 topLevelWindow->SetFocus();
                 }
