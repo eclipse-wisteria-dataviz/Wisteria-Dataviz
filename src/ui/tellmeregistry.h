@@ -21,6 +21,7 @@
 #include <wx/wx.h>
 
 class wxXmlDocument;
+class wxRibbonButtonBar;
 
 namespace Wisteria::UI
     {
@@ -39,6 +40,9 @@ namespace Wisteria::UI
         wxString m_description;
         /// @brief Other phrases that search for the item.
         std::vector<wxString> m_phrases;
+        /// @brief Optional ribbon button whose availability the item follows
+        ///     (e.g., the dropdown button of a menu command).
+        wxString m_buttonId;
         };
 
     /// @brief A named group of features.
@@ -86,6 +90,8 @@ namespace Wisteria::UI
         using TellMeEnabledCallback = std::function<bool(wxWindow* frame)>;
         /// @brief Opens a help topic, or searches help for a query.
         using HelpCallback = std::function<void(wxWindow* frame, const wxString& value)>;
+        /// @brief Returns the command ID for a feature ID, or @c std::nullopt if there is none.
+        using CommandResolver = std::function<std::optional<wxWindowID>(const wxString& id)>;
 
         /// @brief The maximum number of recently used feature IDs that are kept.
         constexpr static size_t MAX_RECENT_IDS{ 10 };
@@ -97,9 +103,13 @@ namespace Wisteria::UI
         void RegisterAction(const wxString& id, TellMeCallback run,
                             TellMeEnabledCallback enabled = {});
 
-        /// @brief Connects a feature ID to a menu command.
-        /// @details Running the feature sends a @c wxEVT_MENU event with @c commandId
-        ///     to the frame. Its enabled state comes from the frame's @c wxEVT_UPDATE_UI handlers.
+        /// @brief Connects a feature ID to a command.
+        /// @details If the frame's ribbon has a button for @c commandId, running the feature
+        ///     clicks that button, and the button's state decides whether it is enabled.
+        ///     The state is first updated from the frame's @c wxEVT_UPDATE_UI handlers.
+        ///     A button that is only in hidden ribbon panels is disabled.\n
+        ///     Otherwise, running the feature sends a @c wxEVT_MENU event to the frame,
+        ///     and its enabled state comes from the frame's @c wxEVT_UPDATE_UI handlers.
         /// @param id The feature ID (from the XML file).
         /// @param commandId The command to send.
         void RegisterCommand(const wxString& id, wxWindowID commandId);
@@ -107,6 +117,22 @@ namespace Wisteria::UI
         /// @brief Sets the function that opens a feature's help topic.
         /// @param handler The handler.
         void SetHelpHandler(HelpCallback handler) { m_helpHandler = std::move(handler); }
+
+        /// @brief Sets the function that maps feature IDs (and @c button attributes) to command
+        /// IDs.
+        /// @details Loaded features with no action or help topic are registered as commands.
+        /// @param resolver The resolver (e.g., one that calls @c wxXmlResource::GetXRCID()).
+        void SetCommandResolver(CommandResolver resolver)
+            {
+            m_commandResolver = std::move(resolver);
+            }
+
+        /// @returns @c true if a ribbon button in the frame is in a shown ribbon panel
+        ///     and is enabled.
+        /// @param frame The frame containing the ribbon.
+        /// @param buttonId The button's ID.
+        [[nodiscard]]
+        static bool IsRibbonButtonAvailable(wxWindow* frame, wxWindowID buttonId);
 
         /// @brief Loads categories and features from a Tell Me XML stream.
         /// @details Loaded items are appended to any already loaded.
@@ -125,6 +151,7 @@ namespace Wisteria::UI
             {
             m_categories.clear();
             m_itemLookup.clear();
+            m_itemButtonIds.clear();
             }
 
         /// @returns The loaded categories.
@@ -194,7 +221,23 @@ namespace Wisteria::UI
             std::optional<wxWindowID> m_commandId;
             };
 
+        /// @brief Where a ribbon button was found.
+        struct RibbonButtonLocation
+            {
+            /// @brief @c true if any ribbon in the frame has the button.
+            bool m_inRibbon{ false };
+            /// @brief A bar with the button in a shown panel (preferring one where it is enabled).
+            wxRibbonButtonBar* m_bar{ nullptr };
+            };
+
         bool LoadDocument(const wxXmlDocument& doc);
+        [[nodiscard]]
+        static RibbonButtonLocation FindRibbonButton(wxWindow* frame, wxWindowID buttonId);
+        static void FindButtonInRibbon(wxWindow* window, wxWindowID buttonId,
+                                       RibbonButtonLocation& location);
+        static bool UpdateRibbonButton(wxRibbonButtonBar* buttonBar, wxWindowID buttonId);
+        [[nodiscard]]
+        static bool IsInShownRibbonPanel(const wxWindow* buttonBar);
         [[nodiscard]]
         static std::vector<wxString> TokenizeQuery(const wxString& query);
         [[nodiscard]]
@@ -214,8 +257,11 @@ namespace Wisteria::UI
         std::vector<TellMeCategory> m_categories;
         std::map<wxString, std::pair<size_t, size_t>> m_itemLookup;
         std::map<wxString, TellMeAction> m_actions;
+        // resolved button IDs of the loaded items, by feature ID
+        std::map<wxString, wxWindowID> m_itemButtonIds;
         std::vector<wxString> m_recentIds;
         HelpCallback m_helpHandler;
+        CommandResolver m_commandResolver;
         };
     } // namespace Wisteria::UI
 

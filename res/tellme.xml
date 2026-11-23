@@ -4,7 +4,11 @@
      or a help topic (help="...") opened from the help folder.
      The name is the item's display name and should start with a verb (e.g., "Insert bar chart").
      Phrases are optional search synonyms, separated by semicolons.
-     A description is optional text shown under the name (with a larger icon). It is not searched. -->
+     A description is optional text shown under the name (with a larger icon). It is not searched.
+     A button is an optional ribbon button ID that the item follows. The item is disabled
+     when that button is disabled or hidden (e.g., for a command inside a dropdown menu).
+     Don't use a dropdown button's ID as an item ID, because running it would open its menu.
+     List the menu's commands instead, each with the dropdown's ID as its button. -->
 <tellme>
   <category name="Actions">
     <!-- graphs -->

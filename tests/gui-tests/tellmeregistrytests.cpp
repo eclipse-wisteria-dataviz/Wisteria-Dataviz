@@ -2,6 +2,10 @@
 #include <catch2/catch_test_macros.hpp>
 #include <wx/file.h>
 #include <wx/filename.h>
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/buttonbar.h>
+#include <wx/ribbon/page.h>
+#include <wx/ribbon/panel.h>
 #include <wx/sstream.h>
 
 using namespace Wisteria::UI;
@@ -343,4 +347,174 @@ TEST_CASE("Tell Me registry runs actions", "[tellmeregistry]")
         CHECK(registry.GetRecentIds().size() == TellMeRegistry::MAX_RECENT_IDS);
         CHECK(registry.GetRecentIds().front() == L"bar");
         }
+    }
+
+constexpr wxWindowID CLICK_ID{ wxID_HIGHEST + 1001 };
+constexpr wxWindowID TOGGLE_ID{ wxID_HIGHEST + 1002 };
+constexpr wxWindowID DISABLED_ID{ wxID_HIGHEST + 1003 };
+constexpr wxWindowID HIDDEN_ID{ wxID_HIGHEST + 1004 };
+constexpr wxWindowID DROPDOWN_ID{ wxID_HIGHEST + 1005 };
+constexpr wxWindowID MENU_ONLY_ID{ wxID_HIGHEST + 1006 };
+
+// clang-format off
+static const wxString RESOLVER_XML{
+    L"<tellme>"
+    L"  <category name=\"Actions\">"
+    L"    <item id=\"CLICK\" name=\"Click the button\"/>"
+    L"    <item id=\"TOGGLE\" name=\"Toggle the button\"/>"
+    L"    <item id=\"DISABLED\" name=\"Disabled button\"/>"
+    L"    <item id=\"HIDDEN\" name=\"Hidden button\"/>"
+    L"    <item id=\"MENU_ONLY\" name=\"Menu command\" button=\"DROPDOWN\"/>"
+    L"    <item id=\"MENU_HIDDEN\" name=\"Hidden menu command\" button=\"HIDDEN\"/>"
+    L"    <item id=\"UNKNOWN\" name=\"Unknown command\"/>"
+    L"    <item id=\"CUSTOM\" name=\"Custom action\"/>"
+    L"  </category>"
+    L"  <category name=\"Help\">"
+    L"    <item id=\"HELP\" help=\"online/help.html\" name=\"Help topic\"/>"
+    L"  </category>"
+    L"</tellme>"
+};
+
+// clang-format on
+
+static std::optional<wxWindowID> ResolveTestCommand(const wxString& name)
+    {
+    const std::map<wxString, wxWindowID> commands{
+        { L"CLICK", CLICK_ID },           { L"TOGGLE", TOGGLE_ID },
+        { L"DISABLED", DISABLED_ID },     { L"HIDDEN", HIDDEN_ID },
+        { L"DROPDOWN", DROPDOWN_ID },     { L"MENU_ONLY", MENU_ONLY_ID },
+        { L"MENU_HIDDEN", MENU_ONLY_ID }, { L"HELP", CLICK_ID },
+        { L"CUSTOM", CLICK_ID }
+    };
+    const auto commandPos = commands.find(name);
+    return commandPos != commands.cend() ? std::optional<wxWindowID>{ commandPos->second } :
+                                           std::nullopt;
+    }
+
+TEST_CASE("Tell Me registry resolves command IDs", "[tellmeregistry]")
+    {
+    TellMeRegistry registry;
+    bool customRan{ false };
+    registry.RegisterAction(L"CUSTOM", [&customRan](wxWindow*) { customRan = true; });
+    registry.SetCommandResolver(ResolveTestCommand);
+    wxStringInputStream stream{ RESOLVER_XML };
+    REQUIRE(registry.LoadXml(stream));
+
+    CHECK(registry.IsRunnable(L"CLICK"));
+    CHECK(registry.IsRunnable(L"MENU_ONLY"));
+    // IDs that the resolver doesn't know aren't registered
+    CHECK_FALSE(registry.IsRunnable(L"UNKNOWN"));
+    // registered actions aren't replaced
+    CHECK(registry.Run(L"CUSTOM", nullptr));
+    CHECK(customRan);
+
+    // help items open their topic, not a command
+    wxString openedTopic;
+    registry.SetHelpHandler([&openedTopic](wxWindow*, const wxString& topic)
+                            { openedTopic = topic; });
+    CHECK(registry.Run(L"HELP", nullptr));
+    CHECK(openedTopic == L"online/help.html");
+
+    const auto menuPos = registry.FindItem(L"MENU_ONLY");
+    REQUIRE(menuPos.has_value());
+    CHECK(registry.GetItem(menuPos->first, menuPos->second).m_buttonId == L"DROPDOWN");
+    }
+
+TEST_CASE("Tell Me registry clicks ribbon buttons", "[tellmeregistry]")
+    {
+    auto* frame = new wxFrame{ nullptr, wxID_ANY, L"Tell Me ribbon test" };
+    auto* ribbon = new wxRibbonBar{ frame, wxID_ANY };
+    auto* page = new wxRibbonPage{ ribbon, wxID_ANY, L"Home" };
+    auto* panel = new wxRibbonPanel{ page, wxID_ANY, L"Shown" };
+    auto* buttonBar = new wxRibbonButtonBar{ panel };
+    const wxBitmap icon{ 16, 16 };
+    buttonBar->AddButton(CLICK_ID, L"Click", icon, wxString{});
+    buttonBar->AddToggleButton(TOGGLE_ID, L"Toggle", icon);
+    buttonBar->AddButton(DISABLED_ID, L"Disabled", icon, wxString{});
+    buttonBar->AddDropdownButton(DROPDOWN_ID, L"Dropdown", icon);
+    auto* hiddenPanel = new wxRibbonPanel{ page, wxID_ANY, L"Hidden" };
+    auto* hiddenBar = new wxRibbonButtonBar{ hiddenPanel };
+    hiddenBar->AddButton(HIDDEN_ID, L"Hidden", icon, wxString{});
+    ribbon->Realize();
+    buttonBar->EnableButton(DISABLED_ID, false);
+    hiddenPanel->Hide();
+
+    int clickCount{ 0 };
+    std::vector<int> toggleStates;
+    int menuCount{ 0 };
+    frame->Bind(
+        wxEVT_RIBBONBUTTONBAR_CLICKED, [&clickCount](wxRibbonButtonBarEvent&) { ++clickCount; },
+        CLICK_ID);
+    frame->Bind(
+        wxEVT_RIBBONBUTTONBAR_CLICKED, [&toggleStates](wxRibbonButtonBarEvent& event)
+        { toggleStates.push_back(event.GetInt()); }, TOGGLE_ID);
+    frame->Bind(wxEVT_MENU, [&menuCount](wxCommandEvent&) { ++menuCount; }, MENU_ONLY_ID);
+
+    TellMeRegistry registry;
+    registry.SetCommandResolver(ResolveTestCommand);
+    wxStringInputStream stream{ RESOLVER_XML };
+    REQUIRE(registry.LoadXml(stream));
+
+    SECTION("Ribbon button availability")
+        {
+        CHECK(TellMeRegistry::IsRibbonButtonAvailable(frame, CLICK_ID));
+        CHECK_FALSE(TellMeRegistry::IsRibbonButtonAvailable(frame, DISABLED_ID));
+        CHECK_FALSE(TellMeRegistry::IsRibbonButtonAvailable(frame, HIDDEN_ID));
+        CHECK_FALSE(TellMeRegistry::IsRibbonButtonAvailable(frame, MENU_ONLY_ID));
+        }
+
+    SECTION("Commands click their ribbon buttons")
+        {
+        CHECK(registry.Run(L"CLICK", frame));
+        CHECK(clickCount == 1);
+
+        // toggle buttons flip, as when clicked
+        CHECK(registry.Run(L"TOGGLE", frame));
+        CHECK(registry.Run(L"TOGGLE", frame));
+        REQUIRE(toggleStates.size() == 2);
+        CHECK(toggleStates[0] != 0);
+        CHECK(toggleStates[1] == 0);
+        }
+
+    SECTION("Disabled and hidden ribbon buttons are disabled")
+        {
+        CHECK_FALSE(registry.IsEnabled(L"DISABLED", frame));
+        CHECK_FALSE(registry.Run(L"DISABLED", frame));
+        CHECK_FALSE(registry.IsEnabled(L"HIDDEN", frame));
+        }
+
+    SECTION("Commands not in the ribbon send menu events")
+        {
+        CHECK(registry.IsEnabled(L"MENU_ONLY", frame));
+        CHECK(registry.Run(L"MENU_ONLY", frame));
+        CHECK(menuCount == 1);
+        }
+
+    SECTION("Menu commands follow their dropdown button")
+        {
+        CHECK(registry.IsEnabled(L"MENU_ONLY", frame));
+        buttonBar->EnableButton(DROPDOWN_ID, false);
+        CHECK_FALSE(registry.IsEnabled(L"MENU_ONLY", frame));
+        // the button is in a hidden panel
+        CHECK_FALSE(registry.IsEnabled(L"MENU_HIDDEN", frame));
+        }
+
+    SECTION("Ribbon buttons are updated from update UI handlers")
+        {
+        // the button bar hasn't processed this, as when it is on an inactive page
+        frame->Bind(
+            wxEVT_UPDATE_UI, [](wxUpdateUIEvent& event) { event.Enable(true); }, DISABLED_ID);
+        CHECK(registry.IsEnabled(L"DISABLED", frame));
+        CHECK(buttonBar->GetButtonEnabled(DISABLED_ID));
+        }
+
+    SECTION("Actions registered after loading keep their dropdown button")
+        {
+        registry.RegisterAction(L"MENU_ONLY", [](wxWindow*) {});
+        CHECK(registry.IsEnabled(L"MENU_ONLY", frame));
+        buttonBar->EnableButton(DROPDOWN_ID, false);
+        CHECK_FALSE(registry.IsEnabled(L"MENU_ONLY", frame));
+        }
+
+    frame->Destroy();
     }

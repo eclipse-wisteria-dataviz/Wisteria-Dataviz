@@ -10,6 +10,9 @@
 #include <algorithm>
 #include <cwctype>
 #include <wx/filename.h>
+#include <wx/ribbon/bar.h>
+#include <wx/ribbon/buttonbar.h>
+#include <wx/ribbon/panel.h>
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
@@ -25,17 +28,148 @@ namespace Wisteria::UI
     //---------------------------------------------------
     void TellMeRegistry::RegisterCommand(const wxString& id, const wxWindowID commandId)
         {
-        m_actions[id] = TellMeAction{ [commandId](wxWindow* frame)
-                                      {
-                                          if (frame == nullptr)
-                                              {
-                                              return;
-                                              }
-                                          wxCommandEvent cmd{ wxEVT_MENU, commandId };
-                                          cmd.SetEventObject(frame);
-                                          frame->ProcessWindowEvent(cmd);
-                                      },
-                                      TellMeEnabledCallback{}, commandId };
+        m_actions[id] =
+            TellMeAction{ [commandId](wxWindow* frame)
+                          {
+                              if (frame == nullptr)
+                                  {
+                                  return;
+                                  }
+                              // click the ribbon button (if there is one),
+                              // the same as the user would
+                              if (const auto location = FindRibbonButton(frame, commandId);
+                                  location.m_bar != nullptr)
+                                  {
+                                  location.m_bar->ActivateButton(
+                                      location.m_bar->GetItemById(commandId));
+                                  return;
+                                  }
+                              wxCommandEvent cmd{ wxEVT_MENU, commandId };
+                              cmd.SetEventObject(frame);
+                              if (!frame->ProcessWindowEvent(cmd))
+                                  {
+                                  wxLogDebug(L"Tell Me: command %d was not handled.", commandId);
+                                  }
+                          },
+                          TellMeEnabledCallback{}, commandId };
+        }
+
+    //---------------------------------------------------
+    bool TellMeRegistry::IsInShownRibbonPanel(const wxWindow* buttonBar)
+        {
+        // Only the panels' own shown state is checked. Inactive pages and
+        // the bars inside minimized panels are hidden, but their buttons still work.
+        for (const auto* window = buttonBar; window != nullptr; window = window->GetParent())
+            {
+            if (window->IsKindOf(wxCLASSINFO(wxRibbonPanel)) && !window->IsShown())
+                {
+                return false;
+                }
+            if (window->IsTopLevel())
+                {
+                break;
+                }
+            }
+        return true;
+        }
+
+    //---------------------------------------------------
+    TellMeRegistry::RibbonButtonLocation TellMeRegistry::FindRibbonButton(wxWindow* frame,
+                                                                          const wxWindowID buttonId)
+        {
+        RibbonButtonLocation location;
+        if (frame == nullptr)
+            {
+            return location;
+            }
+
+        // find the shallowest ribbon bars, level by level, so that the frame's
+        // other windows (e.g., views and their controls) are usually not searched
+        std::vector<wxWindow*> level{ frame };
+        std::vector<wxRibbonBar*> ribbonBars;
+        while (!level.empty() && ribbonBars.empty())
+            {
+            std::vector<wxWindow*> nextLevel;
+            for (auto* window : level)
+                {
+                for (auto* child : window->GetChildren())
+                    {
+                    if (auto* ribbonBar = wxDynamicCast(child, wxRibbonBar); ribbonBar != nullptr)
+                        {
+                        ribbonBars.push_back(ribbonBar);
+                        }
+                    else if (!child->IsTopLevel())
+                        {
+                        nextLevel.push_back(child);
+                        }
+                    }
+                }
+            level = std::move(nextLevel);
+            }
+
+        for (auto* ribbonBar : ribbonBars)
+            {
+            FindButtonInRibbon(ribbonBar, buttonId, location);
+            }
+        return location;
+        }
+
+    //---------------------------------------------------
+    void TellMeRegistry::FindButtonInRibbon(wxWindow* window, const wxWindowID buttonId,
+                                            RibbonButtonLocation& location)
+        {
+        for (auto* child : window->GetChildren())
+            {
+            if (auto* buttonBar = wxDynamicCast(child, wxRibbonButtonBar);
+                buttonBar != nullptr && buttonBar->GetItemById(buttonId) != nullptr)
+                {
+                location.m_inRibbon = true;
+                if (IsInShownRibbonPanel(buttonBar) &&
+                    (location.m_bar == nullptr || (!location.m_bar->GetButtonEnabled(buttonId) &&
+                                                   buttonBar->GetButtonEnabled(buttonId))))
+                    {
+                    location.m_bar = buttonBar;
+                    }
+                }
+            else if (!child->IsTopLevel())
+                {
+                FindButtonInRibbon(child, buttonId, location);
+                // an expanded minimized panel moves its bars into a popup
+                if (auto* panel = wxDynamicCast(child, wxRibbonPanel);
+                    panel != nullptr && panel->GetExpandedPanel() != nullptr)
+                    {
+                    FindButtonInRibbon(panel->GetExpandedPanel(), buttonId, location);
+                    }
+                }
+            }
+        }
+
+    //---------------------------------------------------
+    bool TellMeRegistry::IsRibbonButtonAvailable(wxWindow* frame, const wxWindowID buttonId)
+        {
+        const auto location = FindRibbonButton(frame, buttonId);
+        return location.m_bar != nullptr && UpdateRibbonButton(location.m_bar, buttonId);
+        }
+
+    //---------------------------------------------------
+    bool TellMeRegistry::UpdateRibbonButton(wxRibbonButtonBar* buttonBar, const wxWindowID buttonId)
+        {
+        // button bars only process update UI events while they are shown,
+        // so a button on an inactive page can be out of date
+        wxUpdateUIEvent updateEvent{ buttonId };
+        updateEvent.SetEventObject(buttonBar);
+        if (buttonBar->ProcessWindowEvent(updateEvent))
+            {
+            if (updateEvent.GetSetEnabled())
+                {
+                buttonBar->EnableButton(buttonId, updateEvent.GetEnabled());
+                }
+            if (updateEvent.GetSetChecked())
+                {
+                buttonBar->ToggleButton(buttonId, updateEvent.GetChecked());
+                }
+            }
+        return buttonBar->GetButtonEnabled(buttonId);
         }
 
     //---------------------------------------------------
@@ -108,6 +242,8 @@ namespace Wisteria::UI
                 item.m_name = itemNode->GetAttribute(L"name", wxString{}).Strip(wxString::both);
                 item.m_description =
                     itemNode->GetAttribute(L"description", wxString{}).Strip(wxString::both);
+                item.m_buttonId =
+                    itemNode->GetAttribute(L"button", wxString{}).Strip(wxString::both);
 
                 wxStringTokenizer tokenizer{ itemNode->GetAttribute(L"phrases", wxString{}), L";",
                                              wxTOKEN_STRTOK };
@@ -131,10 +267,31 @@ namespace Wisteria::UI
                     wxLogDebug(L"Tell Me: duplicate feature ID '%s' skipped.", item.m_id);
                     continue;
                     }
+                if (!m_actions.contains(item.m_id) && item.m_helpTopic.empty() && m_commandResolver)
+                    {
+                    if (const auto commandId = m_commandResolver(item.m_id); commandId.has_value())
+                        {
+                        RegisterCommand(item.m_id, commandId.value());
+                        }
+                    }
                 if (!m_actions.contains(item.m_id) && item.m_helpTopic.empty())
                     {
                     wxLogDebug(L"Tell Me: feature ID '%s' has no registered action or help topic.",
                                item.m_id);
+                    }
+                if (!item.m_buttonId.empty())
+                    {
+                    const auto buttonId = m_commandResolver ? m_commandResolver(item.m_buttonId) :
+                                                              std::optional<wxWindowID>{};
+                    if (buttonId.has_value())
+                        {
+                        m_itemButtonIds[item.m_id] = buttonId.value();
+                        }
+                    else
+                        {
+                        wxLogDebug(L"Tell Me: button '%s' of feature ID '%s' could not be used.",
+                                   item.m_buttonId, item.m_id);
+                        }
                     }
 
                 auto& items = m_categories[catIndex].m_items;
@@ -180,12 +337,26 @@ namespace Wisteria::UI
             }
 
         const auto& action = actionPos->second;
+        // a command inside a dropdown menu is unavailable when its dropdown button is
+        if (const auto buttonPos = m_itemButtonIds.find(id);
+            buttonPos != m_itemButtonIds.cend() && frame != nullptr &&
+            !IsRibbonButtonAvailable(frame, buttonPos->second))
+            {
+            return false;
+            }
         if (action.m_enabled)
             {
             return action.m_enabled(frame);
             }
         if (action.m_commandId.has_value() && frame != nullptr)
             {
+            // the ribbon button's state (if the command has one)
+            if (const auto location = FindRibbonButton(frame, action.m_commandId.value());
+                location.m_inRibbon)
+                {
+                return location.m_bar != nullptr &&
+                       UpdateRibbonButton(location.m_bar, action.m_commandId.value());
+                }
             wxUpdateUIEvent updateEvent{ action.m_commandId.value() };
             updateEvent.SetEventObject(frame);
             frame->ProcessWindowEvent(updateEvent);
