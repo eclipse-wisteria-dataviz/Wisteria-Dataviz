@@ -1541,6 +1541,7 @@ namespace Wisteria::Data
         {
             wxString escapedText = val;
             // strip tabs and newlines
+            escapedText.Replace(L'\t', L' ', true);
             escapedText.Replace(L'\n', L' ', true);
             escapedText.Replace(L'\r', L' ', true);
             // quote (if requested)
