@@ -53,7 +53,6 @@
 #include "../src/graphs/win_loss_sparkline.h"
 #include "../src/graphs/wordcloud.h"
 #include "../src/import/text_matrix.h"
-#include "../src/reporting/reportbuilder.h"
 #include "../src/reporting/reportprintout.h"
 #include "../src/ui/dialogs/variableselectdlg.h"
 #include "../src/util/logfile.h"
@@ -160,7 +159,6 @@ class MyFrame final : public wxMDIParentFrame
 
     void OnAbout([[maybe_unused]] wxCommandEvent& event);
     void OnNewWindow(wxCommandEvent& event);
-    void OnOpenProject(wxCommandEvent& event);
     void OnQuit([[maybe_unused]] wxCommandEvent& event);
     void OnCloseAll([[maybe_unused]] wxCommandEvent& event);
     void OnClose([[maybe_unused]] wxCommandEvent& event);

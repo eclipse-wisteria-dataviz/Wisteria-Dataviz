@@ -156,14 +156,13 @@ MyFrame::MyFrame()
     InitToolBar(wxFrameBase::GetToolBar());
 
     // Array of accelerator entries
-    const std::array<wxAcceleratorEntry, 7> entries = {
+    const std::array<wxAcceleratorEntry, 6> entries = {
         wxAcceleratorEntry(wxACCEL_CTRL, L'N', wxID_NEW),
         wxAcceleratorEntry(wxACCEL_CTRL, L'X', wxID_EXIT),
         wxAcceleratorEntry(wxACCEL_CTRL, L'A', wxID_ABOUT),
         wxAcceleratorEntry(wxACCEL_CTRL, L'S', wxID_SAVE),
         wxAcceleratorEntry(wxACCEL_CTRL, L'P', wxID_PRINT),
         wxAcceleratorEntry(wxACCEL_CTRL, L'C', wxID_COPY),
-        wxAcceleratorEntry(wxACCEL_CTRL, L'O', wxID_OPEN),
     };
 
     wxWindowBase::SetAcceleratorTable(wxAcceleratorTable{ entries.size(), entries.data() });
@@ -221,7 +220,6 @@ MyFrame::MyFrame()
 
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnNewWindow, this, wxID_NEW);
-    Bind(wxEVT_MENU, &MyFrame::OnOpenProject, this, wxID_OPEN);
     Bind(wxEVT_MENU, &MyFrame::OnSaveWindow, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MyFrame::OnPrintWindow, this, wxID_PRINT);
     Bind(wxEVT_MENU, &MyFrame::OnPrintAll, this, MyApp::ID_PRINT_ALL);
@@ -306,9 +304,6 @@ wxMenuBar* MyFrame::CreateMainMenubar()
     fileMenu->Append(MyApp::ID_PRINT_ALL, _(L"&Print All..."), _(L"Print All"));
     fileMenu->AppendSeparator();
 
-    fileMenu->Append(wxID_OPEN, _(L"&Open\tCtrl+O"), _(L"Open Project..."));
-
-    fileMenu->AppendSeparator();
     fileMenu->Append(MyApp::ID_TEXT_CLASSIFIER, _(L"&Text Classifier..."),
                      _(L"Demonstrates the Text Classifier feature"));
     fileMenu->AppendSeparator();
@@ -553,29 +548,6 @@ void MyFrame::OnAbout([[maybe_unused]] wxCommandEvent& event)
                                "a wxWidgets-based data visualization library."));
 
     wxAboutBox(aboutInfo, this);
-    }
-
-void MyFrame::OnOpenProject([[maybe_unused]] wxCommandEvent& event)
-    {
-    wxFileDialog fileDlg(this, _(L"Open Project"), wxEmptyString, GetLabel(),
-                         _(L"Project File (*.json)|*.json"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-
-    if (fileDlg.ShowModal() != wxID_OK)
-        {
-        return;
-        }
-
-    Wisteria::ReportBuilder rb;
-    auto report = rb.LoadConfigurationFile(fileDlg.GetPath(), this);
-
-    for (auto& page : report)
-        {
-        // create and show a child frame for each page
-        auto* subframe = new MyChild(this);
-        page->Reparent(subframe);
-        subframe->m_canvas = page;
-        subframe->Show(true);
-        }
     }
 
 void MyFrame::OnNewWindow(wxCommandEvent& event)
