@@ -211,6 +211,21 @@ namespace Wisteria::UI
         /// @param column The column to select.
         void SetSelectedCell(size_t row, size_t column);
 
+        /** @brief Shows a choice on the "Placement" page for where the new item goes.
+            @details The first choice (the default) is the canvas passed to the constructor,
+                which is a new canvas in the Graphs section. The others are the pages.
+                The cell grid is only shown when a page is chosen.
+                Only applies when inserting an item.
+            @param pages The names and canvases of the pages.*/
+        void SetPlacementDestinations(const std::vector<std::pair<wxString, Canvas*>>& pages);
+
+        /// @returns The canvas that the item will be placed on.
+        [[nodiscard]]
+        Canvas* GetDestinationCanvas() noexcept
+            {
+            return m_canvas;
+            }
+
       protected:
         /// @brief Creates the dialog controls.
         /// @details Override in derived classes to add additional sidebar pages.
@@ -304,8 +319,21 @@ namespace Wisteria::UI
         void SelectCell(size_t row, size_t column);
         [[nodiscard]]
         bool IsLegendCell(size_t row, size_t column) const;
+        /// @brief Selects the first empty cell, or else the first cell that isn't a legend.
+        void SelectFirstAvailableCell();
+        /// @brief Switches the placement grid to the canvas chosen as the destination.
+        void OnDestinationChanged();
 
         Canvas* m_canvas{ nullptr };
+        // the new Graphs section canvas, and the pages, that the item can be placed on
+        Canvas* m_graphsCanvas{ nullptr };
+        std::vector<Canvas*> m_destinationPages;
+        int m_destination{ 0 };
+        wxChoice* m_destinationChoice{ nullptr };
+        wxSizer* m_destinationSizer{ nullptr };
+        wxSizer* m_gridSizeSizer{ nullptr };
+        wxStaticText* m_cellPrompt{ nullptr };
+        wxSizer* m_placementSizer{ nullptr };
         const ReportBuilder* m_reportBuilder{ nullptr };
         SideBarBook* m_sideBarBook{ nullptr };
         wxPanel* m_gridPanel{ nullptr };

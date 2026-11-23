@@ -90,6 +90,18 @@ The following properties are available:
   - `"pdf"`: The pages to leave out of PDF exports.
   - `"pptx"`: The pages to leave out of PowerPoint exports.
   - `"odp"`: The pages to leave out of OpenDocument presentation exports.
+- `"graphs"`: An array of standalone graphs. \
+  Each graph is shown on its own canvas that fills the window, rather than on a page. \
+  These graphs aren't included in exports or page numbering. \
+  Each graph contains the following properties:
+  - `"name"`: A string value representing the name of the graph. \
+    Note that constants can be used in the name. \
+    (This is optional.) \
+    If omitted, the graph is named after its title (or *Graph 1*, *Graph 2*, etc. if it doesn't have one).
+  - `"guid"`: A string value uniquely identifying the graph. \
+    This is optional.
+  - `"graph"`: The graph's definition, which is the same as a graph item on a page (see [Graphs](#graphs)). \
+    This includes its `"legend"` and `"filter"` properties.
 
 ### Examples {-}
 
@@ -132,6 +144,25 @@ Boilerplate project containing pages and rows of items:
           ]
         }
       ]
+    }
+  ]
+}
+```
+
+A project with a standalone graph:
+
+```json
+{
+  "name": "RETENTION",
+  "graphs": [
+    {
+      "name": "Products",
+      "graph": {
+        "type": "pie-chart",
+        "dataset": "Sales",
+        "variables": { "group-1": "Product" },
+        "legend": { "placement": "right" }
+      }
     }
   ]
 }

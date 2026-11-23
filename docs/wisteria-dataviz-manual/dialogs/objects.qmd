@@ -59,6 +59,38 @@ A value of 0 is fully transparent, whereas 255 is fully opaque.
 
 \newpage
 
+## Graphs Section {#sec-graphs-section}
+
+The **Graphs** section of the sidebar is a workspace for creating and exploring graphs.
+It is shown below **Constants** and above the pages.
+New graphs are added here by default (see [**Insert into**](#sec-editor-placement)).
+When a graph is ready, you can copy it onto a page.
+
+Click a graph in this section to view it.
+Each graph is shown by itself and fills the window, rather than being sized like a printed page.
+If the graph has a legend, then the legend is shown on the side of the graph chosen in its legend options.
+
+The graph is listed by its title (unless the project file gives it a name).
+Graphs without a title are listed as *Graph 1*, *Graph 2*, and so on.
+If more than one graph has the same title, then a number is added after it (e.g., *Sales (2)*).
+
+To edit a graph, double-click it or select it and click `r keys("Edit")`.
+To remove a graph from this section, select it and click `r keys("Delete")` (or press `r keys("Delete")`).
+
+To place a copy of a graph on a page, view the graph and click the `r keys("Copy to Page")` button in the **Objects** section of the **Objects** tab.
+Select the page to copy the graph to, and the graph's editor will be shown.
+On its [**Placement**](#sec-editor-placement) page, select the cell to place the graph in.
+A filtered graph is copied with its filter, and its dataset can't be changed.
+The graph stays in the **Graphs** section, so changes to the copy on the page don't affect it.
+(You can also select the graph, click `r keys("Copy")`, then select the page and click `r keys("Paste")`.)
+
+::: {.notesection data-latex=""}
+Graphs in this section are saved with the project, but they aren't included in exports or when printing all pages.
+Filtered graphs in this section aren't linked to filtered graphs on pages.
+:::
+
+\newpage
+
 ## Label {#sec-label-dlg}
 
 A label is a block of text drawn on a page (e.g., a title or a note).

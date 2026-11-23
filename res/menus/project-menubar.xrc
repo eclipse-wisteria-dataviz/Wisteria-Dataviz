@@ -324,6 +324,9 @@
                 <label>Paste</label>
                 <accel>Ctrl+V</accel>
             </object>
+            <object class="wxMenuItem" name="ID_COPY_GRAPH_TO_PAGE">
+                <label>Copy to Page...</label>
+            </object>
             <object class="wxMenuItem" name="ID_EDIT_ITEM">
                 <label>Edit...</label>
             </object>

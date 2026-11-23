@@ -206,6 +206,10 @@
           name="Delete selected item"
           description="Remove the selected item from the page"
           phrases="Remove the selected graph"/>
+    <item id="ID_COPY_GRAPH_TO_PAGE" icon="images/page-add.svg"
+          name="Copy graph to page"
+          description="Place a copy of the graph from the Graphs section onto a page"
+          phrases="Add graph to page;Move graph to page;Put graph on page"/>
     <item id="wxID_COPY" icon="images/copy.svg"
           name="Copy selected item"
           description="Copy the selected item"

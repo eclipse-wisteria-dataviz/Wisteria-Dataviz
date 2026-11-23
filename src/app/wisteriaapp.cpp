@@ -148,6 +148,7 @@ const std::vector<std::pair<const wchar_t*, wxWindowID>>& WisteriaApp::GetComman
         { L"ID_NEW_DIVIDER_VERTICAL_DOUBLE", ID_NEW_DIVIDER_VERTICAL_DOUBLE },
         { L"ID_EDIT_ITEM", ID_EDIT_ITEM },
         { L"ID_DELETE_ITEM", ID_DELETE_ITEM },
+        { L"ID_COPY_GRAPH_TO_PAGE", ID_COPY_GRAPH_TO_PAGE },
         { L"ID_VIEW_LOG_REPORT", ID_VIEW_LOG_REPORT },
         { L"ID_SCRIPT_WINDOW", ID_SCRIPT_WINDOW },
         { L"ID_PROJECT_SETTINGS", ID_PROJECT_SETTINGS },
@@ -1816,6 +1817,10 @@ wxRibbonBar* WisteriaApp::CreateRibbon(wxWindow* parent, const wxDocument* doc)
         objectsButtonBar->AddButton(wxID_PASTE, _(L"Paste"), ReadSvgIcon(L"images/paste.svg"),
                                     _(L"Paste the copied item"));
         objectsButtonBar->SetKeyTip(wxID_PASTE, _DT(L"U"));
+        objectsButtonBar->AddButton(ID_COPY_GRAPH_TO_PAGE, _(L"Copy to Page"),
+                                    ReadSvgIcon(L"images/page-add.svg"),
+                                    _(L"Copy the graph to a page"));
+        objectsButtonBar->SetKeyTip(ID_COPY_GRAPH_TO_PAGE, _DT(L"CG"));
         objectsButtonBar->AddButton(ID_EDIT_ITEM, _(L"Edit"), ReadSvgIcon(L"images/edit.svg"),
                                     _(L"Edit the selected item"));
         objectsButtonBar->SetKeyTip(ID_EDIT_ITEM, _DT(L"W"));
@@ -2555,6 +2560,7 @@ void WisteriaApp::InitProjectSidebar()
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/pivot-longer.svg"));
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/subset.svg"));
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/join.svg"));
+    m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/chart-basic.svg"));
     }
 
 //-------------------------------------------

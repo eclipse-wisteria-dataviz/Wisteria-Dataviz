@@ -72,6 +72,13 @@ class WisteriaView final : public wxView
         return m_pages;
         }
 
+    /// @returns The canvases in the Graphs section, each holding one graph (and its legend).
+    [[nodiscard]]
+    const std::vector<Wisteria::Canvas*>& GetGraphs() const noexcept
+        {
+        return m_graphs;
+        }
+
     /// @brief Finds a page by its GUID.
     /// @param guid The GUID of the page to look for.
     /// @returns The index of the page, or @c std::nullopt if not found.
@@ -190,6 +197,11 @@ class WisteriaView final : public wxView
     void OnSidebarClick(const wxCommandEvent& event);
     void OnCopyItem(wxCommandEvent& event);
     void OnPasteItem(wxCommandEvent& event);
+    /// @brief Opens a graph's editor from its serialized JSON, to place a copy of it on a page.
+    /// @param graphJson The graph's JSON.
+    /// @param canvas The page to place the graph on.
+    void PasteGraphJson(const wxString& graphJson, Wisteria::Canvas* canvas);
+    void OnCopyGraphToPage(wxCommandEvent& event);
     void OnPrintAll(wxCommandEvent& event);
     void OnBackstagePrint(wxCommandEvent& event);
     void PrintAllPages(bool prompt, int copies);
@@ -431,8 +443,9 @@ class WisteriaView final : public wxView
         const wxString& allLabel,
         const std::optional<FilterableGraphFallback>& fallback = std::nullopt);
 
-    /// @brief Shows a filtered graph's filter value on every other filtered graph in the
-    ///     project that filters the same dataset and column.
+    /// @brief Shows a filtered graph's filter value on the other filtered graphs on pages
+    ///     that filter the same dataset and column.
+    /// @details A source in the Graphs section isn't synced.
     /// @param source The filtered graph whose filter value was changed.
     /// @returns @c true if any graph's filter value was changed.
     bool SyncLinkedFilters(const Wisteria::Graphs::FilterableGraph& source);
@@ -628,8 +641,87 @@ class WisteriaView final : public wxView
     [[nodiscard]]
     size_t GetDatasetIconFromName(const wxString& name) const;
 
+    /// @returns The shown canvas (a page or a Graphs section canvas), or @c nullptr.
     [[nodiscard]]
     Wisteria::Canvas* GetActiveCanvas() const noexcept;
+
+    /// @returns The shown page, or @c nullptr if a page isn't shown.
+    [[nodiscard]]
+    Wisteria::Canvas* GetActivePage() const noexcept;
+
+    /// @returns @c true if @p canvas is in the Graphs section.
+    /// @param canvas The canvas to review.
+    [[nodiscard]]
+    bool IsGraphsSectionCanvas(const Wisteria::Canvas* canvas) const noexcept;
+
+    /// @returns A new, hidden canvas for the Graphs section that fills its window.
+    [[nodiscard]]
+    Wisteria::Canvas* CreateGraphCanvas();
+
+    /// @brief Adds a canvas to the Graphs section and shows it.
+    /// @param canvas The canvas (from CreateGraphCanvas()) holding the graph.
+    void AddGraphToSection(Wisteria::Canvas* canvas);
+
+    /// @brief Removes a canvas from the Graphs section and destroys it.
+    /// @param canvas The canvas to remove.
+    void RemoveGraphFromSection(Wisteria::Canvas* canvas);
+
+    /// @returns The sidebar label for a Graphs section canvas, based on its graph's title.
+    /// @param canvas The Graphs section canvas.
+    [[nodiscard]]
+    wxString GetGraphDisplayName(const Wisteria::Canvas& canvas) const;
+
+    /// @brief Fills the dialog's destination choice with the Graphs section and the pages.
+    /// @param dlg The insert dialog.
+    void SetupGraphDestinations(Wisteria::UI::InsertItemDlg& dlg) const;
+
+    /// @brief Owns a Graphs section canvas while a graph is being inserted.
+    /// @details The canvas is destroyed unless Commit() is called.
+    class StagedGraphCanvas
+        {
+      public:
+        /// @brief Constructor.
+        /// @param view The view to add the canvas to.
+        explicit StagedGraphCanvas(WisteriaView* view)
+            : m_view(view), m_canvas(view->CreateGraphCanvas())
+            {
+            }
+
+        /// @private
+        StagedGraphCanvas(const StagedGraphCanvas&) = delete;
+        /// @private
+        StagedGraphCanvas& operator=(const StagedGraphCanvas&) = delete;
+
+        /// @private
+        ~StagedGraphCanvas()
+            {
+            if (!m_committed && m_canvas != nullptr)
+                {
+                m_canvas->Destroy();
+                }
+            }
+
+        /// @returns The staged canvas.
+        [[nodiscard]]
+        Wisteria::Canvas* Get() const noexcept
+            {
+            return m_canvas;
+            }
+
+        /// @brief Adds the canvas to the Graphs section if it is @p destination.
+        ///     Otherwise, shows the page that is @p destination.
+        /// @param destination The canvas that the graph was placed on.
+        void Finalize(Wisteria::Canvas* destination);
+
+      private:
+        WisteriaView* m_view{ nullptr };
+        Wisteria::Canvas* m_canvas{ nullptr };
+        bool m_committed{ false };
+        };
+
+    /// @brief Shows a page and points page number placeholders at it.
+    /// @param canvas The page to show.
+    void SelectPage(Wisteria::Canvas* canvas);
 
     /// @brief Returns the active canvas, or prompts the user to select a page if none is active.
     /// @returns The active canvas, or @c nullptr if no pages exist or the user cancels.
@@ -643,6 +735,10 @@ class WisteriaView final : public wxView
 
     [[nodiscard]]
     bool IsPageSelected() const noexcept;
+
+    /// @returns @c true if a Graphs section graph is shown and there is a page to copy it to.
+    [[nodiscard]]
+    bool CanCopyGraphToPage() const noexcept;
 
     [[nodiscard]]
     bool IsDatasetSelected() const noexcept;
@@ -683,10 +779,14 @@ class WisteriaView final : public wxView
 
     Wisteria::ReportBuilder m_reportBuilder;
     std::vector<Wisteria::Canvas*> m_pages;
+    std::vector<Wisteria::Canvas*> m_graphs;
+    wxWindowID m_graphsFolderId{ wxID_ANY };
     WindowContainer m_workWindows;
 
     // the last graph placed by PlaceGraphWithLegend(), which a filterable graph replaces
     mutable std::weak_ptr<Wisteria::GraphItems::GraphItemBase> m_lastPlacedGraph;
+    // the canvas that PlaceGraphWithLegend() last placed a graph on
+    mutable Wisteria::Canvas* m_lastPlacedCanvas{ nullptr };
     mutable Wisteria::UI::LegendPlacement m_lastPlacedLegendPlacement{
         Wisteria::UI::LegendPlacement::None
     };
@@ -709,6 +809,11 @@ class WisteriaView final : public wxView
     constexpr static size_t DATA_PIVOT_LONGER_ICON_INDEX{ 4 };
     constexpr static size_t DATA_SUBSET_ICON_INDEX{ 5 };
     constexpr static size_t DATA_JOIN_ICON_INDEX{ 6 };
+    constexpr static size_t GRAPHS_ICON_INDEX{ 7 };
+
+    // sidebar folders: Data, Constants, Graphs, then one folder per page
+    constexpr static size_t GRAPHS_FOLDER_INDEX{ 2 };
+    constexpr static size_t FIRST_PAGE_FOLDER_INDEX{ 3 };
 
     wxDECLARE_DYNAMIC_CLASS(WisteriaView);
     };

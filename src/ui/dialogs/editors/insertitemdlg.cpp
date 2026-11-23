@@ -46,11 +46,26 @@ namespace Wisteria::UI
                                  const wxPoint& pos, const wxSize& size, const long style,
                                  EditMode editMode, const int pageOptions)
         : DialogWithHelp(parent, id, caption, pos, size, style), m_canvas(canvas),
-          m_reportBuilder(reportBuilder), m_editMode(editMode), m_pageOptions(pageOptions)
+          m_graphsCanvas(canvas), m_reportBuilder(reportBuilder), m_editMode(editMode),
+          m_pageOptions(pageOptions)
         {
         const auto gridSize = m_canvas->GetFixedObjectsGridSize();
         m_rows = std::max<size_t>(gridSize.first, 1);
         m_columns = std::max<size_t>(gridSize.second, 1);
+
+        SelectFirstAvailableCell();
+        }
+
+    //-------------------------------------------
+    void InsertItemDlg::SelectFirstAvailableCell()
+        {
+        m_selectedRow = 0;
+        m_selectedColumn = 0;
+        if (m_canvas == nullptr)
+            {
+            return;
+            }
+        const auto gridSize = m_canvas->GetFixedObjectsGridSize();
 
         // select the first empty cell (scanning in reading order)
         for (size_t row = 0; row < gridSize.first; ++row)
@@ -117,6 +132,80 @@ namespace Wisteria::UI
         }
 
     //-------------------------------------------
+    void
+    InsertItemDlg::SetPlacementDestinations(const std::vector<std::pair<wxString, Canvas*>>& pages)
+        {
+        if (GetEditMode() != EditMode::Insert || m_destinationChoice == nullptr ||
+            m_placementSizer == nullptr)
+            {
+            return;
+            }
+
+        m_destinationPages.clear();
+        m_destinationChoice->Clear();
+        m_destinationChoice->Append(_(L"Graphs section"));
+        for (const auto& [pageName, pageCanvas] : pages)
+            {
+            if (pageCanvas != nullptr)
+                {
+                m_destinationChoice->Append(pageName);
+                m_destinationPages.push_back(pageCanvas);
+                }
+            }
+
+        m_destination = 0;
+        m_destinationChoice->GetValidator()->TransferToWindow();
+        m_placementSizer->Show(m_destinationSizer, true);
+        OnDestinationChanged();
+        }
+
+    //-------------------------------------------
+    void InsertItemDlg::OnDestinationChanged()
+        {
+        if (m_destinationChoice == nullptr || m_placementSizer == nullptr)
+            {
+            return;
+            }
+        m_destinationChoice->GetValidator()->TransferFromWindow();
+
+        const bool isPage =
+            (m_destination > 0 && std::cmp_less_equal(m_destination, m_destinationPages.size()));
+        m_canvas =
+            isPage ? m_destinationPages[static_cast<size_t>(m_destination) - 1] : m_graphsCanvas;
+
+        const auto gridSize = m_canvas->GetFixedObjectsGridSize();
+        m_rows = std::max<size_t>(gridSize.first, 1);
+        m_columns = std::max<size_t>(gridSize.second, 1);
+        if (m_rowsSpin != nullptr)
+            {
+            m_rowsSpin->SetRange(static_cast<int>(m_rows), 50);
+            m_rowsSpin->SetValue(static_cast<int>(m_rows));
+            }
+        if (m_columnsSpin != nullptr)
+            {
+            m_columnsSpin->SetRange(static_cast<int>(m_columns), 50);
+            m_columnsSpin->SetValue(static_cast<int>(m_columns));
+            }
+        SelectFirstAvailableCell();
+
+        // a graph in the Graphs section fills its own canvas, so there is no cell to pick
+        if (m_gridSizeSizer != nullptr)
+            {
+            m_placementSizer->Show(m_gridSizeSizer, isPage);
+            }
+        if (m_cellPrompt != nullptr)
+            {
+            m_cellPrompt->Show(isPage);
+            }
+        if (m_gridPanel != nullptr)
+            {
+            m_gridPanel->Show(isPage);
+            m_gridPanel->Refresh();
+            }
+        m_placementSizer->Layout();
+        }
+
+    //-------------------------------------------
     void InsertItemDlg::CreateControls()
         {
         auto* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -134,6 +223,23 @@ namespace Wisteria::UI
         auto* pageSizer = new wxBoxSizer(wxVERTICAL);
         pagePage->SetSizer(pageSizer);
         m_sideBarBook->AddPage(pagePage, _(L"Placement"), ID_PAGE_SECTION, false);
+        m_placementSizer = pageSizer;
+
+        // destination
+        if (GetEditMode() == EditMode::Insert)
+            {
+            m_destinationSizer = new wxBoxSizer(wxHORIZONTAL);
+            m_destinationSizer->Add(new wxStaticText(pagePage, wxID_ANY, _(L"Insert into:")),
+                                    wxSizerFlags{}.CenterVertical().Border(wxRIGHT));
+            m_destinationChoice = new wxChoice(pagePage, wxID_ANY);
+            m_destinationChoice->SetValidator(wxGenericValidator{ &m_destination });
+            m_destinationSizer->Add(m_destinationChoice, wxSizerFlags{ 1 }.CenterVertical());
+            pageSizer->Add(m_destinationSizer, wxSizerFlags{}.Expand().Border());
+            pageSizer->Show(m_destinationSizer, false);
+
+            m_destinationChoice->Bind(wxEVT_CHOICE, [this]([[maybe_unused]] wxCommandEvent&)
+                                      { OnDestinationChanged(); });
+            }
 
         // grid size controls (only for new items being added to the canvas)
         if (GetEditMode() == EditMode::Insert)
@@ -141,6 +247,7 @@ namespace Wisteria::UI
             auto* gridSizeSizer =
                 new wxFlexGridSizer(4, wxSize{ wxSizerFlags::GetDefaultBorder() * 2,
                                                wxSizerFlags::GetDefaultBorder() });
+            m_gridSizeSizer = gridSizeSizer;
             gridSizeSizer->Add(new wxStaticText(pagePage, wxID_ANY, _(L"Rows:")),
                                wxSizerFlags{}.CenterVertical());
             m_rowsSpin = new wxSpinCtrl(pagePage, wxID_ANY);
@@ -178,9 +285,9 @@ namespace Wisteria::UI
         // grid preview (only for new items being added to the canvas)
         if (GetEditMode() == EditMode::Insert)
             {
-            pageSizer->Add(new wxStaticText(pagePage, wxID_ANY,
-                                            _(L"Select the cell where the item will be placed:")),
-                           wxSizerFlags{}.Border(wxLEFT));
+            m_cellPrompt = new wxStaticText(pagePage, wxID_ANY,
+                                            _(L"Select the cell where the item will be placed:"));
+            pageSizer->Add(m_cellPrompt, wxSizerFlags{}.Border(wxLEFT));
 
             const int previewHeight = FromDIP(200);
             const auto previewWidth =

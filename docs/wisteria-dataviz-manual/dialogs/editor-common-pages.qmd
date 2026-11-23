@@ -351,7 +351,13 @@ The options on this page control where the item is placed on the page and how it
 
 ### Grid {-}
 
+**Insert into**: Select where a new graph goes.
+The default is **Graphs section**, which adds the graph to the [**Graphs**](#sec-graphs-section) section of the sidebar.
+Select a page to place the graph on that page instead.
+This option is only shown when inserting a graph.
+
 A page is laid out as a grid of cells, with one item per cell.
+The following options are only shown when the item is placed on a page.
 
 **Rows**: Enter the number of rows in the page's grid.
 

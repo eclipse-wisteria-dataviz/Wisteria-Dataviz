@@ -86,6 +86,18 @@ namespace Wisteria
         [[nodiscard]]
         std::vector<Canvas*> LoadConfigurationFile(const wxString& filePath, wxWindow* parent);
 
+        /// @brief Releases the standalone graph canvases loaded from the @c graphs section
+        ///     by the last call to @c LoadConfigurationFile().
+        /// @details Each canvas holds one graph (and its legend) and fills its window.
+        ///     The canvases are hidden. The caller takes ownership.
+        ///     Calling this empties the list.
+        /// @returns The graph canvases.
+        [[nodiscard]]
+        std::vector<Canvas*> ReleaseGraphCanvases()
+            {
+            return std::exchange(m_graphCanvases, {});
+            }
+
         /// @brief Builds a single graph from its serialized JSON without placing it on a canvas.
         /// @details The dataset that the graph refers to must already be loaded.
         /// @param json The JSON of a single graph (as written by a project save).
@@ -1948,6 +1960,9 @@ namespace Wisteria
         bool m_odpExportOptionsLoaded{ false };
 
         size_t m_pageNumber{ 1 };
+
+        // standalone graphs (one per canvas) from the "graphs" section
+        std::vector<Canvas*> m_graphCanvases;
 
         static std::map<std::wstring_view, Wisteria::Colors::Color> m_colorMap;
 

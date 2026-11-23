@@ -83,7 +83,7 @@ bool WisteriaDoc::SaveProject(const wxString& filePath) const
         wxString::Format(L"{\"name\": \"%s\", \"subject\": \"%s\", \"author\": \"%s\", "
                          L"\"keywords\": \"%s\", "
                          L"\"watermark\": {}, \"print\": {}, "
-                         L"\"datasets\": [], \"constants\": [], \"pages\": []}",
+                         L"\"datasets\": [], \"constants\": [], \"graphs\": [], \"pages\": []}",
                          EscapeJsonStr(projectName),
                          EscapeJsonStr(view->GetReportBuilder().GetSubject()),
                          EscapeJsonStr(view->GetReportBuilder().GetAuthor()),
@@ -516,6 +516,54 @@ bool WisteriaDoc::SaveProject(const wxString& filePath) const
             }
 
         pagesArray->ArrayAdd(pageObj);
+        }
+
+    // standalone graphs
+    //------------------
+    if (!view->GetGraphs().empty())
+        {
+        auto graphsArray = root->GetProperty(L"graphs");
+        for (const auto* canvas : view->GetGraphs())
+            {
+            if (canvas == nullptr)
+                {
+                continue;
+                }
+
+            // the graph is the one item on the canvas that isn't its legend
+            wxSimpleJSON::Ptr_t graphNode{ nullptr };
+            const auto [rowCount, colCount] = canvas->GetFixedObjectsGridSize();
+            for (size_t row = 0; row < rowCount && graphNode == nullptr; ++row)
+                {
+                for (size_t col = 0; col < colCount && graphNode == nullptr; ++col)
+                    {
+                    const auto item = canvas->GetFixedObject(row, col);
+                    if (item != nullptr && !WisteriaView::IsLegendItem(item.get()))
+                        {
+                        graphNode = SavePageItem(item.get(), canvas);
+                        }
+                    }
+                }
+            if (graphNode == nullptr)
+                {
+                continue;
+                }
+
+            // a graph without its own name is named after its title when loaded
+            const auto& graphName = canvas->GetNameTemplate();
+            auto graphEntry = wxSimpleJSON::Create(wxSimpleJSON::JSONType::IS_OBJECT);
+            if (!graphName.empty())
+                {
+                graphEntry->Add(L"name", graphName);
+                }
+            graphEntry->Add(L"guid", canvas->GetGuid());
+            graphEntry->Add(L"graph", graphNode);
+            graphsArray->ArrayAdd(graphEntry);
+            }
+        }
+    else
+        {
+        root->DeleteProperty(L"graphs");
         }
 
     wxString output = root->Print();

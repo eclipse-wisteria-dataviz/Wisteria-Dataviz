@@ -6,12 +6,17 @@
 // License:     3-Clause BSD license
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "../../src/base/label.h"
+#include "../../src/graphs/filterablegraph.h"
 #include "../../src/graphs/piechart.h"
 #include "../../src/reporting/reportbuilder.h"
 #include "graphrenderharness.h"
 #include <catch2/catch_test_macros.hpp>
 #include <memory>
 #include <stdexcept>
+#include <vector>
+#include <wx/file.h>
+#include <wx/filename.h>
 
 using namespace Wisteria;
 using namespace Wisteria::Data;
@@ -100,4 +105,134 @@ TEST_CASE("ReportBuilder::LoadGraphDetached", "[reportbuilder][detached]")
         CHECK(builder.LoadGraphDetached(L"not json", canvas) == nullptr);
         CHECK(builder.LoadGraphDetached(pieJson, nullptr) == nullptr);
         }
+    }
+
+TEST_CASE("ReportBuilder loads standalone graphs", "[reportbuilder][graphs]")
+    {
+    wxLogNull noLog;
+    const wxString tempDir{ wxFileName::GetTempDir() + wxFileName::GetPathSeparator() };
+    const wxString csvPath{ tempDir + L"wisteria-standalone-graphs-test.csv" };
+    const wxString configPath{ tempDir + L"wisteria-standalone-graphs-test.json" };
+
+        {
+        wxFile csvFile{ csvPath, wxFile::write };
+        REQUIRE(csvFile.IsOpened());
+        csvFile.Write(L"Region,Product\nEast,Apples\nEast,Bananas\nNorth,Bananas\n"
+                      "North,Cherries\nWest,Apples\nWest,Cherries\n");
+        }
+        {
+        wxFile configFile{ configPath, wxFile::write };
+        REQUIRE(configFile.IsOpened());
+        configFile.Write(LR"({
+  "name": "Standalone graphs test",
+  "datasets": [
+    {
+      "name": "Sales",
+      "path": "wisteria-standalone-graphs-test.csv",
+      "categorical-columns": [ { "name": "Region" }, { "name": "Product" } ]
+    }
+  ],
+  "graphs": [
+    {
+      "name": "Products",
+      "graph": {
+        "type": "pie-chart",
+        "dataset": "Sales",
+        "variables": { "group-1": "Product" }
+      }
+    },
+    {
+      "name": "Products by region",
+      "graph": {
+        "type": "pie-chart",
+        "dataset": "Sales",
+        "variables": { "group-1": "Product" },
+        "legend": { "placement": "left" },
+        "filter": { "column": "Region", "default": "North" }
+      }
+    },
+    {
+      "name": "Unknown",
+      "graph": { "type": "not-a-graph" }
+    }
+  ],
+  "pages": [
+    {
+      "name": "Page",
+      "rows": [
+        {
+          "items": [
+            {
+              "type": "pie-chart",
+              "dataset": "Sales",
+              "variables": { "group-1": "Region" }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+})");
+        }
+
+    ReportBuilder builder;
+    const auto pages = builder.LoadConfigurationFile(configPath, wxTheApp->GetTopWindow());
+    const auto graphs = builder.ReleaseGraphCanvases();
+    wxRemoveFile(csvPath);
+    wxRemoveFile(configPath);
+
+    // destroys the loaded canvases, even if a REQUIRE below fails
+    struct CanvasCleanup
+        {
+        std::vector<Canvas*> m_canvases;
+
+        CanvasCleanup() = default;
+        CanvasCleanup(const CanvasCleanup&) = delete;
+        CanvasCleanup& operator=(const CanvasCleanup&) = delete;
+
+        ~CanvasCleanup()
+            {
+            for (auto* canvas : m_canvases)
+                {
+                if (canvas != nullptr)
+                    {
+                    canvas->Destroy();
+                    }
+                }
+            }
+        };
+
+    CanvasCleanup cleanup;
+    cleanup.m_canvases.insert(cleanup.m_canvases.end(), pages.cbegin(), pages.cend());
+    cleanup.m_canvases.insert(cleanup.m_canvases.end(), graphs.cbegin(), graphs.cend());
+
+    // graphs are kept separate from the pages
+    REQUIRE(pages.size() == 1);
+    CHECK(pages.front()->GetLabel() == L"Page");
+
+    // a graph that can't be built isn't loaded
+    REQUIRE(graphs.size() == 2);
+    CHECK(builder.ReleaseGraphCanvases().empty());
+
+    for (const auto* graphCanvas : graphs)
+        {
+        CHECK_FALSE(graphCanvas->IsMaintainingAspectRatio());
+        }
+
+    CHECK(graphs[0]->GetLabel() == L"Products");
+    CHECK(graphs[0]->GetFixedObjectsGridSize() == std::pair<size_t, size_t>{ 1, 1 });
+    CHECK(dynamic_cast<const PieChart*>(graphs[0]->GetFixedObject(0, 0).get()) != nullptr);
+
+    // the legend is placed to the left of the filtered graph
+    CHECK(graphs[1]->GetLabel() == L"Products by region");
+    CHECK(graphs[1]->GetFixedObjectsGridSize() == std::pair<size_t, size_t>{ 1, 2 });
+    const auto* legend =
+        dynamic_cast<const GraphItems::Label*>(graphs[1]->GetFixedObject(0, 0).get());
+    REQUIRE(legend != nullptr);
+    CHECK(legend->IsLegend());
+    const auto* filterableGraph =
+        dynamic_cast<const FilterableGraph*>(graphs[1]->GetFixedObject(0, 1).get());
+    REQUIRE(filterableGraph != nullptr);
+    CHECK(filterableGraph->GetFilterColumn() == L"Region");
+    CHECK(filterableGraph->GetVariants()[filterableGraph->GetActiveIndex()].m_label == L"North");
     }

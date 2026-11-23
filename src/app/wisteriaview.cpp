@@ -252,6 +252,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         { wxID_PASTE, [this]() { return IsPageSelected(); } },
         { ID_EDIT_ITEM, [this]() { return IsCanvasItemSelected(); } },
         { ID_DELETE_ITEM, [this]() { return IsCanvasItemSelected(); } },
+        { ID_COPY_GRAPH_TO_PAGE, [this]() { return CanCopyGraphToPage(); } },
         { ID_GOTO_DATASOURCE, [this]() { return IsGraphSelected(); } },
         { ID_FILTER_CHOICES, [this]() { return GetSelectedFilterableGraph() != nullptr; } }
     };
@@ -584,6 +585,8 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     // bind edit/delete item buttons
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnEditItem, this, ID_EDIT_ITEM);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnDeleteItem, this, ID_DELETE_ITEM);
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnCopyGraphToPage, this,
+                  ID_COPY_GRAPH_TO_PAGE);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnGoToDatasource, this,
                   ID_GOTO_DATASOURCE);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_DROPDOWN_CLICKED, &WisteriaView::OnFilterDropdown, this,
@@ -614,6 +617,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertSpacer, this, ID_NEW_SPACER);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnEditItem, this, ID_EDIT_ITEM);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDeleteItem, this, ID_DELETE_ITEM);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnCopyGraphToPage, this, ID_COPY_GRAPH_TO_PAGE);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnGoToDatasource, this, ID_GOTO_DATASOURCE);
     m_frame->Bind(
         wxEVT_MENU,
@@ -758,9 +762,6 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
                               initialImportInfo });
         m_reportBuilder.GetDatasetTransformOptions()[initialDatasetName].m_columnNamesSort =
             initialImportInfo.GetColumnNamesSort();
-        AddPageToProject(1, 1, wxString{});
-        // adding the page selects it in the sidebar; re-select the dataset instead
-        // so the user lands on their imported data rather than the empty page
         m_sideBar->SelectSubItem(0, 0);
 
         SetAutoRefresh(wxGetApp().GetAppSettings()->IsProjectAutoRefresh(), false);
@@ -887,6 +888,11 @@ bool WisteriaView::LoadProject(const wxString& filename)
                 page->SetSizeFromPaperSize();
                 page->MaintainAspectRatio(true);
                 }
+            m_graphs = m_reportBuilder.ReleaseGraphCanvases();
+            for (auto* graphCanvas : m_graphs)
+                {
+                ApplyGlobalPrintSettings(graphCanvas);
+                }
             }
 
         const auto pendingErrors = m_reportBuilder.UnloadPendingErrorMessages();
@@ -908,6 +914,11 @@ bool WisteriaView::LoadProject(const wxString& filename)
     const wxWindowID constantsId = nextId;
     nextId = wxNewId();
     m_sideBar->InsertItem(1, _(L"Constants"), constantsId, CONSTANTS_ICON_INDEX);
+
+    // add the "Graphs" folder (its graphs are added as subitems below)
+    m_graphsFolderId = nextId;
+    nextId = wxNewId();
+    m_sideBar->InsertItem(GRAPHS_FOLDER_INDEX, _(L"Graphs"), m_graphsFolderId, GRAPHS_ICON_INDEX);
 
     m_constantsGrid = new wxGrid(m_workArea, constantsId);
     m_constantsGrid->SetDoubleBuffered(true);
@@ -1038,6 +1049,25 @@ bool WisteriaView::LoadProject(const wxString& filename)
         // populate constants grid with data from the loaded project
         PopulateConstantsGrid();
 
+        // add standalone graphs as subitems under "Graphs"
+        for (auto* graphCanvas : m_graphs)
+            {
+            const wxWindowID graphId = nextId;
+            nextId = wxNewId();
+
+            graphCanvas->SetId(graphId);
+            graphCanvas->Hide();
+            m_workArea->GetSizer()->Add(graphCanvas, wxSizerFlags{ 1 }.Expand());
+            m_workWindows.AddWindow(graphCanvas);
+
+            if (graphCanvas->GetLabel().empty())
+                {
+                graphCanvas->SetLabel(GetGraphDisplayName(*graphCanvas));
+                }
+            m_sideBar->InsertSubItemById(m_graphsFolderId, graphCanvas->GetLabel(), graphId,
+                                         GRAPHS_ICON_INDEX);
+            }
+
         // add pages as top-level folders
         size_t pageNum{ 1 };
         for (auto* canvas : m_pages)
@@ -1062,10 +1092,14 @@ bool WisteriaView::LoadProject(const wxString& filename)
         m_filtersSyncedOnLoad = SyncLinkedFiltersOnLoad();
         }
 
-    // expand the Data folder
+    // expand the Data and Graphs folders
     if (m_sideBar->GetFolderCount() > 0)
         {
         m_sideBar->GetFolder(0).Expand();
+        }
+    if (m_sideBar->GetFolderCount() > GRAPHS_FOLDER_INDEX)
+        {
+        m_sideBar->GetFolder(GRAPHS_FOLDER_INDEX).Expand();
         }
 
     // select and show the dataset area
@@ -1100,6 +1134,8 @@ void WisteriaView::TearDownProject()
     m_workWindows.Clear();
     m_constantsGrid = nullptr;
     m_pages.clear();
+    m_graphs.clear();
+    m_graphsFolderId = wxID_ANY;
 
     m_sideBar->DeleteAllFolders();
 
@@ -1441,7 +1477,7 @@ void WisteriaView::OnCopyItem([[maybe_unused]] wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnPasteItem([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = GetActiveCanvas();
+    auto* canvas = GetActivePage();
     if (canvas == nullptr)
         {
         return;
@@ -1451,25 +1487,7 @@ void WisteriaView::OnPasteItem([[maybe_unused]] wxCommandEvent& event)
     if (const auto& graphJson = Wisteria::Canvas::GetGraphClipboard(); !graphJson.empty())
         {
         SyncPageNumber(canvas);
-
-        std::shared_ptr<Wisteria::Graphs::Graph2D> graph;
-        try
-            {
-            graph = m_reportBuilder.LoadGraphDetached(graphJson, canvas);
-            }
-        catch (const std::exception& exc)
-            {
-            wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Paste"), wxOK | wxICON_ERROR, m_frame);
-            return;
-            }
-        if (graph == nullptr)
-            {
-            wxMessageBox(_(L"This type of graph cannot be pasted."), _(L"Paste"),
-                         wxOK | wxICON_INFORMATION, m_frame);
-            return;
-            }
-        graph->SetId(wxID_ANY);
-        EditGraphByType(*graph, canvas, 0, 0, true);
+        PasteGraphJson(graphJson, canvas);
         return;
         }
 
@@ -1525,6 +1543,121 @@ void WisteriaView::OnPasteItem([[maybe_unused]] wxCommandEvent& event)
     canvas->Update();
 
     GetDocument()->Modify(true);
+    }
+
+//-------------------------------------------
+void WisteriaView::PasteGraphJson(const wxString& graphJson, Wisteria::Canvas* canvas)
+    {
+    std::shared_ptr<Wisteria::Graphs::Graph2D> graph;
+    try
+        {
+        graph = m_reportBuilder.LoadGraphDetached(graphJson, canvas);
+        }
+    catch (const std::exception& exc)
+        {
+        wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Paste"), wxOK | wxICON_ERROR, m_frame);
+        return;
+        }
+    if (graph == nullptr)
+        {
+        wxMessageBox(_(L"This type of graph cannot be pasted."), _(L"Paste"),
+                     wxOK | wxICON_INFORMATION, m_frame);
+        return;
+        }
+    graph->SetId(wxID_ANY);
+    EditGraphByType(*graph, canvas, 0, 0, true);
+    }
+
+//-------------------------------------------
+void WisteriaView::OnCopyGraphToPage([[maybe_unused]] wxCommandEvent& event)
+    {
+    auto* graphCanvas = GetActiveCanvas();
+    const auto* doc = dynamic_cast<WisteriaDoc*>(GetDocument());
+    if (!IsGraphsSectionCanvas(graphCanvas) || doc == nullptr)
+        {
+        return;
+        }
+    if (m_pages.empty())
+        {
+        wxMessageBox(_(L"Please add a page to copy the graph to."), _(L"Copy to Page"),
+                     wxOK | wxICON_INFORMATION, m_frame);
+        return;
+        }
+
+    // the graph is the one item on the canvas that isn't its legend
+    std::shared_ptr<Wisteria::GraphItems::GraphItemBase> graphItem;
+    const auto [rowCount, colCount] = graphCanvas->GetFixedObjectsGridSize();
+    for (size_t row = 0; row < rowCount && graphItem == nullptr; ++row)
+        {
+        for (size_t col = 0; col < colCount && graphItem == nullptr; ++col)
+            {
+            auto item = graphCanvas->GetFixedObject(row, col);
+            if (item != nullptr && !IsLegendItem(item.get()))
+                {
+                graphItem = item;
+                }
+            }
+        }
+
+    // a filtered graph is copied from the graph that it is showing
+    const auto* filterableGraph =
+        dynamic_cast<const Wisteria::Graphs::FilterableGraph*>(graphItem.get());
+    const Wisteria::Graphs::Graph2D* graph =
+        (filterableGraph != nullptr) ?
+            filterableGraph->GetActiveGraph().get() :
+            dynamic_cast<const Wisteria::Graphs::Graph2D*>(graphItem.get());
+    if (graph == nullptr)
+        {
+        return;
+        }
+
+    const auto graphJson = doc->SerializeGraphToJson(graph, graphCanvas);
+    if (graphJson.empty())
+        {
+        wxMessageBox(_(L"This graph could not be copied."), _(L"Copy to Page"),
+                     wxOK | wxICON_INFORMATION, m_frame);
+        return;
+        }
+
+    wxArrayString pageNames;
+    for (const auto* page : m_pages)
+        {
+        pageNames.Add(page->GetLabel());
+        }
+    const int sel = wxGetSingleChoiceIndex(_(L"Select the page to copy the graph to:"),
+                                           _(L"Copy to Page"), pageNames, m_frame);
+    if (sel == wxNOT_FOUND)
+        {
+        return;
+        }
+    auto* page = m_pages[static_cast<size_t>(sel)];
+    SelectPage(page);
+
+    if (filterableGraph == nullptr)
+        {
+        PasteGraphJson(graphJson, page);
+        return;
+        }
+
+    // keep the filter's column and unfiltered label as they were written (e.g., with constants)
+    const auto& filteredGraphs = filterableGraph->GetVariants();
+    const wxString columnTemplate{ filterableGraph->GetPropertyTemplate(L"filter.column") };
+    const wxString allLabelTemplate{ filterableGraph->GetPropertyTemplate(L"filter.all-label") };
+    const wxString defaultValue{ filteredGraphs.at(filterableGraph->GetActiveIndex()).m_label };
+    const wxString allLabel{ allLabelTemplate.empty() ? filteredGraphs.front().m_label :
+                                                        allLabelTemplate };
+    const wxString filterColumn{ columnTemplate.empty() ? filterableGraph->GetFilterColumn() :
+                                                          columnTemplate };
+
+    m_lastPlacedGraph.reset();
+        {
+        // every filter value's graph is a subset of this dataset, so it can't be changed
+        const Wisteria::UI::InsertGraphDlg::ScopedDatasetLock datasetLock{
+            graph->GetPropertyTemplate(L"dataset")
+        };
+        PasteGraphJson(graphJson, page);
+        }
+    ReplaceWithFilterableGraph(page, filterColumn, defaultValue, allLabel);
     }
 
 //-------------------------------------------
@@ -2259,7 +2392,7 @@ void WisteriaView::OnProjectSettings([[maybe_unused]] wxCommandEvent& event)
     // this also starts/stops the polling timer and syncs the toolbar button
     SetAutoRefresh(dlg.IsAutoRefresh(), true);
 
-    // apply the new watermark to all pages
+    // apply the new watermark to all pages and graphs
     const Wisteria::Canvas::Watermark newWatermark{ dlg.GetWatermarkLabel(),
                                                     dlg.GetWatermarkColor() };
     for (auto* page : m_pages)
@@ -2268,6 +2401,14 @@ void WisteriaView::OnProjectSettings([[maybe_unused]] wxCommandEvent& event)
             {
             page->SetWatermark(newWatermark);
             page->Refresh();
+            }
+        }
+    for (auto* graphCanvas : m_graphs)
+        {
+        if (graphCanvas != nullptr)
+            {
+            graphCanvas->SetWatermark(newWatermark);
+            graphCanvas->Refresh();
             }
         }
 
@@ -2331,7 +2472,7 @@ void WisteriaView::AdjustGridColumnsForIcons(wxGrid* grid)
 void WisteriaView::OnInsertPage([[maybe_unused]] wxCommandEvent& event)
     {
     wxArrayString pageNames;
-    for (size_t i = 2; i < m_sideBar->GetFolderCount(); ++i)
+    for (size_t i = FIRST_PAGE_FOLDER_INDEX; i < m_sideBar->GetFolderCount(); ++i)
         {
         pageNames.Add(m_sideBar->GetFolderText(i));
         }
@@ -2383,7 +2524,7 @@ void WisteriaView::OnInsertPage([[maybe_unused]] wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnEditPage([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = GetActiveCanvas();
+    auto* canvas = GetActivePage();
     if (canvas == nullptr)
         {
         return;
@@ -2458,7 +2599,7 @@ void WisteriaView::OnEditPage([[maybe_unused]] wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnDeletePage([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = GetActiveCanvas();
+    auto* canvas = GetActivePage();
     if (canvas == nullptr)
         {
         wxFAIL_MSG(L"No active canvas when deleting page?!");
@@ -2482,9 +2623,20 @@ void WisteriaView::OnDeletePage([[maybe_unused]] wxCommandEvent& event)
 
     m_sideBar->SelectFolder(0, false, false, false);
     m_sideBar->DeleteFolder(selectedFolder.value());
-    m_sideBar->SelectFolder(selectedFolder.value() < m_sideBar->GetFolderCount() ?
-                                selectedFolder.value() :
-                                m_sideBar->GetFolderCount() - 1);
+    // show the page that took its place (or the one before it),
+    // or the first graph, or the data section
+    if (m_sideBar->GetFolderCount() > FIRST_PAGE_FOLDER_INDEX)
+        {
+        m_sideBar->SelectFolder(std::min(selectedFolder.value(), m_sideBar->GetFolderCount() - 1));
+        }
+    else if (!m_graphs.empty())
+        {
+        m_sideBar->SelectSubItemById(m_graphsFolderId, m_graphs.front()->GetId());
+        }
+    else
+        {
+        m_sideBar->SelectFolder(0);
+        }
 
     RemovePageFromProject(canvas);
 
@@ -2560,10 +2712,10 @@ void WisteriaView::OnRearrangePages([[maybe_unused]] wxCommandEvent& event)
         };
 
     std::vector<PageFolderInfo> currentPages;
-    for (size_t i = 2; i < m_sideBar->GetFolderCount(); ++i)
+    for (size_t i = FIRST_PAGE_FOLDER_INDEX; i < m_sideBar->GetFolderCount(); ++i)
         {
-        currentPages.push_back(
-            { m_sideBar->GetFolderText(i), m_sideBar->GetFolder(i).GetId(), m_pages[i - 2] });
+        currentPages.push_back({ m_sideBar->GetFolderText(i), m_sideBar->GetFolder(i).GetId(),
+                                 m_pages[i - FIRST_PAGE_FOLDER_INDEX] });
         }
 
     wxArrayString pageNames;
@@ -2658,7 +2810,7 @@ void WisteriaView::OnRearrangePages([[maybe_unused]] wxCommandEvent& event)
 
     m_pages = newPages;
 
-    while (m_sideBar->GetFolderCount() > 2)
+    while (m_sideBar->GetFolderCount() > FIRST_PAGE_FOLDER_INDEX)
         {
         m_sideBar->DeleteFolder(m_sideBar->GetFolderCount() - 1);
         }
@@ -2673,7 +2825,8 @@ void WisteriaView::OnRearrangePages([[maybe_unused]] wxCommandEvent& event)
         (activeCanvas != nullptr) ? std::ranges::find(m_pages, activeCanvas) : m_pages.end();
     if (activePos != m_pages.end())
         {
-        m_sideBar->SelectFolder(static_cast<size_t>(std::distance(m_pages.begin(), activePos)) + 2);
+        m_sideBar->SelectFolder(static_cast<size_t>(std::distance(m_pages.begin(), activePos)) +
+                                FIRST_PAGE_FOLDER_INDEX);
         }
     else if (m_sideBar->GetFolderCount() > 0)
         {
@@ -2744,7 +2897,7 @@ Wisteria::Canvas* WisteriaView::AddPageToProject(const size_t rows, const size_t
 
     const size_t sidebarInsertIndex =
         position.has_value() ?
-            position.value() + 2 : // offset by Data (0) and Constants (1) folders
+            position.value() + FIRST_PAGE_FOLDER_INDEX : // after Data, Constants, and Graphs
             m_sideBar->GetFolderCount();
 
     m_sideBar->InsertItem(sidebarInsertIndex, displayName, pageId, PAGE_ICON_INDEX);
@@ -2765,6 +2918,12 @@ bool WisteriaView::IsPageSelected() const noexcept
     {
     return std::ranges::any_of(m_pages, [](const auto* canvas)
                                { return canvas != nullptr && canvas->IsShown(); });
+    }
+
+//-------------------------------------------
+bool WisteriaView::CanCopyGraphToPage() const noexcept
+    {
+    return !m_pages.empty() && IsGraphsSectionCanvas(GetActiveCanvas());
     }
 
 //-------------------------------------------
@@ -2892,6 +3051,7 @@ void WisteriaView::UpdateGraphButtonStates() const
         m_objectsButtonBar->EnableButton(ID_NEW_DIVIDER, true);
         m_objectsButtonBar->EnableButton(wxID_COPY, IsCanvasItemSelected());
         m_objectsButtonBar->EnableButton(wxID_PASTE, IsPageSelected());
+        m_objectsButtonBar->EnableButton(ID_COPY_GRAPH_TO_PAGE, CanCopyGraphToPage());
         m_objectsButtonBar->EnableButton(ID_EDIT_ITEM, IsCanvasItemSelected());
         m_objectsButtonBar->EnableButton(ID_DELETE_ITEM, IsCanvasItemSelected());
         }
@@ -2929,6 +3089,7 @@ void WisteriaView::UpdateMenuBarStates() const
     menuBar->Enable(wxID_PASTE, IsPageSelected());
     menuBar->Enable(ID_EDIT_ITEM, IsCanvasItemSelected());
     menuBar->Enable(ID_DELETE_ITEM, IsCanvasItemSelected());
+    menuBar->Enable(ID_COPY_GRAPH_TO_PAGE, CanCopyGraphToPage());
     menuBar->Enable(ID_GOTO_DATASOURCE, IsGraphSelected());
     menuBar->Enable(ID_FILTER_CHOICES, GetSelectedFilterableGraph() != nullptr);
     menuBar->Check(ID_AUTO_REFRESH, m_autoRefresh);
@@ -3385,6 +3546,23 @@ void WisteriaView::CarryForwardProperty(const Wisteria::Graphs::Graph2D& oldGrap
 //-------------------------------------------
 Wisteria::Canvas* WisteriaView::GetActiveCanvas() const noexcept
     {
+    if (auto* page = GetActivePage(); page != nullptr)
+        {
+        return page;
+        }
+    for (auto* canvas : m_graphs)
+        {
+        if (canvas != nullptr && canvas->IsShown())
+            {
+            return canvas;
+            }
+        }
+    return nullptr;
+    }
+
+//-------------------------------------------
+Wisteria::Canvas* WisteriaView::GetActivePage() const noexcept
+    {
     for (auto* canvas : m_pages)
         {
         if (canvas != nullptr && canvas->IsShown())
@@ -3393,6 +3571,210 @@ Wisteria::Canvas* WisteriaView::GetActiveCanvas() const noexcept
             }
         }
     return nullptr;
+    }
+
+//-------------------------------------------
+bool WisteriaView::IsGraphsSectionCanvas(const Wisteria::Canvas* canvas) const noexcept
+    {
+    return canvas != nullptr && std::ranges::find(m_graphs, canvas) != m_graphs.cend();
+    }
+
+//-------------------------------------------
+Wisteria::Canvas* WisteriaView::CreateGraphCanvas()
+    {
+    auto* canvas = new Wisteria::Canvas(m_workArea);
+    canvas->Hide();
+    canvas->SetFixedObjectsGridSize(1, 1);
+    ApplyGlobalPrintSettings(canvas);
+    canvas->FitToPageWhenPrinting(true);
+    // fills the window, rather than being sized like a printed page
+    canvas->MaintainAspectRatio(false);
+    Wisteria::Canvas::Watermark watermark{};
+    watermark.m_label = m_reportBuilder.GetWatermarkLabel();
+    if (m_reportBuilder.GetWatermarkColor().IsOk())
+        {
+        watermark.m_color = m_reportBuilder.GetWatermarkColor();
+        }
+    canvas->SetWatermark(watermark);
+    return canvas;
+    }
+
+//-------------------------------------------
+void WisteriaView::AddGraphToSection(Wisteria::Canvas* canvas)
+    {
+    if (canvas == nullptr)
+        {
+        return;
+        }
+
+    // named after the graph's title (no name template), so that edits relabel it
+    const wxString displayName = GetGraphDisplayName(*canvas);
+    canvas->SetLabel(displayName);
+    canvas->SetId(wxNewId());
+
+    m_graphs.push_back(canvas);
+    m_workArea->GetSizer()->Add(canvas, wxSizerFlags{ 1 }.Expand());
+    m_workWindows.AddWindow(canvas);
+    m_sideBar->InsertSubItemById(m_graphsFolderId, displayName, canvas->GetId(), GRAPHS_ICON_INDEX);
+    m_sideBar->GetFolder(GRAPHS_FOLDER_INDEX).Expand();
+    m_sideBar->SelectSubItemById(m_graphsFolderId, canvas->GetId());
+
+    GetDocument()->Modify(true);
+    }
+
+//-------------------------------------------
+void WisteriaView::RemoveGraphFromSection(Wisteria::Canvas* canvas)
+    {
+    const auto foundGraph = std::ranges::find(m_graphs, canvas);
+    if (foundGraph == m_graphs.end())
+        {
+        wxFAIL_MSG(L"Canvas not found when removing graph?!");
+        return;
+        }
+
+    wxWindowUpdateLocker wl{ m_frame };
+
+    m_sideBar->SelectFolder(GRAPHS_FOLDER_INDEX, false, false, false);
+    m_sideBar->DeleteSubItemById(m_graphsFolderId, canvas->GetId());
+    const auto removedPos = static_cast<size_t>(std::distance(m_graphs.begin(), foundGraph));
+    m_graphs.erase(foundGraph);
+    m_workWindows.RemoveWindowById(canvas->GetId());
+    m_workArea->GetSizer()->Detach(canvas);
+    canvas->Destroy();
+
+    // show the graph that took its place (or the one before it),
+    // or the first page, or the data section
+    if (!m_graphs.empty())
+        {
+        const auto* nextGraph = m_graphs[std::min(removedPos, m_graphs.size() - 1)];
+        m_sideBar->SelectSubItemById(m_graphsFolderId, nextGraph->GetId());
+        }
+    else if (m_sideBar->GetFolderCount() > FIRST_PAGE_FOLDER_INDEX)
+        {
+        m_sideBar->SelectFolder(FIRST_PAGE_FOLDER_INDEX);
+        }
+    else
+        {
+        m_sideBar->SelectFolder(0);
+        }
+    m_workArea->Layout();
+
+    GetDocument()->Modify(true);
+    }
+
+//-------------------------------------------
+wxString WisteriaView::GetGraphDisplayName(const Wisteria::Canvas& canvas) const
+    {
+    // labels must be unique, so that a graph can be found by its label
+    const auto isLabelTaken = [this, &canvas](const wxString& label)
+    {
+        return std::ranges::any_of(m_graphs,
+                                   [&canvas, &label](const auto* graphCanvas)
+                                   {
+                                       return graphCanvas != nullptr && graphCanvas != &canvas &&
+                                              graphCanvas->GetLabel().CmpNoCase(label) == 0;
+                                   });
+    };
+
+    wxString title;
+    const auto [rowCount, colCount] = canvas.GetFixedObjectsGridSize();
+    for (size_t row = 0; row < rowCount && title.empty(); ++row)
+        {
+        for (size_t col = 0; col < colCount && title.empty(); ++col)
+            {
+            const auto item = canvas.GetFixedObject(row, col);
+            const Wisteria::Graphs::Graph2D* graph{ nullptr };
+            if (const auto* filterableGraph =
+                    dynamic_cast<const Wisteria::Graphs::FilterableGraph*>(item.get());
+                filterableGraph != nullptr)
+                {
+                graph = filterableGraph->GetActiveGraph().get();
+                }
+            else
+                {
+                graph = dynamic_cast<const Wisteria::Graphs::Graph2D*>(item.get());
+                }
+            if (graph != nullptr)
+                {
+                title = graph->GetTitle().GetText();
+                title.Replace(L"\n", L" ");
+                title.Trim(true).Trim(false);
+                }
+            }
+        }
+
+    // a graph without a title gets the first unused "Graph N"
+    if (title.empty())
+        {
+        for (size_t graphNumber = 1;; ++graphNumber)
+            {
+            const wxString defaultName = wxString::Format(_(L"Graph %zu"), graphNumber);
+            if (!isLabelTaken(defaultName))
+                {
+                return defaultName;
+                }
+            }
+        }
+
+    // a title shared with another graph gets a number after it
+    if (!isLabelTaken(title))
+        {
+        return title;
+        }
+    for (size_t copyNumber = 2;; ++copyNumber)
+        {
+        const wxString numberedTitle = wxString::Format(L"%s (%zu)", title, copyNumber);
+        if (!isLabelTaken(numberedTitle))
+            {
+            return numberedTitle;
+            }
+        }
+    }
+
+//-------------------------------------------
+void WisteriaView::SetupGraphDestinations(Wisteria::UI::InsertItemDlg& dlg) const
+    {
+    std::vector<std::pair<wxString, Wisteria::Canvas*>> pages;
+    pages.reserve(m_pages.size());
+    for (auto* page : m_pages)
+        {
+        if (page != nullptr)
+            {
+            pages.emplace_back(page->GetLabel(), page);
+            }
+        }
+    dlg.SetPlacementDestinations(pages);
+    }
+
+//-------------------------------------------
+void WisteriaView::SelectPage(Wisteria::Canvas* canvas)
+    {
+    const auto foundPage = std::ranges::find(m_pages, canvas);
+    if (foundPage == m_pages.end())
+        {
+        return;
+        }
+    if (!canvas->IsShown())
+        {
+        m_sideBar->SelectFolder(static_cast<size_t>(std::distance(m_pages.begin(), foundPage)) +
+                                    FIRST_PAGE_FOLDER_INDEX,
+                                true, true);
+        }
+    SyncPageNumber(canvas);
+    }
+
+//-------------------------------------------
+void WisteriaView::StagedGraphCanvas::Finalize(Wisteria::Canvas* destination)
+    {
+    if (destination == m_canvas)
+        {
+        m_view->AddGraphToSection(m_canvas);
+        m_committed = true;
+        }
+    else
+        {
+        m_view->SelectPage(destination);
+        }
     }
 
 //-------------------------------------------
@@ -3417,7 +3799,7 @@ void WisteriaView::SyncPageNumber(const Wisteria::Canvas* canvas)
 //-------------------------------------------
 Wisteria::Canvas* WisteriaView::EnsureActivePage()
     {
-    if (auto* canvas = GetActiveCanvas(); canvas != nullptr)
+    if (auto* canvas = GetActivePage(); canvas != nullptr)
         {
         SyncPageNumber(canvas);
         return canvas;
@@ -3441,7 +3823,7 @@ Wisteria::Canvas* WisteriaView::EnsureActivePage()
         return nullptr;
         }
 
-    m_sideBar->SelectFolder(static_cast<size_t>(sel) + 2, true, true);
+    m_sideBar->SelectFolder(static_cast<size_t>(sel) + FIRST_PAGE_FOLDER_INDEX, true, true);
 
     SyncPageNumber(m_pages[static_cast<size_t>(sel)]);
     return m_pages[static_cast<size_t>(sel)];
@@ -3457,6 +3839,7 @@ void WisteriaView::PlaceGraphWithLegend(
         (legend != nullptr) ? legendPlacement : Wisteria::UI::LegendPlacement::None;
     PlaceGraphAndLegendInGrid(canvas, plot, std::move(legend), graphRow, graphCol, legendPlacement);
     m_lastPlacedGraph = plot;
+    m_lastPlacedCanvas = canvas;
 
     UpdateCanvas(canvas);
 
@@ -3574,19 +3957,18 @@ void WisteriaView::PlaceGraphAndLegendInGrid(
 //-------------------------------------------
 void WisteriaView::OnInsertChernoffPlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertChernoffDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertChernoffDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/chernoffplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -3606,6 +3988,7 @@ void WisteriaView::OnInsertChernoffPlot([[maybe_unused]] wxCommandEvent& event)
                         });
         PlaceGraphWithLegend(canvas, plot, std::move(legend), dlg.GetSelectedRow(),
                              dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -3616,19 +3999,18 @@ void WisteriaView::OnInsertChernoffPlot([[maybe_unused]] wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnInsertScatterPlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertScatterPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertScatterPlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/scatterplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -3637,6 +4019,7 @@ void WisteriaView::OnInsertScatterPlot([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -3679,19 +4062,18 @@ wxString WisteriaView::BuildAggPosJson(const wxString& pos, const wxString& dime
 //-------------------------------------------
 void WisteriaView::OnInsertTable([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertTableDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertTableDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/table.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -3700,6 +4082,7 @@ void WisteriaView::OnInsertTable([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, table, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -3866,12 +4249,25 @@ void WisteriaView::OnEditItem([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
+    // a Graphs section graph without its own name is listed by its title,
+    // which the edit may have changed
+    const auto updateGraphLabel = [this, canvas]()
+    {
+        if (IsGraphsSectionCanvas(canvas) && canvas->GetNameTemplate().empty())
+            {
+            const wxString displayName = GetGraphDisplayName(*canvas);
+            canvas->SetLabel(displayName);
+            m_sideBar->SetSubItemLabel(m_graphsFolderId, canvas->GetId(), displayName);
+            }
+    };
+
     // a graph built once for each value of a column wraps a regular graph
     if (auto* filterableGraph =
             dynamic_cast<Wisteria::Graphs::FilterableGraph*>(selectedItem.get());
         filterableGraph != nullptr)
         {
         EditFilterableGraph(*filterableGraph, canvas, itemRow, itemCol);
+        updateGraphLabel();
         return;
         }
 
@@ -3886,6 +4282,7 @@ void WisteriaView::OnEditItem([[maybe_unused]] wxCommandEvent& event)
         }
 
     EditGraphByType(*graph, canvas, itemRow, itemCol);
+    updateGraphLabel();
     }
 
 //-------------------------------------------
@@ -4114,11 +4511,6 @@ const std::vector<WisteriaView::FilterableGraphType>& WisteriaView::GetFilterabl
 //-------------------------------------------
 void WisteriaView::OnInsertFilteredGraph([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
     if (m_reportBuilder.GetDatasets().empty())
         {
         wxMessageBox(_(L"Please import a dataset before inserting a filtered graph."),
@@ -4146,7 +4538,9 @@ void WisteriaView::OnInsertFilteredGraph([[maybe_unused]] wxCommandEvent& event)
         }
 
     // the graph type's own insert dialog builds the graph from the filter's dataset
+    // (and places it on the page or in the Graphs section)
     m_lastPlacedGraph.reset();
+    m_lastPlacedCanvas = nullptr;
         {
         const Wisteria::UI::InsertGraphDlg::ScopedDatasetLock datasetLock{
             filterDlg.GetDatasetName()
@@ -4156,8 +4550,33 @@ void WisteriaView::OnInsertFilteredGraph([[maybe_unused]] wxCommandEvent& event)
         m_frame->GetEventHandler()->ProcessEvent(insertEvent);
         }
 
+    auto* canvas = m_lastPlacedCanvas;
+    m_lastPlacedCanvas = nullptr;
+    if (canvas == nullptr || m_lastPlacedGraph.expired())
+        {
+        return;
+        }
+
     ReplaceWithFilterableGraph(canvas, filterDlg.GetFilterColumn(), filterDlg.GetDefaultValue(),
                                wxString{});
+
+    // a Graphs section canvas whose graph couldn't be filtered is left empty
+    if (IsGraphsSectionCanvas(canvas))
+        {
+        const auto [rowCount, colCount] = canvas->GetFixedObjectsGridSize();
+        bool hasItem{ false };
+        for (size_t row = 0; row < rowCount && !hasItem; ++row)
+            {
+            for (size_t col = 0; col < colCount && !hasItem; ++col)
+                {
+                hasItem = (canvas->GetFixedObject(row, col) != nullptr);
+                }
+            }
+        if (!hasItem)
+            {
+            RemoveGraphFromSection(canvas);
+            }
+        }
     }
 
 //-------------------------------------------
@@ -4285,6 +4704,17 @@ void WisteriaView::ReplaceWithFilterableGraph(
 //-------------------------------------------
 bool WisteriaView::SyncLinkedFilters(const Wisteria::Graphs::FilterableGraph& source)
     {
+    // filtered graphs in the Graphs section aren't linked to the ones on pages
+    for (const auto* graphCanvas : m_graphs)
+        {
+        if (graphCanvas != nullptr &&
+            std::ranges::any_of(graphCanvas->GetFilterableGraphs(),
+                                [&source](const auto& graph) { return graph.get() == &source; }))
+            {
+            return false;
+            }
+        }
+
     bool anyChanged{ false };
     const bool isAllChoice{ source.GetActiveIndex() == 0 };
     const wxString& activeLabel{ source.GetVariants().at(source.GetActiveIndex()).m_label };
@@ -4559,6 +4989,17 @@ void WisteriaView::OnDeleteItem([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
+    // a Graphs section canvas only holds its graph, so remove the whole canvas
+    if (IsGraphsSectionCanvas(canvas))
+        {
+        if (wxMessageBox(_(L"Are you sure you want to delete this graph?"), _(L"Delete Graph"),
+                         wxYES_NO | wxICON_QUESTION, m_frame) == wxYES)
+            {
+            RemoveGraphFromSection(canvas);
+            }
+        return;
+        }
+
     if (wxMessageBox(_(L"Are you sure you want to delete the selected item?"), _(L"Delete Item"),
                      wxYES_NO | wxICON_QUESTION, m_frame) != wxYES)
         {
@@ -4826,19 +5267,18 @@ void WisteriaView::EditScatterPlot(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertBubblePlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertBubblePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertBubblePlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/bubbleplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -4847,6 +5287,7 @@ void WisteriaView::OnInsertBubblePlot([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -4955,19 +5396,18 @@ void WisteriaView::EditChernoffPlot(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertLinePlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertLinePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertLinePlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/lineplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -4976,6 +5416,7 @@ void WisteriaView::OnInsertLinePlot([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5029,19 +5470,18 @@ void WisteriaView::EditLinePlot(const Wisteria::Graphs::Graph2D& graph, Wisteria
 //-------------------------------------------
 void WisteriaView::OnInsertMultiSeriesLinePlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertMultiSeriesLinePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertMultiSeriesLinePlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/lineplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5050,6 +5490,7 @@ void WisteriaView::OnInsertMultiSeriesLinePlot([[maybe_unused]] wxCommandEvent& 
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5104,19 +5545,18 @@ void WisteriaView::EditMultiSeriesLinePlot(const Wisteria::Graphs::Graph2D& grap
 //-------------------------------------------
 void WisteriaView::OnInsertWCurvePlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWCurveDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWCurveDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wcurve.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5125,6 +5565,7 @@ void WisteriaView::OnInsertWCurvePlot([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5179,19 +5620,18 @@ void WisteriaView::EditWCurvePlot(const Wisteria::Graphs::Graph2D& graph, Wister
 //-------------------------------------------
 void WisteriaView::OnInsertLRRoadmap([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertLRRoadmapDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertLRRoadmapDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/roadmap.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5200,6 +5640,7 @@ void WisteriaView::OnInsertLRRoadmap([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5254,19 +5695,18 @@ void WisteriaView::EditLRRoadmap(const Wisteria::Graphs::Graph2D& graph, Wisteri
 //-------------------------------------------
 void WisteriaView::OnInsertProConRoadmap([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertProConRoadmapDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertProConRoadmapDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/roadmap.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5275,6 +5715,7 @@ void WisteriaView::OnInsertProConRoadmap([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5329,19 +5770,18 @@ void WisteriaView::EditProConRoadmap(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertGanttChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertGanttChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertGanttChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/gantt.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5350,6 +5790,7 @@ void WisteriaView::OnInsertGanttChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5403,19 +5844,18 @@ void WisteriaView::EditGanttChart(Wisteria::Graphs::Graph2D& graph, Wisteria::Ca
 //-------------------------------------------
 void WisteriaView::OnInsertCandlestickPlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertCandlestickPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertCandlestickPlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/candlestick.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5423,6 +5863,7 @@ void WisteriaView::OnInsertCandlestickPlot([[maybe_unused]] wxCommandEvent& even
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5472,19 +5913,18 @@ void WisteriaView::EditCandlestickPlot(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertSankeyDiagram([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertSankeyDiagramDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertSankeyDiagramDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/sankey.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5493,6 +5933,7 @@ void WisteriaView::OnInsertSankeyDiagram([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5543,11 +5984,7 @@ void WisteriaView::EditSankeyDiagram(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertBoxPlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
     auto* doc = dynamic_cast<WisteriaDoc*>(GetDocument());
     if (doc == nullptr)
         {
@@ -5555,13 +5992,16 @@ void WisteriaView::OnInsertBoxPlot([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
-    Wisteria::UI::InsertBoxPlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertBoxPlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/boxplot.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5570,6 +6010,7 @@ void WisteriaView::OnInsertBoxPlot([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5630,11 +6071,7 @@ void WisteriaView::EditBoxPlot(Wisteria::Graphs::Graph2D& graph, Wisteria::Canva
 //-------------------------------------------
 void WisteriaView::OnInsertCatBarChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
     auto* doc = dynamic_cast<WisteriaDoc*>(GetDocument());
     if (doc == nullptr)
         {
@@ -5642,13 +6079,16 @@ void WisteriaView::OnInsertCatBarChart([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
-    Wisteria::UI::InsertCatBarChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertCatBarChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/barchart.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5657,6 +6097,7 @@ void WisteriaView::OnInsertCatBarChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5717,19 +6158,18 @@ void WisteriaView::EditCatBarChart(Wisteria::Graphs::Graph2D& graph, Wisteria::C
 //-------------------------------------------
 void WisteriaView::OnInsertLikertChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertLikertDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertLikertDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/likert7.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5738,6 +6178,7 @@ void WisteriaView::OnInsertLikertChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5792,19 +6233,18 @@ void WisteriaView::EditLikertChart(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertHeatMap([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertHeatMapDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertHeatMapDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/heatmap.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5813,6 +6253,7 @@ void WisteriaView::OnInsertHeatMap([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5866,19 +6307,18 @@ void WisteriaView::EditHeatMap(const Wisteria::Graphs::Graph2D& graph, Wisteria:
 //-------------------------------------------
 void WisteriaView::OnInsertHistogram([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertHistogramDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertHistogramDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/histogram.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5887,6 +6327,7 @@ void WisteriaView::OnInsertHistogram([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -5940,19 +6381,18 @@ void WisteriaView::EditHistogram(const Wisteria::Graphs::Graph2D& graph, Wisteri
 //-------------------------------------------
 void WisteriaView::OnInsertScaleChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertScaleChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertScaleChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/scale.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -5961,6 +6401,7 @@ void WisteriaView::OnInsertScaleChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6014,19 +6455,18 @@ void WisteriaView::EditScaleChart(const Wisteria::Graphs::Graph2D& graph, Wister
 //-------------------------------------------
 void WisteriaView::OnInsertWordCloud([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWordCloudDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWordCloudDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wordcloud.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-survey.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6036,6 +6476,7 @@ void WisteriaView::OnInsertWordCloud([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6046,19 +6487,18 @@ void WisteriaView::OnInsertWordCloud([[maybe_unused]] wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnInsertChoroplethMap([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertChoroplethMapDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertChoroplethMapDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/choropleth.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6083,6 +6523,7 @@ void WisteriaView::OnInsertChoroplethMap([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, std::move(legendObject), dlg.GetSelectedRow(),
                              dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6195,19 +6636,18 @@ void WisteriaView::EditWordCloud(const Wisteria::Graphs::Graph2D& graph, Wisteri
 //-------------------------------------------
 void WisteriaView::OnInsertWLSparkline([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWLSparklineDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWLSparklineDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/sparkline.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-education-social-sports.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6216,6 +6656,7 @@ void WisteriaView::OnInsertWLSparkline([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6270,19 +6711,18 @@ void WisteriaView::EditWLSparkline(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertStemAndLeaf([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertStemAndLeafDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertStemAndLeafDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/stem-leaf.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6291,6 +6731,7 @@ void WisteriaView::OnInsertStemAndLeaf([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6345,11 +6786,7 @@ void WisteriaView::EditStemAndLeaf(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertPieChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
     auto* doc = dynamic_cast<WisteriaDoc*>(GetDocument());
     if (doc == nullptr)
         {
@@ -6357,13 +6794,16 @@ void WisteriaView::OnInsertPieChart([[maybe_unused]] wxCommandEvent& event)
         return;
         }
 
-    Wisteria::UI::InsertPieChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertPieChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/piechart.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6372,6 +6812,7 @@ void WisteriaView::OnInsertPieChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6432,19 +6873,18 @@ void WisteriaView::EditPieChart(const Wisteria::Graphs::Graph2D& graph, Wisteria
 //-------------------------------------------
 void WisteriaView::OnInsertWaffleChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWaffleChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWaffleChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/waffle.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6453,6 +6893,7 @@ void WisteriaView::OnInsertWaffleChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6509,19 +6950,18 @@ void WisteriaView::EditWaffleChart(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertRaceTrackChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertRaceTrackChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertRaceTrackChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/racetrack.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6530,6 +6970,7 @@ void WisteriaView::OnInsertRaceTrackChart([[maybe_unused]] wxCommandEvent& event
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6585,19 +7026,18 @@ void WisteriaView::EditRaceTrackChart(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertNightingaleRoseChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertNightingaleRoseChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertNightingaleRoseChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/rose.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6606,6 +7046,7 @@ void WisteriaView::OnInsertNightingaleRoseChart([[maybe_unused]] wxCommandEvent&
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6662,19 +7103,18 @@ void WisteriaView::EditNightingaleRoseChart(const Wisteria::Graphs::Graph2D& gra
 //-------------------------------------------
 void WisteriaView::OnInsertBulletChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertBulletChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertBulletChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/bulletchart.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6682,6 +7122,7 @@ void WisteriaView::OnInsertBulletChart([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6731,19 +7172,18 @@ void WisteriaView::EditBulletChart(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertIshikawaDiagram([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertIshikawaDiagramDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertIshikawaDiagramDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/ishikawa.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6751,6 +7191,7 @@ void WisteriaView::OnInsertIshikawaDiagram([[maybe_unused]] wxCommandEvent& even
         const auto legendPlacement = dlg.GetLegendPlacement();
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6806,19 +7247,18 @@ void WisteriaView::EditIshikawaDiagram(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertRunChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertRunChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertRunChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/runchart.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-spc.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6827,6 +7267,7 @@ void WisteriaView::OnInsertRunChart([[maybe_unused]] wxCommandEvent& event)
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6881,19 +7322,18 @@ void WisteriaView::EditRunChart(const Wisteria::Graphs::Graph2D& graph, Wisteria
 //-------------------------------------------
 void WisteriaView::OnInsertWaterfallChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWaterfallChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWaterfallChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/waterfallchart.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6901,6 +7341,7 @@ void WisteriaView::OnInsertWaterfallChart([[maybe_unused]] wxCommandEvent& event
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -6950,19 +7391,18 @@ void WisteriaView::EditWaterfallChart(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertFunnelChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertFunnelChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertFunnelChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/funnel.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-business.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -6970,6 +7410,7 @@ void WisteriaView::OnInsertFunnelChart([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -7019,19 +7460,18 @@ void WisteriaView::EditFunnelChart(const Wisteria::Graphs::Graph2D& graph, Wiste
 //-------------------------------------------
 void WisteriaView::OnInsertDuBoisSpiralChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertDuBoisSpiralChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertDuBoisSpiralChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/dubois-spiral.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -7039,6 +7479,7 @@ void WisteriaView::OnInsertDuBoisSpiralChart([[maybe_unused]] wxCommandEvent& ev
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -7088,19 +7529,18 @@ void WisteriaView::EditDuBoisSpiralChart(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertDuelingPieChart([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertDuelingPieChartDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertDuelingPieChartDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/dueling-pie.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -7108,6 +7548,7 @@ void WisteriaView::OnInsertDuelingPieChart([[maybe_unused]] wxCommandEvent& even
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -7157,19 +7598,18 @@ void WisteriaView::EditDuelingPieChart(const Wisteria::Graphs::Graph2D& graph,
 //-------------------------------------------
 void WisteriaView::OnInsertPictograph([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertPictographDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertPictographDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/pictograph.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-basic.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -7177,6 +7617,7 @@ void WisteriaView::OnInsertPictograph([[maybe_unused]] wxCommandEvent& event)
         PlaceGraphWithLegend(canvas, plot, std::unique_ptr<Wisteria::GraphItems::GraphItemBase>{},
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(),
                              Wisteria::UI::LegendPlacement::None);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -7225,19 +7666,18 @@ void WisteriaView::EditPictograph(const Wisteria::Graphs::Graph2D& graph, Wister
 //-------------------------------------------
 void WisteriaView::OnInsertWilmarthBridgePlot([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = EnsureActivePage();
-    if (canvas == nullptr)
-        {
-        return;
-        }
+    StagedGraphCanvas staged{ this };
 
-    Wisteria::UI::InsertWilmarthBridgePlotDlg dlg(canvas, &m_reportBuilder, m_frame);
+    Wisteria::UI::InsertWilmarthBridgePlotDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
     SetDialogIcon(dlg, L"images/wilmarth-bridge.svg");
     SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
     if (dlg.ShowModal() != wxID_OK)
         {
         return;
         }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
 
     try
         {
@@ -7246,6 +7686,7 @@ void WisteriaView::OnInsertWilmarthBridgePlot([[maybe_unused]] wxCommandEvent& e
 
         PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
                              dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
         }
     catch (const std::exception& exc)
         {
@@ -7813,6 +8254,11 @@ void WisteriaView::RefreshPagePrintSettings()
         page->SetSizeFromPaperSize();
         page->MaintainAspectRatio(true);
         UpdateCanvas(page);
+        }
+    // graphs only print with these settings; on screen, they fill the window
+    for (auto* graphCanvas : m_graphs)
+        {
+        ApplyGlobalPrintSettings(graphCanvas);
         }
     }
 

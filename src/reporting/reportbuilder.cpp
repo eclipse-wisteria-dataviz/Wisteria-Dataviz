@@ -371,6 +371,9 @@ namespace Wisteria
         m_configFilePath = filePath;
 
         m_pageNumber = 1;
+        // canvases that weren't released are hidden children of their parent,
+        // which destroys them
+        m_graphCanvases.clear();
 
         std::vector<Canvas*> reportPages;
 
@@ -1122,6 +1125,82 @@ namespace Wisteria
 
                     ++m_pageNumber;
                     }
+                }
+            }
+
+        // standalone graphs, each on its own canvas that fills its window
+        if (const auto graphsProperty = json->GetProperty(L"graphs"); graphsProperty->IsOk())
+            {
+            for (const auto& graphEntry : graphsProperty->AsNodes())
+                {
+                const auto graphNode = graphEntry->GetProperty(L"graph");
+                if (!graphNode->IsOk())
+                    {
+                    continue;
+                    }
+                const auto typeProperty = graphNode->GetProperty(L"type");
+                if (!typeProperty->IsOk())
+                    {
+                    continue;
+                    }
+
+                auto* canvas = new Canvas(parent);
+                // shown by the caller that takes it
+                canvas->Hide();
+                canvas->SetFixedObjectsGridSize(1, 1);
+                const auto rawName = graphEntry->GetProperty(_DT(L"name"))->AsString();
+                canvas->SetNameTemplate(rawName);
+                canvas->SetLabel(ExpandConstants(rawName));
+                if (graphEntry->HasProperty(L"guid"))
+                    {
+                    const auto guid = graphEntry->GetProperty(L"guid")->AsString();
+                    if (!guid.empty())
+                        {
+                        canvas->SetGuid(guid);
+                        }
+                    }
+                Canvas::Watermark watermark{};
+                if (!reportWatermark.empty())
+                    {
+                    watermark.m_label = reportWatermark;
+                    }
+                if (reportWatermarkColor.IsOk())
+                    {
+                    watermark.m_color = reportWatermarkColor;
+                    }
+                canvas->SetWatermark(watermark);
+
+                try
+                    {
+                    const auto typeName = typeProperty->AsString();
+                    size_t graphRow{ 0 };
+                    size_t graphColumn{ 0 };
+                    if (graphNode->HasProperty(L"filter"))
+                        {
+                        LoadFilterableGraph(graphNode, typeName, canvas, graphRow, graphColumn);
+                        }
+                    else
+                        {
+                        [[maybe_unused]]
+                        const auto loadedGraph =
+                            LoadGraphByType(graphNode, typeName, canvas, graphRow, graphColumn);
+                        }
+                    }
+                catch (const std::exception& err)
+                    {
+                    wxLogError(L"%s", wxString::FromUTF8(err.what()));
+                    }
+
+                if (canvas->GetFixedObject(0, 0) == nullptr)
+                    {
+                    canvas->Destroy();
+                    continue;
+                    }
+
+                canvas->CalcRowDimensions();
+                canvas->FitToPageWhenPrinting(true);
+                canvas->MaintainAspectRatio(false);
+                m_graphCanvases.push_back(canvas);
                 }
             }
 

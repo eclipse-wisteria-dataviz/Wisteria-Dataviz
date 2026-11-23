@@ -506,6 +506,7 @@ constexpr wxWindowID ID_BACKSTAGE_SETTINGS{ wxID_HIGHEST + 124 };
 constexpr wxWindowID ID_EDIT_ITEM{ wxID_HIGHEST + 39 };
 constexpr wxWindowID ID_DELETE_ITEM{ wxID_HIGHEST + 40 };
 constexpr wxWindowID ID_GOTO_DATASOURCE{ wxID_HIGHEST + 83 };
+constexpr wxWindowID ID_COPY_GRAPH_TO_PAGE{ wxID_HIGHEST + 99 };
 constexpr wxWindowID ID_SOURCES_BUTTONBAR{ wxID_HIGHEST + 84 };
 constexpr wxWindowID ID_FILTER_CHOICES{ wxID_HIGHEST + 126 };
 // menu items for the choices of the selected filterable graph
