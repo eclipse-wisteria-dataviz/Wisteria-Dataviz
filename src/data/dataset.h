@@ -1965,8 +1965,10 @@ namespace Wisteria::Data
                 - Dates
                 - Continuous
 
-                Continuous columns are exported with six-point precision and date
-                columns are exported in ISO date & time format.
+                Continuous columns are exported at full precision (with '.' as the
+                decimal separator and no thousands separators) and date
+                columns are exported in ISO date & time format.\n
+                Tabs and newlines in text values are replaced with spaces.
             @param filePath The file path to save to.
             @param delimiter The delimiter to save with.
             @param quoteColumns Whether the columns should be quoted.
