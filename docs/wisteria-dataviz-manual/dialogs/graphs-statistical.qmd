@@ -191,6 +191,56 @@ A missing measurement is shown as a transparent cell with a red X in the middle.
 
 \newpage
 
+## Matrix Heat Map {#sec-matrix-heat-map-dlg}
+
+A matrix heat map counts how often each pairing of two variables occurs.
+It shows the counts as a grid of colored cells so that the most common pairings stand out.
+For example, it can show which high schools send the most students to which colleges.
+The dataset should have one row per observation, holding its row and column values and (optionally) the groups that those values belong to.
+The order of the rows does not matter.
+
+### Variables {-}
+
+**Row**: The values shown down the rows (e.g., high schools).
+This can be a categorical or numeric column.
+
+**Column**: The values shown across the columns (e.g., colleges).
+This can be a categorical or numeric column.
+
+**Row group** (optional): Splits the rows into groups (e.g., public and private high schools).
+
+**Column group** (optional): Splits the columns into groups (e.g., public and private colleges).
+
+Groups are sorted alphabetically, and the values within each group are sorted alphabetically (or numerically, for numeric columns).
+A value is counted separately within each of its groups, so two schools with the same name (one public and one private) are shown as separate rows.
+
+### Options {-}
+
+**Cell values**: Which value each cell shows. The cells are colored by this value.
+
+- **Counts**: How many observations have the pairing.
+- **Percent of each row**: The pairing's share of its row.
+For example, the percentage of a high school's students who went to each college.
+This is useful when the rows differ in size, because a large high school would otherwise darken its whole row.
+- **Percent of each column**: The pairing's share of its column.
+For example, the percentage of a college's students who came from each high school.
+- **Percent of total**: The pairing's share of all observations.
+
+**Show totals**: Adds a total for each row (in a column to the right) and each column (in a row below), along with the grand total.
+The totals are always counts and are not colored.
+With percentages, they show what each percentage is out of.
+For example, with **Percent of each row** selected, a row's total shows how many students its percentages are of.
+
+::: {.notesection data-latex=""}
+For the color scheme, the first colors are mapped to the lower values and the last colors are mapped to the higher values.
+Pairings that never occur are shown as empty cells.
+An observation missing its row or column value is not counted, but its other value is still shown.
+For example, a high school whose students have no college listed is shown as a row of empty cells.
+An observation missing a group is placed into an unlabeled group, shown after the other groups.
+:::
+
+\newpage
+
 ## Scatter Plot {#sec-scatter-plot-dlg}
 
 A scatter plot shows the relationship between two measurements, with one point per observation.

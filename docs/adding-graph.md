@@ -211,6 +211,9 @@ If adding a new ribbon category, also:
 
 The menu bar's labels are extracted for translation into `src/xrc_menu_strings.cpp` by `cmake/XrcStrings.cmake`, so re-run *CMake* after changing them.
 
+In `res/tellme.xml`, add an `item` for the menu ID to the graphs in the "Actions" category.
+Give it the graph's icon, a name starting with "Insert", a short description, and search phrases (e.g., other names for the graph and what it is used for).
+
 Tests
 =============================
 
@@ -225,26 +228,30 @@ Documentation
 =============================
 
 - `docs/syntax-manual/graphs.qmd`: Add a section for the JSON node (its properties and an example), following the existing graphs.
+- `docs/wisteria-dataviz-manual/dialogs/graphs-*.qmd`: Add a section for the insert dialog to the chapter of the graph's category (e.g., `graphs-statistical.qmd`).
+  Describe the graph, its variables, and its options, following the existing graphs.
+  This chapter should match the help topic passed to `SetDialogHelpTopic()` in the view's insert and edit functions.
 - `docs/wisteria-dataviz-manual/overviews/new-features.qmd`: Add a line to the current release's list.
 - `README.md` and `docs/gallery.md`: Add an entry with a rendered image from `docs/images/`.
 
 Summary of Files to Modify
 =============================
 
-1. `src/graphs/ishikawadiagram.h/.cpp` - The graph
-2. `src/reporting/reportbuilder.h` - Include and declare the loader
-3. `src/reporting/reportbuilder.cpp` - Dispatch on the type string
-4. `src/reporting/report_builder_*_graphs.cpp` - Implement the loader
-5. `src/reporting/reportenumconvert.h` - String conversions, if there are new enums
-6. `src/base/enums.h` - `GalleryItemType` (and `GalleryGroup` if needed)
-7. `src/ui/controls/objectgallery.cpp` - Gallery item ID (and group name and icon if needed)
-8. `src/ui/dialogs/editors/insert_ishikawa_diagram_dlg.h/.cpp` - Insert and edit dialog, including the Data Guide
-9. `src/ui/dialogs/editors/insertpagedlg.h/.cpp` - Gallery drop handler
-10. `src/app/wisteriaapp.h` - Menu ID (and ribbon button ID if needed)
-11. `src/app/wisteriaapp.cpp` - Type string, icon lookup, gallery table, menu bar ID (and ribbon button if needed)
-12. `src/app/wisteriaview.h/.cpp` - Insert and edit handlers, menu, routing (and ribbon dropdown if needed)
-13. `src/app/wisteriadoc.cpp` - Saving
-14. `res/menus/project-menubar.xrc` - macOS menu bar item (and category menu if needed)
-15. `res/images/` - Icons
-16. `tests/gui-tests/ishikawadiagramrendertests.cpp` - Tests
-17. `docs/syntax-manual/graphs.qmd`, `docs/wisteria-dataviz-manual/overviews/new-features.qmd`, `README.md`, `docs/gallery.md` - Documentation
+- `src/graphs/ishikawadiagram.h/.cpp` - The graph
+- `src/reporting/reportbuilder.h` - Include and declare the loader
+- `src/reporting/reportbuilder.cpp` - Dispatch on the type string
+- `src/reporting/report_builder_*_graphs.cpp` - Implement the loader
+- `src/reporting/reportenumconvert.h` - String conversions, if there are new enums
+- `src/base/enums.h` - `GalleryItemType` (and `GalleryGroup` if needed)
+- `src/ui/controls/objectgallery.cpp` - Gallery item ID (and group name and icon if needed)
+- `src/ui/dialogs/editors/insert_ishikawa_diagram_dlg.h/.cpp` - Insert and edit dialog, including the Data Guide
+- `src/ui/dialogs/editors/insertpagedlg.h/.cpp` - Gallery drop handler
+- `src/app/wisteriaapp.h` - Menu ID (and ribbon button ID if needed)
+- `src/app/wisteriaapp.cpp` - Type string, icon lookup, gallery table, menu bar ID (and ribbon button if needed)
+- `src/app/wisteriaview.h/.cpp` - Insert and edit handlers, menu, routing (and ribbon dropdown if needed)
+- `src/app/wisteriadoc.cpp` - Saving
+- `res/menus/project-menubar.xrc` - macOS menu bar item (and category menu if needed)
+- `res/tellme.xml` - Tell Me entry
+- `res/images/` - Icons
+- `tests/gui-tests/ishikawadiagramrendertests.cpp` - Tests
+- `docs/syntax-manual/graphs.qmd`, `docs/wisteria-dataviz-manual/dialogs/graphs-*.qmd`, `docs/wisteria-dataviz-manual/overviews/new-features.qmd`, `README.md`, `docs/gallery.md` - Documentation

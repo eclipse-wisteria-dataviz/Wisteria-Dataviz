@@ -260,6 +260,7 @@ class WisteriaView final : public wxView
     void OnInsertBoxPlot(wxCommandEvent& event);
     void OnInsertLikertChart(wxCommandEvent& event);
     void OnInsertHeatMap(wxCommandEvent& event);
+    void OnInsertMatrixHeatMap(wxCommandEvent& event);
     void OnInsertHistogram(wxCommandEvent& event);
     void OnInsertWordCloud(wxCommandEvent& event);
     void OnInsertWLSparkline(wxCommandEvent& event);
@@ -363,6 +364,8 @@ class WisteriaView final : public wxView
                          size_t graphRow, size_t graphCol, bool pasteAsNew = false) const;
     void EditHeatMap(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,
                      size_t graphRow, size_t graphCol, bool pasteAsNew = false) const;
+    void EditMatrixHeatMap(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,
+                           size_t graphRow, size_t graphCol, bool pasteAsNew = false) const;
     void EditHistogram(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,
                        size_t graphRow, size_t graphCol, bool pasteAsNew = false) const;
     void EditWordCloud(const Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas* canvas,

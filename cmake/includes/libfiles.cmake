@@ -76,6 +76,7 @@ SET(WISTERIA_SRC
     src/graphs/lixgauge.cpp
     src/graphs/lixgaugegerman.cpp
     src/graphs/lrroadmap.cpp
+    src/graphs/matrixheatmap.cpp
     src/graphs/multi_series_lineplot.cpp
     src/graphs/nightingale_rose_chart.cpp
     src/graphs/pictograph.cpp
@@ -152,6 +153,7 @@ SET(WISTERIA_SRC
     src/ui/dialogs/editors/insertlikertdlg.cpp
     src/ui/dialogs/editors/insertlineplotdlg.cpp
     src/ui/dialogs/editors/insertlrroadmapdlg.cpp
+    src/ui/dialogs/editors/insertmatrixheatmapdlg.cpp
     src/ui/dialogs/editors/insertmultiserieslineplotdlg.cpp
     src/ui/dialogs/editors/insertpictographdlg.cpp
     src/ui/dialogs/editors/insertpiechartdlg.cpp

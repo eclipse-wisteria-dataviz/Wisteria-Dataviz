@@ -5412,6 +5412,23 @@ wxSimpleJSON::Ptr_t WisteriaDoc::SaveGraphByType(const Wisteria::Graphs::Graph2D
             node->Add(L"group-header-prefix", heatmap->GetGroupHeaderPrefix());
             }
         }
+    else if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::MatrixHeatMap)))
+        {
+        const auto* heatmap = dynamic_cast<const Wisteria::Graphs::MatrixHeatMap*>(graph);
+        if (heatmap->GetCellValues() != Wisteria::CrossTabValue::Count)
+            {
+            const auto cellValuesStr =
+                Wisteria::ReportEnumConvert::ConvertCrossTabValueToString(heatmap->GetCellValues());
+            if (cellValuesStr.has_value())
+                {
+                node->Add(L"cell-values", cellValuesStr.value());
+                }
+            }
+        if (heatmap->IsShowingTotals())
+            {
+            node->Add(L"show-totals", true);
+            }
+        }
     else if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::WinLossSparkline)))
         {
         const auto* sparkline = dynamic_cast<const Wisteria::Graphs::WinLossSparkline*>(graph);

@@ -37,6 +37,7 @@ SET(TEST_SRC_FILES
     lixgaugegermanrendertests.cpp
     lixgaugerendertests.cpp
     lrroadmaprendertests.cpp
+    matrixheatmaptests.cpp
     memmaptests.cpp
     multiserieslineplotrendertests.cpp
     nightingale_rose_chart_render_tests.cpp

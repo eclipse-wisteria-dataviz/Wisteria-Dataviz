@@ -251,6 +251,7 @@ namespace Wisteria::UI
         bool DropBoxPlot(Canvas* stagingCanvas, size_t row, size_t col);
         bool DropStemAndLeaf(Canvas* stagingCanvas, size_t row, size_t col);
         bool DropHeatMap(Canvas* stagingCanvas, size_t row, size_t col);
+        bool DropMatrixHeatMap(Canvas* stagingCanvas, size_t row, size_t col);
         bool DropScatterPlot(Canvas* stagingCanvas, size_t row, size_t col);
         bool DropBubblePlot(Canvas* stagingCanvas, size_t row, size_t col);
         bool DropChernoffFacesPlot(Canvas* stagingCanvas, size_t row, size_t col);

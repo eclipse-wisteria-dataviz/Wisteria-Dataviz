@@ -181,6 +181,7 @@ const std::vector<std::pair<const wchar_t*, wxWindowID>>& WisteriaApp::GetComman
         { L"ID_NEW_BOXPLOT", ID_NEW_BOXPLOT },
         { L"ID_NEW_STEMANDLEAF", ID_NEW_STEMANDLEAF },
         { L"ID_NEW_HEATMAP", ID_NEW_HEATMAP },
+        { L"ID_NEW_MATRIX_HEATMAP", ID_NEW_MATRIX_HEATMAP },
         { L"ID_NEW_SCATTERPLOT", ID_NEW_SCATTERPLOT },
         { L"ID_NEW_BUBBLEPLOT", ID_NEW_BUBBLEPLOT },
         { L"ID_NEW_CHERNOFFPLOT", ID_NEW_CHERNOFFPLOT },
@@ -2750,6 +2751,10 @@ wxString WisteriaApp::GetGraphTypeString(const Wisteria::Graphs::Graph2D* graph)
         {
         return _DT(L"heatmap");
         }
+    if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::MatrixHeatMap)))
+        {
+        return _DT(L"matrix-heatmap");
+        }
     if (graph->IsKindOf(wxCLASSINFO(Wisteria::Graphs::ChoroplethMap)))
         {
         return _DT(L"choropleth-map");
@@ -2912,6 +2917,10 @@ wxString WisteriaApp::GetItemIconName(const Wisteria::GraphItems::GraphItemBase*
     if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::HeatMap)))
         {
         return L"images/heatmap.svg";
+        }
+    if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::MatrixHeatMap)))
+        {
+        return L"images/matrix-heatmap.svg";
         }
     if (item->IsKindOf(wxCLASSINFO(Wisteria::Graphs::ChoroplethMap)))
         {
@@ -3104,6 +3113,8 @@ const std::vector<Wisteria::GalleryItemInfo>& WisteriaApp::GetGalleryItemCatalog
         { GalleryItemType::StemAndLeafPlot, _(L"Stem-and-Leaf Plot"), L"images/stem-leaf.svg",
           GalleryGroup::Statistical },
         { GalleryItemType::HeatMap, _(L"Heat Map"), L"images/heatmap.svg",
+          GalleryGroup::Statistical },
+        { GalleryItemType::MatrixHeatMap, _(L"Matrix Heat Map"), L"images/matrix-heatmap.svg",
           GalleryGroup::Statistical },
         { GalleryItemType::ScatterPlot, _(L"Scatter Plot"), L"images/scatterplot.svg",
           GalleryGroup::Statistical },

@@ -82,6 +82,7 @@ images/lineplot.svg
 images/log-book.svg
 images/lua-dark-mode.svg
 images/lua.svg
+images/matrix-heatmap.svg
 images/multiplot-common-axis.svg
 images/multiplot.svg
 images/odp.svg

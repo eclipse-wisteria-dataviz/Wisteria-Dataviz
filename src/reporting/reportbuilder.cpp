@@ -31,6 +31,10 @@ namespace Wisteria
             {
             return LoadHeatMap(graphNode, canvas, currentRow, currentColumn);
             }
+        if (type.CmpNoCase(L"matrix-heatmap") == 0)
+            {
+            return LoadMatrixHeatMap(graphNode, canvas, currentRow, currentColumn);
+            }
         if (type.CmpNoCase(L"choropleth-map") == 0)
             {
             return LoadChoroplethMap(graphNode, canvas, currentRow, currentColumn);

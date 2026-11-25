@@ -36,6 +36,7 @@
 #include "insertlikertdlg.h"
 #include "insertlineplotdlg.h"
 #include "insertlrroadmapdlg.h"
+#include "insertmatrixheatmapdlg.h"
 #include "insertmultiserieslineplotdlg.h"
 #include "insertpictographdlg.h"
 #include "insertpiechartdlg.h"
@@ -1043,6 +1044,8 @@ namespace Wisteria::UI
             return DropStemAndLeaf(stagingCanvas, row, col);
         case Wisteria::GalleryItemType::HeatMap:
             return DropHeatMap(stagingCanvas, row, col);
+        case Wisteria::GalleryItemType::MatrixHeatMap:
+            return DropMatrixHeatMap(stagingCanvas, row, col);
         case Wisteria::GalleryItemType::ScatterPlot:
             return DropScatterPlot(stagingCanvas, row, col);
         case Wisteria::GalleryItemType::BubblePlot:
@@ -1406,6 +1409,33 @@ namespace Wisteria::UI
         try
             {
             auto plot = dlg.BuildHeatMap();
+            const auto legendPlacement = dlg.GetLegendPlacement();
+            PlaceGraphInGrid(stagingCanvas, plot,
+                             WisteriaView::BuildLegend(dlg, *plot, legendPlacement),
+                             dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+            return true;
+            }
+        catch (const std::exception& exc)
+            {
+            wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, this);
+            return false;
+            }
+        }
+
+    //-------------------------------------------
+    bool InsertPageDlg::DropMatrixHeatMap(Canvas* stagingCanvas, const size_t row, const size_t col)
+        {
+        Wisteria::UI::InsertMatrixHeatMapDlg dlg(stagingCanvas, m_reportBuilder, this);
+        WisteriaView::SetDialogIcon(dlg, L"images/matrix-heatmap.svg");
+        dlg.SetSelectedCell(row, col);
+        if (dlg.ShowModal() != wxID_OK)
+            {
+            return false;
+            }
+
+        try
+            {
+            auto plot = dlg.BuildMatrixHeatMap();
             const auto legendPlacement = dlg.GetLegendPlacement();
             PlaceGraphInGrid(stagingCanvas, plot,
                              WisteriaView::BuildLegend(dlg, *plot, legendPlacement),

@@ -214,6 +214,9 @@
                     <object class="wxMenuItem" name="ID_NEW_HEATMAP">
                         <label>Heat Map...</label>
                     </object>
+                    <object class="wxMenuItem" name="ID_NEW_MATRIX_HEATMAP">
+                        <label>Matrix Heat Map...</label>
+                    </object>
                     <object class="separator"/>
                     <object class="wxMenuItem" name="ID_NEW_SCATTERPLOT">
                         <label>Scatter Plot...</label>

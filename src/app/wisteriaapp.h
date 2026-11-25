@@ -446,6 +446,7 @@ constexpr wxWindowID ID_NEW_BUBBLEPLOT{ wxID_HIGHEST + 24 };
 constexpr wxWindowID ID_NEW_CHERNOFFPLOT{ wxID_HIGHEST + 25 };
 constexpr wxWindowID ID_NEW_STEMANDLEAF{ wxID_HIGHEST + 26 };
 constexpr wxWindowID ID_NEW_WILMARTH_BRIDGE_PLOT{ wxID_HIGHEST + 78 };
+constexpr wxWindowID ID_NEW_MATRIX_HEATMAP{ wxID_HIGHEST + 280 };
 
 // Survey graphs
 constexpr wxWindowID ID_NEW_LIKERT{ wxID_HIGHEST + 27 };

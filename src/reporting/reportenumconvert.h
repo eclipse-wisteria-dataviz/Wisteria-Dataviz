@@ -456,6 +456,23 @@ namespace Wisteria
 
         //---------------------------------------------------
         [[nodiscard]]
+        static std::optional<CrossTabValue> ConvertCrossTabValue(const wxString& value)
+            {
+            static const std::map<std::wstring, CrossTabValue> crossTabValues = {
+                { L"count", CrossTabValue::Count },
+                { L"row-percent", CrossTabValue::RowPercentage },
+                { L"column-percent", CrossTabValue::ColumnPercentage },
+                { L"total-percent", CrossTabValue::TotalPercentage }
+            };
+
+            const auto foundValue = crossTabValues.find(value.Lower().ToStdWstring());
+            return ((foundValue != crossTabValues.cend()) ?
+                        std::optional<CrossTabValue>(foundValue->second) :
+                        std::nullopt);
+            }
+
+        //---------------------------------------------------
+        [[nodiscard]]
         static std::optional<wxBrushStyle> ConvertBrushStyle(const wxString& value)
             {
             static const std::map<std::wstring, wxBrushStyle> styleValues = {
@@ -2383,6 +2400,24 @@ namespace Wisteria
             {
             static const std::map<FlowShape, wxString> values = {
                 { FlowShape::Curvy, L"curvy" }, { FlowShape::Jagged, L"jagged" }
+            };
+
+            const auto foundValue = values.find(value);
+            return (foundValue != values.cend()) ? std::optional<wxString>{ foundValue->second } :
+                                                   std::nullopt;
+            }
+
+        /// @brief Converts a CrossTabValue enum to its JSON string.
+        /// @param value The cross tabulation value enum value.
+        /// @returns The string if found, or std::nullopt.
+        [[nodiscard]]
+        static std::optional<wxString> ConvertCrossTabValueToString(CrossTabValue value)
+            {
+            static const std::map<CrossTabValue, wxString> values = {
+                { CrossTabValue::Count, L"count" },
+                { CrossTabValue::RowPercentage, L"row-percent" },
+                { CrossTabValue::ColumnPercentage, L"column-percent" },
+                { CrossTabValue::TotalPercentage, L"total-percent" }
             };
 
             const auto foundValue = values.find(value);

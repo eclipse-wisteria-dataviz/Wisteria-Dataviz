@@ -40,6 +40,7 @@
 #include "../ui/dialogs/editors/insertlikertdlg.h"
 #include "../ui/dialogs/editors/insertlineplotdlg.h"
 #include "../ui/dialogs/editors/insertlrroadmapdlg.h"
+#include "../ui/dialogs/editors/insertmatrixheatmapdlg.h"
 #include "../ui/dialogs/editors/insertmultiserieslineplotdlg.h"
 #include "../ui/dialogs/editors/insertpagedlg.h"
 #include "../ui/dialogs/editors/insertpictographdlg.h"
@@ -589,6 +590,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertBoxPlot, this, ID_NEW_BOXPLOT);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertLikertChart, this, ID_NEW_LIKERT);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertHeatMap, this, ID_NEW_HEATMAP);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertMatrixHeatMap, this, ID_NEW_MATRIX_HEATMAP);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertHistogram, this, ID_NEW_HISTOGRAM);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertWordCloud, this, ID_NEW_WORD_CLOUD);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertChoroplethMap, this, ID_NEW_CHOROPLETH_MAP);
@@ -3285,6 +3287,8 @@ void WisteriaView::BuildGraphMenus()
                L"images/stem-leaf.svg");
     m_statisticalGraphMenu.AppendSeparator();
     appendItem(m_statisticalGraphMenu, ID_NEW_HEATMAP, _(L"Heat Map..."), L"images/heatmap.svg");
+    appendItem(m_statisticalGraphMenu, ID_NEW_MATRIX_HEATMAP, _(L"Matrix Heat Map..."),
+               L"images/matrix-heatmap.svg");
     m_statisticalGraphMenu.AppendSeparator();
     appendItem(m_statisticalGraphMenu, ID_NEW_SCATTERPLOT, _(L"Scatter Plot..."),
                L"images/scatterplot.svg");
@@ -4421,6 +4425,10 @@ void WisteriaView::EditGraphByType(Wisteria::Graphs::Graph2D& graph, Wisteria::C
         {
         EditHeatMap(graph, canvas, graphRow, graphCol, pasteAsNew);
         }
+    else if (graph.IsKindOf(wxCLASSINFO(Wisteria::Graphs::MatrixHeatMap)))
+        {
+        EditMatrixHeatMap(graph, canvas, graphRow, graphCol, pasteAsNew);
+        }
     else if (graph.IsKindOf(wxCLASSINFO(Wisteria::Graphs::Histogram)))
         {
         EditHistogram(graph, canvas, graphRow, graphCol, pasteAsNew);
@@ -4557,6 +4565,8 @@ const std::vector<WisteriaView::FilterableGraphType>& WisteriaView::GetFilterabl
         { ID_NEW_STEMANDLEAF, GalleryItemType::StemAndLeafPlot, _(L"Stem-and-Leaf Plot"),
           wxCLASSINFO(StemAndLeafPlot) },
         { ID_NEW_HEATMAP, GalleryItemType::HeatMap, _(L"Heat Map"), wxCLASSINFO(HeatMap) },
+        { ID_NEW_MATRIX_HEATMAP, GalleryItemType::MatrixHeatMap, _(L"Matrix Heat Map"),
+          wxCLASSINFO(MatrixHeatMap) },
         { ID_NEW_SCATTERPLOT, GalleryItemType::ScatterPlot, _(L"Scatter Plot"),
           wxCLASSINFO(ScatterPlot) },
         { ID_NEW_BUBBLEPLOT, GalleryItemType::BubblePlot, _(L"Bubble Plot"),
@@ -6361,6 +6371,81 @@ void WisteriaView::EditHeatMap(const Wisteria::Graphs::Graph2D& graph, Wisteria:
     try
         {
         auto plot = dlg.BuildHeatMap(&graph);
+        const auto legendPlacement = dlg.GetLegendPlacement();
+
+        if (!pasteAsNew)
+            {
+            ClearGraphAndLegend(canvas, graph, graphRow, graphCol);
+            }
+
+        PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
+                             dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        }
+    catch (const std::exception& exc)
+        {
+        wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, m_frame);
+        }
+    }
+
+//-------------------------------------------
+void WisteriaView::OnInsertMatrixHeatMap([[maybe_unused]] wxCommandEvent& event)
+    {
+    StagedGraphCanvas staged{ this };
+
+    Wisteria::UI::InsertMatrixHeatMapDlg dlg(staged.Get(), &m_reportBuilder, m_frame);
+    SetDialogIcon(dlg, L"images/matrix-heatmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    SetupGraphDestinations(dlg);
+    if (dlg.ShowModal() != wxID_OK)
+        {
+        return;
+        }
+    auto* canvas = dlg.GetDestinationCanvas();
+    SyncPageNumber(canvas);
+
+    try
+        {
+        auto plot = dlg.BuildMatrixHeatMap();
+        const auto legendPlacement = dlg.GetLegendPlacement();
+
+        PlaceGraphWithLegend(canvas, plot, BuildLegend(dlg, *plot, legendPlacement),
+                             dlg.GetSelectedRow(), dlg.GetSelectedColumn(), legendPlacement);
+        staged.Finalize(canvas);
+        }
+    catch (const std::exception& exc)
+        {
+        wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Error"), wxOK | wxICON_ERROR, m_frame);
+        }
+    }
+
+//-------------------------------------------
+void WisteriaView::EditMatrixHeatMap(const Wisteria::Graphs::Graph2D& graph,
+                                     Wisteria::Canvas* canvas, const size_t graphRow,
+                                     const size_t graphCol, const bool pasteAsNew) const
+    {
+    Wisteria::UI::InsertMatrixHeatMapDlg dlg(
+        canvas, &m_reportBuilder, m_frame,
+        pasteAsNew ? _(L"Insert Matrix Heat Map") : _(L"Edit Matrix Heat Map"), wxID_ANY,
+        wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER,
+        pasteAsNew ? Wisteria::UI::InsertItemDlg::EditMode::Insert :
+                     Wisteria::UI::InsertItemDlg::EditMode::Edit);
+    SetDialogIcon(dlg, L"images/matrix-heatmap.svg");
+    SetDialogHelpTopic(dlg, L"online/dialogs/graphs-statistical.html");
+    if (!pasteAsNew)
+        {
+        dlg.SetSelectedCell(graphRow, graphCol);
+        }
+    dlg.LoadFromGraph(graph);
+
+    if (dlg.ShowModal() != wxID_OK)
+        {
+        return;
+        }
+
+    try
+        {
+        auto plot = dlg.BuildMatrixHeatMap(&graph);
         const auto legendPlacement = dlg.GetLegendPlacement();
 
         if (!pasteAsNew)

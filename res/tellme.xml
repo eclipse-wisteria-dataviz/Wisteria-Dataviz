@@ -107,7 +107,11 @@
     <item id="ID_NEW_HEATMAP" icon="images/heatmap.svg"
           name="Insert heat map"
           description="Show values as a grid of colors"
-          phrases="Heat map;Heatmap;Calendar heat map;Matrix"/>
+          phrases="Heat map;Heatmap;Calendar heat map"/>
+    <item id="ID_NEW_MATRIX_HEATMAP" icon="images/matrix-heatmap.svg"
+          name="Insert matrix heat map"
+          description="Count how often pairs of values occur"
+          phrases="Matrix heat map;Matrix heatmap;Matrix;Cross tabulation;Crosstab;Contingency table;Count combinations;Most common pairings"/>
     <item id="ID_NEW_SCATTERPLOT" icon="images/scatterplot.svg"
           name="Insert scatter plot"
           description="Show the relationship between two variables"

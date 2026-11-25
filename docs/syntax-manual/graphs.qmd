@@ -579,6 +579,48 @@ Properties for `"heatmap"` nodes:
 :::
 
 ::: {.minipage data-latex="{\textwidth}"}
+## Matrix Heat Map {#matrix-heatmap-properties .unnumbered}
+
+Properties for `"matrix-heatmap"` nodes:
+
+- `"variables"`: An item containing the following properties:
+  - `"row"`: The categorical or continuous column whose values are shown down the rows.
+  - `"column"`: The categorical or continuous column whose values are shown across the columns.
+  - `"row-group"`: An (optional) categorical column to group the rows by.
+  - `"column-group"`: An (optional) categorical column to group the columns by.
+- `"cell-values"`: A string specifying which value each cell shows (and is colored by). The options are:
+  - `"count"`: How many observations have the cell's row and column values. This is the default.
+  - `"row-percent"`: The cell's count as a percentage of its row's total.
+  - `"column-percent"`: The cell's count as a percentage of its column's total.
+  - `"total-percent"`: The cell's count as a percentage of all observations.
+- `"show-totals"`: A boolean specifying whether to show a total for each row and column, along with the grand total. The default is `false`.
+  The totals are always counts, so with percentages they show what each percentage is out of.
+
+Each cell shows how many observations have that row's and column's values.
+Row percentages are useful when the rows differ in size, such as a large high school that would otherwise darken its whole row.
+Groups are sorted alphabetically, and the values within each group are sorted alphabetically (or numerically, for continuous columns).
+The order of the data does not matter.
+
+A value is counted separately within each of its groups.
+For example, two high schools with the same name (one public and one private) are shown as separate rows.
+
+```json
+{
+  "type": "matrix-heatmap",
+  "dataset": "Matriculation",
+  "variables": {
+    "row": "High School",
+    "column": "College",
+    "row-group": "HS Type",
+    "column-group": "College Type"
+  },
+  "cell-values": "row-percent",
+  "show-totals": true
+}
+```
+:::
+
+::: {.minipage data-latex="{\textwidth}"}
 ## Histogram {#histogram-properties .unnumbered}
 
 Properties for `"histogram"` nodes:

@@ -503,6 +503,62 @@ namespace Wisteria
 
     //---------------------------------------------------
     std::shared_ptr<Graphs::Graph2D>
+    ReportBuilder::LoadMatrixHeatMap(const wxSimpleJSON::Ptr_t& graphNode, Canvas* canvas,
+                                     size_t& currentRow, size_t& currentColumn)
+        {
+        const wxString dsName = graphNode->GetProperty(L"dataset")->AsString();
+        const auto foundPos = m_datasets.find(dsName);
+        if (foundPos == m_datasets.cend() || foundPos->second == nullptr)
+            {
+            throw std::runtime_error(
+                wxString::Format(_(L"%s: dataset not found for matrix heatmap."), dsName).ToUTF8());
+            }
+
+        const auto variablesNode = graphNode->GetProperty(L"variables");
+        if (variablesNode->IsOk())
+            {
+            auto heatmap =
+                std::make_shared<Graphs::MatrixHeatMap>(canvas, LoadGraphColorScheme(graphNode));
+
+            // the group variables are optional
+            const auto loadGroupVariable = [this, &heatmap, &variablesNode](
+                                               const wxString& property) -> std::optional<wxString>
+            {
+                const auto rawName = variablesNode->GetProperty(property)->AsString();
+                if (rawName.empty())
+                    {
+                    return std::nullopt;
+                    }
+                heatmap->SetPropertyTemplate(L"variables." + property, rawName);
+                return ExpandConstants(rawName);
+            };
+            const auto rowGroupVarName = loadGroupVariable(L"row-group");
+            const auto columnGroupVarName = loadGroupVariable(L"column-group");
+
+            heatmap->SetData(foundPos->second,
+                             ExpandAndCache(heatmap.get(), L"variables.row",
+                                            variablesNode->GetProperty(L"row")->AsString()),
+                             ExpandAndCache(heatmap.get(), L"variables.column",
+                                            variablesNode->GetProperty(L"column")->AsString()),
+                             rowGroupVarName, columnGroupVarName);
+
+            const auto cellValues = ReportEnumConvert::ConvertCrossTabValue(
+                graphNode->GetProperty(L"cell-values")->AsString());
+            if (cellValues.has_value())
+                {
+                heatmap->SetCellValues(cellValues.value());
+                }
+            heatmap->ShowTotals(graphNode->GetProperty(L"show-totals")->AsBool(false));
+
+            LoadGraph(graphNode, canvas, currentRow, currentColumn, heatmap);
+            return heatmap;
+            }
+
+        throw std::runtime_error(_(L"Variables not defined for matrix heatmap.").ToUTF8());
+        }
+
+    //---------------------------------------------------
+    std::shared_ptr<Graphs::Graph2D>
     ReportBuilder::LoadBoxPlot(const wxSimpleJSON::Ptr_t& graphNode, Canvas* canvas,
                                size_t& currentRow, size_t& currentColumn)
         {

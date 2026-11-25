@@ -736,6 +736,19 @@ namespace Wisteria
         Jagged
         };
 
+    /// @brief Which value to show in each cell of a cross tabulation (e.g., matrix heatmap).
+    enum class CrossTabValue
+        {
+        /// @brief How many observations have the cell's combination.
+        Count,
+        /// @brief The cell's count as a percentage of its row's total.
+        RowPercentage,
+        /// @brief The cell's count as a percentage of its column's total.
+        ColumnPercentage,
+        /// @brief The cell's count as a percentage of all observations.
+        TotalPercentage
+        };
+
     /// @brief How to display a table cell's content.
     enum class TableCellFormat
         {
@@ -890,7 +903,8 @@ namespace Wisteria
         Pictograph,
         FilteredGraph,
         IshikawaDiagram,
-        RunChart
+        RunChart,
+        MatrixHeatMap
         };
     } // namespace Wisteria
 

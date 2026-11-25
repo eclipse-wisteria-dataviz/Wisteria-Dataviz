@@ -215,6 +215,8 @@ namespace Wisteria::UI
             return L"stem-leaf";
         case GalleryItemType::HeatMap:
             return L"heatmap";
+        case GalleryItemType::MatrixHeatMap:
+            return L"matrix-heatmap";
         case GalleryItemType::ScatterPlot:
             return L"scatterplot";
         case GalleryItemType::BubblePlot:

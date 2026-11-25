@@ -38,6 +38,7 @@
 #include "../graphs/likertchart.h"
 #include "../graphs/lineplot.h"
 #include "../graphs/lrroadmap.h"
+#include "../graphs/matrixheatmap.h"
 #include "../graphs/multi_series_lineplot.h"
 #include "../graphs/nightingale_rose_chart.h"
 #include "../graphs/pictograph.h"
@@ -1511,6 +1512,16 @@ namespace Wisteria
         std::shared_ptr<Graphs::Graph2D> LoadHeatMap(const wxSimpleJSON::Ptr_t& graphNode,
                                                      Canvas* canvas, size_t& currentRow,
                                                      size_t& currentColumn);
+        /// @brief Loads a matrix heatmap node into the canvas.
+        /// @param graphNode The graph node to parse.
+        /// @param canvas The canvas to add the graph to.
+        /// @param[in,out] currentRow The row in the canvas where the graph will be placed.
+        /// @param[in,out] currentColumn The column in the canvas where the graph will be placed.
+        /// @returns The graph that was added to the canvas, or null upon failure.
+        [[nodiscard]]
+        std::shared_ptr<Graphs::Graph2D> LoadMatrixHeatMap(const wxSimpleJSON::Ptr_t& graphNode,
+                                                           Canvas* canvas, size_t& currentRow,
+                                                           size_t& currentColumn);
         /// @brief Loads a choropleth map node into the canvas.
         /// @param graphNode The graph node to parse.
         /// @param canvas The canvas to add the graph to.
