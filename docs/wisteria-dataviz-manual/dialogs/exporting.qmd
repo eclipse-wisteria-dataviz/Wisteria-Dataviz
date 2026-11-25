@@ -29,6 +29,17 @@ This section is shown above the project's export formats, which are listed under
 Click **Export Graph** to save the graph as an image.
 You will be asked for the image format (e.g., PNG, SVG, or PDF), and then where to save the file.
 
+## Exporting a Dataset {#sec-export-dataset}
+
+If a dataset from the **Data** section is selected, then the **Export** page also has a **Selected Dataset** section.
+This section is shown above the project's export formats.
+Click **Export Dataset** to save the dataset as a text file.
+In the save dialog, choose either comma-separated values (`.csv`) or tab-delimited text (`.txt`) as the file type.
+
+The columns are saved in the following order: the ID column, the categorical columns, the date columns, and then the continuous columns.
+Numbers are saved at full precision, using a period as the decimal separator and no thousands separators.
+Dates are saved in ISO format.
+
 ## Pages to Export {#sec-export-page-selection}
 
 If a project has more than one page, then a list of its pages is shown before the export options.

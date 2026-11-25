@@ -2343,7 +2343,24 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
     graphExportSizer->Add(graphExportDetails, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
     exportSizer->Add(graphExportSizer, wxSizerFlags{}.Expand());
 
-    // the project-level exports, which only need a heading when the graph's export is shown
+    // the dataset selected in the Data section, which is only shown when there is one
+    auto* datasetExportSizer = new wxBoxSizer(wxVERTICAL);
+    datasetExportSizer->Add(new wxBackstageHeading(exportPage, wxID_ANY, _(L"Selected Dataset"),
+                                                   wxBackstageHeadingStyle::Section),
+                            wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    auto* datasetExportDetails = new wxBoxSizer(wxVERTICAL);
+    auto* datasetExportButton =
+        new wxBackstageButton(exportPage, ID_BACKSTAGE_EXPORT_DATASET, _(L"Export Dataset"),
+                              GetResourceManager().GetSVG(L"images/data.svg"));
+    datasetExportButton->SetIconSize(wxSize{ 64, 64 });
+    datasetExportDetails->Add(datasetExportButton, wxSizerFlags{}.Border(wxBOTTOM, margin / 2));
+    addExportBullets(exportPage, datasetExportDetails,
+                     { _(L"Exports the selected dataset to a text file."),
+                       _(L"Choose from comma-separated or tab-delimited formats.") });
+    datasetExportSizer->Add(datasetExportDetails, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    exportSizer->Add(datasetExportSizer, wxSizerFlags{}.Expand());
+
+    // the project-level exports, which only need a heading when a selection's export is shown
     auto* projectExportHeading = new wxBackstageHeading(exportPage, wxID_ANY, _(L"Project"),
                                                         wxBackstageHeadingStyle::Section);
     exportSizer->Add(projectExportHeading, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
@@ -2413,43 +2430,49 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
     exportPage->SetSizer(exportSizer);
     selectExportType(0);
 
-    backstage->Bind(
-        wxEVT_BUTTON,
-        [backstage](wxCommandEvent&)
+    for (const auto commandId : { ID_BACKSTAGE_EXPORT_GRAPH, ID_BACKSTAGE_EXPORT_DATASET })
         {
-            wxCommandEvent exportEvent{ wxEVT_MENU, ID_BACKSTAGE_EXPORT_GRAPH };
-            backstage->ProcessWindowEvent(exportEvent);
-        },
-        ID_BACKSTAGE_EXPORT_GRAPH);
+        backstage->Bind(
+            wxEVT_BUTTON,
+            [backstage, commandId](wxCommandEvent&)
+            {
+                wxCommandEvent exportEvent{ wxEVT_MENU, commandId };
+                backstage->ProcessWindowEvent(exportEvent);
+            },
+            commandId);
+        }
 
-    // shows the graph's export (and the project heading below it) only if a graph is selected
-    const auto refreshGraphExport =
-        [doc, exportPage, exportSizer, graphExportSizer, projectExportHeading]()
+    // shows the selected graph's or dataset's export (and the project heading below it)
+    // only if one is selected
+    const auto refreshSelectionExport =
+        [doc, exportPage, exportSizer, graphExportSizer, datasetExportSizer, projectExportHeading]()
     {
         const auto* view = dynamic_cast<WisteriaView*>(doc->GetFirstView());
         const bool hasGraph = (view != nullptr && view->GetSelectedGraphCanvas() != nullptr);
+        const bool hasDataset = (view != nullptr && view->GetSelectedDatasetName().has_value());
         exportSizer->Show(graphExportSizer, hasGraph, true);
-        exportSizer->Show(projectExportHeading, hasGraph);
+        exportSizer->Show(datasetExportSizer, hasDataset, true);
+        exportSizer->Show(projectExportHeading, hasGraph || hasDataset);
         exportPage->Layout();
     };
-    refreshGraphExport();
+    refreshSelectionExport();
 
-    // a different graph (or none) may be selected since the page was last shown
+    // a different graph or dataset (or none) may be selected since the page was last shown
     backstage->Bind(
         wxEVT_BACKSTAGE_CLICKED,
-        [refreshGraphExport](wxNotifyEvent& event)
+        [refreshSelectionExport](wxNotifyEvent& event)
         {
-            refreshGraphExport();
+            refreshSelectionExport();
             event.Skip();
         },
         ID_BACKSTAGE_EXPORT);
     // the backstage reopens on the page it was closed on, which may be this one
     backstage->Bind(wxEVT_SHOW,
-                    [refreshGraphExport](wxShowEvent& event)
+                    [refreshSelectionExport](wxShowEvent& event)
                     {
                         if (event.IsShown())
                             {
-                            refreshGraphExport();
+                            refreshSelectionExport();
                             }
                         event.Skip();
                     });

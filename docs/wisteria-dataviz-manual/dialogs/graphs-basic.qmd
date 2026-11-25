@@ -490,7 +490,7 @@ The first segment is drawn horizontally across the top, the middle segments zigz
 This suits data where the last value is far larger than the others, as the spiral can absorb a very long length in a compact area.
 The dataset should have one row per segment, in the order that the segments should be drawn, holding its name and its value.
 
-The layout follows W. E. B. Du Bois's *City and Rural Population. 1890* [@battle-baptiste-rusert], one of the hand-drawn plates that he and his students at Atlanta University prepared for the 1900 Paris Exposition.
+The layout follows W. E. B. Du Bois's hand-drawn plate of the 1890 city and rural population, made for the 1900 Paris Exposition [@battle-baptiste-rusert].
 
 ### Variables {-}
 

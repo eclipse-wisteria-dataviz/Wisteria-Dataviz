@@ -84,6 +84,11 @@ class WisteriaView final : public wxView
     [[nodiscard]]
     Wisteria::Canvas* GetSelectedGraphCanvas() const noexcept;
 
+    /// @returns The name of the dataset selected in the Data section,
+    ///     or @c std::nullopt if a dataset isn't selected.
+    [[nodiscard]]
+    std::optional<wxString> GetSelectedDatasetName() const;
+
     /// @brief Finds a page by its GUID.
     /// @param guid The GUID of the page to look for.
     /// @returns The index of the page, or @c std::nullopt if not found.

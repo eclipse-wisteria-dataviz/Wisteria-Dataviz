@@ -318,7 +318,7 @@ Select the **Dataset**, the **Label column** containing the brackets' labels, an
 The bracket **Style**, **Color**, and **Width** can also be selected here.
 
 Check **Simplify brackets** to shorten repeated date-range labels.
-For example, if the brackets contain labels like *1979-80* or *FY1979-1980*, then the first one is kept as-is, but the remaining ones are shortened to *'79-80*.
+For example, if the brackets contain labels like *1979–80* or *FY1979–1980*, then the first one is kept as-is, but the remaining ones are shortened to *'79–80*.
 (This is only applied if all dates are in the same century.)
 
 ### Mirroring {-}

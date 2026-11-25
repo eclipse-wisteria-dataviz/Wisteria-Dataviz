@@ -426,6 +426,45 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         },
         ID_BACKSTAGE_EXPORT_GRAPH);
 
+    // the backstage's dataset export, which saves the dataset as delimited text
+    m_frame->Bind(
+        wxEVT_MENU,
+        [this]([[maybe_unused]]
+               wxCommandEvent& event)
+        {
+            const auto datasetName = GetSelectedDatasetName();
+            if (!datasetName)
+                {
+                return;
+                }
+            const auto& dataset = m_reportBuilder.GetDatasets().find(datasetName.value())->second;
+            wxFileDialog fileDlg(m_frame, _(L"Export Dataset"), wxString{}, datasetName.value(),
+                                 _(L"Comma-separated values (*.csv)|*.csv|"
+                                   "Tab-delimited text (*.txt)|*.txt"),
+                                 wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+            if (fileDlg.ShowModal() != wxID_OK)
+                {
+                return;
+                }
+            try
+                {
+                if (fileDlg.GetFilterIndex() == 0)
+                    {
+                    dataset->ExportCSV(fileDlg.GetPath());
+                    }
+                else
+                    {
+                    dataset->ExportTSV(fileDlg.GetPath());
+                    }
+                }
+            catch (const std::exception& exc)
+                {
+                wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Export Dataset"),
+                             wxOK | wxICON_ERROR, m_frame);
+                }
+        },
+        ID_BACKSTAGE_EXPORT_DATASET);
+
     // bind project settings button
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnProjectSettings, this,
                   ID_PROJECT_SETTINGS);
@@ -1306,6 +1345,20 @@ bool WisteriaView::IsDatasetFileReadable(const wxString& datasetFilePath)
     const wxLogNull noLog;
     wxFile file;
     return file.Open(datasetFilePath, wxFile::read);
+    }
+
+//-------------------------------------------
+std::optional<wxString> WisteriaView::GetSelectedDatasetName() const
+    {
+    if (m_sideBar == nullptr || m_sideBar->GetSelectedFolder() != 0 ||
+        !m_sideBar->GetSelectedSubItemId().second)
+        {
+        return std::nullopt;
+        }
+    const wxString datasetName{ m_sideBar->GetSelectedLabel() };
+    return m_reportBuilder.GetDatasets().contains(datasetName) ?
+               std::optional<wxString>{ datasetName } :
+               std::nullopt;
     }
 
 //-------------------------------------------

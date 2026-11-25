@@ -9,6 +9,7 @@
 - Choropleth now supports median
 - Added **Tell Me** search box for finding and running commands
 - Added **Graphs** section to the sidebar, where new graphs are shown by themselves and fill the window
+- Added dataset export support (as tab- or comma-separated files)
 
 ## {{< var PROGRAM_NAME >}} 1.2.2 {-}
 ***
