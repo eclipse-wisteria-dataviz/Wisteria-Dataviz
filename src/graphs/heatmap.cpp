@@ -405,10 +405,13 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::HeatMap, Wisteria::Graphs::GroupGrap
                     wxPoint(drawArea.GetTopLeft().x + (boxWidth * currentColumn) + boxWidth,
                             drawArea.GetTopLeft().y + (currentRow * boxWidth))
                 };
-                // keep scaling at 1 since this is set to a specific size on the plot
+                // Keep scaling at 1 since this is set to a specific size on the plot.
+                // A cell also keeps its fill color in an HTML dashboard's dark mode.
                 auto box = std::make_unique<GraphItems::Polygon>(
-                    GraphItems::GraphItemInfo{ cell.m_selectionLabel }.Pen(GetPen()).Brush(
-                        cellColor),
+                    GraphItems::GraphItemInfo{ cell.m_selectionLabel }
+                        .Pen(GetPen())
+                        .Brush(cellColor)
+                        .Accessibility(wxSVGAttributes{}.Class(_DT(L"ink-keep heatmap-cell"))),
                     pts);
                 const wxRect boxRect{ pts[0], pts[2] };
 

@@ -375,6 +375,10 @@ html[data-view="slides"] .dash-progress
 .page-svg .chernoff-legend-line [fill]:not([fill="none"])
   { fill: light-dark(#0095B6, #ACE5EE); }
 
+/* heatmap cell outlines follow light/dark mode */
+.page-svg .heatmap-cell [stroke="#BEBBBB"]
+  { stroke: light-dark(#BEBBBB, #444444); }
+
 /* lays a page out invisibly so the script can measure it */
 .page.ink-measure
   {
