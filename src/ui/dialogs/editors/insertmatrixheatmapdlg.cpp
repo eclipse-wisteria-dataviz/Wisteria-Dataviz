@@ -102,11 +102,13 @@ namespace Wisteria::UI
                                { _(L"HS Type"), _(L"Row group") },
                                { _(L"College"), _(L"Column") },
                                { _(L"College Type"), _(L"Column group") } };
-        students.m_rows = { { L"Central", _(L"Public"), L"State U", _(L"Public") },
-                            { L"Central", _(L"Public"), L"Ivy College", _(L"Private") },
-                            { L"St. Agnes", _(L"Private"), L"Ivy College", _(L"Private") },
-                            { L"St. Agnes", _(L"Private"), L"Ivy College", _(L"Private") },
-                            { L"West", _(L"Public"), L"State U", _(L"Public") } };
+        students.m_rows = {
+            { L"Central", _(L"Public"), _DT(L"State U"), _(L"Public") },
+            { L"Central", _(L"Public"), _DT(L"Ivy College"), _(L"Private") },
+            { _DT(L"St. Agnes"), _(L"Private"), _DT(L"Ivy College"), _(L"Private") },
+            { _DT(L"St. Agnes"), _(L"Private"), _DT(L"Ivy College"), _(L"Private") },
+            { L"West", _(L"Public"), _DT(L"State U"), _(L"Public") }
+        };
         guide.m_examples = { std::move(students) };
 
         guide.m_missingData = {

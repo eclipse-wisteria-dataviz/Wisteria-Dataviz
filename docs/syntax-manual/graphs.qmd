@@ -589,11 +589,13 @@ Properties for `"matrix-heatmap"` nodes:
   - `"row-group"`: An (optional) categorical column to group the rows by.
   - `"column-group"`: An (optional) categorical column to group the columns by.
 - `"cell-values"`: A string specifying which value each cell shows (and is colored by). The options are:
-  - `"count"`: How many observations have the cell's row and column values. This is the default.
+  - `"count"`: How many observations have the cell's row and column values.
+    This is the default.
   - `"row-percent"`: The cell's count as a percentage of its row's total.
   - `"column-percent"`: The cell's count as a percentage of its column's total.
   - `"total-percent"`: The cell's count as a percentage of all observations.
-- `"show-totals"`: A boolean specifying whether to show a total for each row and column, along with the grand total. The default is `false`.
+- `"show-totals"`: A boolean specifying whether to show a total for each row and column, along with the grand total.
+  The default is `false`.
   The totals are always counts, so with percentages they show what each percentage is out of.
 
 Each cell shows how many observations have that row's and column's values.

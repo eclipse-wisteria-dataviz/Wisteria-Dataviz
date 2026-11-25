@@ -3785,6 +3785,7 @@ wxString WisteriaView::GetGraphDisplayName(const Wisteria::Canvas& canvas) const
         {
         for (size_t graphNumber = 1;; ++graphNumber)
             {
+            // TRANSLATORS: Default name for an untitled graph. %zu is the graph's number.
             const wxString defaultName = wxString::Format(_(L"Graph %zu"), graphNumber);
             if (!isLabelTaken(defaultName))
                 {

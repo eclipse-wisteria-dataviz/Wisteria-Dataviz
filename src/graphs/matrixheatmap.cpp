@@ -314,13 +314,14 @@ wxIMPLEMENT_DYNAMIC_CLASS(Wisteria::Graphs::MatrixHeatMap, Wisteria::Graphs::Gra
         // the entire row (or column, or table) shows as 100%.
         if (value > 0 && value < 0.5)
             {
-            return _(L"<1%");
+            return _DT(L"<1%");
             }
         if (value >= 99.5 && value < 100)
             {
-            return _(L">99%");
+            return _DT(L">99%");
             }
-        return wxNumberFormatter::ToString(value, 0, wxNumberFormatter::Style::Style_None) + L"%";
+        return wxString::Format(
+            L"%s%%", wxNumberFormatter::ToString(value, 0, wxNumberFormatter::Style::Style_None));
         }
 
     //----------------------------------------------------------------
