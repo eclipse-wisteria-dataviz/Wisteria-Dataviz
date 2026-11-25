@@ -225,6 +225,7 @@ void WisteriaApp::RegisterTellMeFeatures()
         }
     }
 
+/// @cond DOXYGEN_IGNORE
 #if defined(__WXOSX__)
 //-------------------------------------------
 void WisteriaApp::RegisterMenuBarItemIds()
@@ -276,6 +277,7 @@ void WisteriaApp::OnQuitMenu([[maybe_unused]] wxCommandEvent& event)
         }
     }
 #endif
+/// @endcond
 
 //-------------------------------------------
 bool WisteriaApp::OnInit()
