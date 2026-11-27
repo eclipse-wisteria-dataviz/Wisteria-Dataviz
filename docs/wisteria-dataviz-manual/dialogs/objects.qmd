@@ -62,7 +62,7 @@ A value of 0 is fully transparent, whereas 255 is fully opaque.
 ## Graphs Section {#sec-graphs-section}
 
 The **Graphs** section of the sidebar is a workspace for creating and exploring graphs.
-It is shown below **Constants** and above the pages.
+It is shown below **Analysis** and above the pages.
 New graphs are added here by default (see [**Insert into**](#sec-editor-placement)).
 When a graph is ready, you can copy it onto a page.
 

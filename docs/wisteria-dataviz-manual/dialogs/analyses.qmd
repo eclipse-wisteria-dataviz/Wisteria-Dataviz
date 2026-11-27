@@ -1,0 +1,60 @@
+```{r}
+#| include: false
+#| eval: true
+
+source('../R/appdown.r')
+```
+
+# Analyzing Data {#sec-analyzing-data}
+
+A project's datasets can be analyzed with statistical analyses.
+These analyses are available from the **Analysis** tab.
+
+Each analysis is added to the **Analysis** section of the sidebar.
+Click an analysis there to view its results.
+
+The source dataset is not changed.
+Only an analysis's settings are saved with the project.
+Its results are recalculated whenever the project is opened or refreshed (see `r keys("Refresh All")`).
+
+The **Results** section of the **Analysis** tab works with the analysis selected in the sidebar:
+
+- `r keys("Edit")`: Changes the analysis's settings and recalculates it.
+- `r keys("Delete")`: Removes the analysis from the project.
+
+To save the results table being shown to a comma-separated or tab-delimited file, click **Export** in the **File** tab, then click `r keys("Export Results")`.
+
+## Descriptive Statistics {#sec-descriptive-statistics-dlg}
+
+This dialog summarizes the continuous columns of a dataset.
+To open it, click `r keys("Descriptive Statistics")` in the **Basic Statistics** section of the **Analysis** tab.
+
+**Dataset**: Select the dataset to analyze.
+
+`r keys("Select Columns...")`: Click this to select the columns to analyze:
+
+- **Columns**: The continuous columns to summarize.
+  At least one column is required.
+- **Group by**: An optional categorical column.
+  The statistics are calculated separately for each of its groups.
+  Leave this empty to analyze all the rows together.
+
+**Statistics**: Select which statistics to include:
+
+- **N (valid observations)**: The number of values that are not missing.
+- **Missing**: The number of missing values.
+- **Mean**: The average of the values.
+- **Standard deviation**: The sample standard deviation, which divides by N − 1.
+- **Minimum**: The smallest value.
+- **Quartiles (Q1, median, Q3)**: The first quartile, the median, and the third quartile.
+  The quartiles are calculated with Tukey's hinges, which are the medians of the lower and upper halves of the data [@tukey; @hoaglin-mosteller-tukey].
+  If there is an odd number of values, then the median is included in both halves.
+- **Maximum**: The largest value.
+
+**Output name**: Enter the name of the analysis, as shown in the sidebar.
+
+The results show one row for each column (or for each column and group).
+If a column is no longer in the dataset (or is no longer continuous), then it is left out of the results and a warning is shown.
+It is summarized again once the dataset has it.
+A statistic that cannot be calculated is left empty.
+For example, a standard deviation requires at least two values.

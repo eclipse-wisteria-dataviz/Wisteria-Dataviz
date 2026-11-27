@@ -16,6 +16,7 @@ book:
       chapters:
       - dialogs/import-dataset.qmd
       - dialogs/transformations.qmd
+      - dialogs/analyses.qmd
       - dialogs/exporting.qmd
       - dialogs/common-dialogs.qmd
     - part: "Pages, Graphs, & Objects"
