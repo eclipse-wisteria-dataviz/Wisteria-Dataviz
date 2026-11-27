@@ -9,7 +9,7 @@ source('../R/appdown.r')
 
 Graphs and other objects are added to a page from the ribbon:
 
-- **Analyses** tab: The **Graphs** section groups the graphs into categories (`r keys("Basic")`, `r keys("Business")`, `r keys("Statistical")`, `r keys("SPC")`, `r keys("Survey")`, `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")`).
+- **Graphs** tab: The **Graphs** section groups the graphs into categories (`r keys("Basic")`, `r keys("Business")`, `r keys("Statistical")`, `r keys("SPC")`, `r keys("Survey")`, `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")`).
   Click a category and select a graph from its menu.
 - **Objects** tab: The **Objects** section inserts labels, KPI cards, images, shapes, axes, spacers, and dividers.
 

@@ -74,10 +74,16 @@ The graph is listed by its title (unless the project file gives it a name).
 Graphs without a title are listed as *Graph 1*, *Graph 2*, and so on.
 If more than one graph has the same title, then a number is added after it (e.g., *Sales (2)*).
 
-To edit a graph, double-click it or select it and click `r keys("Edit")`.
-To remove a graph from this section, select it and click `r keys("Delete")` (or press `r keys("Delete")`).
+The **Graph** section of the **Graphs** tab works with the graph being shown:
 
-To place a copy of a graph on a page, view the graph and click the `r keys("Copy to Page")` button in the **Objects** section of the **Objects** tab.
+- `r keys("Edit")`: Opens the graph's editor. (You can also double-click the graph.)
+- `r keys("Copy to Page")`: Places a copy of the graph on a page (see below).
+- `r keys("Delete")`: Removes the graph from this section.
+  (You can also select the graph and press `r keys("Delete")`.)
+
+The `r keys("Edit")` and `r keys("Delete")` buttons on the **Objects** tab only work with items on pages.
+
+To place a copy of a graph on a page, view the graph and click `r keys("Copy to Page")`.
 Select the page to copy the graph to, and the graph's editor will be shown.
 On its [**Placement**](#sec-editor-placement) page, select the cell to place the graph in.
 A filtered graph is copied with its filter, and its dataset can't be changed.
@@ -157,7 +163,7 @@ To insert one, click the `r keys("KPI Card")` button in the **Objects** section 
 To edit an existing KPI card, select it and click `r keys("Edit")`.
 
 ::: {.tipsection data-latex=""}
-To show the number for each value of a column (e.g., each region), click the `r keys("Filtered")` button in the **Graphs** section of the **Analyses** tab and select **KPI Card** as the graph (see [Filtered Graph](#sec-filtered-graph-dlg)).
+To show the number for each value of a column (e.g., each region), click the `r keys("Filtered")` button in the **Graphs** section of the **Graphs** tab and select **KPI Card** as the graph (see [Filtered Graph](#sec-filtered-graph-dlg)).
 :::
 
 ### Data {-}
@@ -339,7 +345,7 @@ The `r keys("Divider")` button inserts a horizontal or vertical line (single or 
 
 A filtered graph shows one of a set of graphs, based on a value in a column.
 In an exported HTML dashboard, a menu lets the viewer switch between the values.
-To insert one, click the `r keys("Filtered")` button in the **Graphs** section of the **Analyses** tab.
+To insert one, click the `r keys("Filtered")` button in the **Graphs** section of the **Graphs** tab.
 
 **Dataset**: Select the dataset to filter.
 

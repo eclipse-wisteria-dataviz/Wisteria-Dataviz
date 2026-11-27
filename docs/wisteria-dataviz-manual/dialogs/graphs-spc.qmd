@@ -7,7 +7,7 @@ source('../R/appdown.r')
 
 # Statistical Process Control Graphs {#sec-graphs-spc}
 
-The graphs in this chapter are available from the `r keys("SPC")` button in the **Graphs** section of the **Analyses** tab.
+The graphs in this chapter are available from the `r keys("SPC")` button in the **Graphs** section of the **Graphs** tab.
 Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
 
 ## Ishikawa Diagram {#sec-ishikawa-dlg}

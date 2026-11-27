@@ -7,7 +7,7 @@ source('../R/appdown.r')
 
 # Basic Graphs {#sec-graphs-basic}
 
-The graphs in this chapter are available from the `r keys("Basic")` button in the **Graphs** section of the **Analyses** tab.
+The graphs in this chapter are available from the `r keys("Basic")` button in the **Graphs** section of the **Graphs** tab.
 Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
 
 ## Bar Chart {#sec-bar-chart-dlg}

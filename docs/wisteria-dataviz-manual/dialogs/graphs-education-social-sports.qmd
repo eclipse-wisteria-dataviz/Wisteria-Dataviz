@@ -7,7 +7,7 @@ source('../R/appdown.r')
 
 # Education, Social Sciences, & Sports Graphs {#sec-graphs-education-social-sports}
 
-The graphs in this chapter are available from the `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")` buttons in the **Graphs** section of the **Analyses** tab.
+The graphs in this chapter are available from the `r keys("Education")`, `r keys("Social Sciences")`, and `r keys("Sports")` buttons in the **Graphs** section of the **Graphs** tab.
 Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
 
 ## Scale Chart {#sec-scale-chart-dlg}

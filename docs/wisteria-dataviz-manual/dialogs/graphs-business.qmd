@@ -7,7 +7,7 @@ source('../R/appdown.r')
 
 # Business Graphs {#sec-graphs-business}
 
-The graphs in this chapter are available from the `r keys("Business")` button in the **Graphs** section of the **Analyses** tab.
+The graphs in this chapter are available from the `r keys("Business")` button in the **Graphs** section of the **Graphs** tab.
 Along with the options described here, each graph's editor includes the [shared pages](#sec-editor-common) (e.g., **Axes**, **Legend**, and **Placement**).
 
 ## Gantt Chart {#sec-gantt-dlg}
