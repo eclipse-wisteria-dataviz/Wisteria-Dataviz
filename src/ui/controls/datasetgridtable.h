@@ -246,6 +246,18 @@ namespace Wisteria::UI
             return DatasetGridColumnType::Continuous;
             }
 
+        /// @brief Sets the number of decimal places shown for continuous values.
+        /// @details Trailing zeros are not shown.
+        /// @param precision The number of decimal places.
+        void SetPrecision(const int precision) noexcept { m_precision = precision; }
+
+        /// @returns The number of decimal places shown for continuous values.
+        [[nodiscard]]
+        int GetPrecision() const noexcept
+            {
+            return m_precision;
+            }
+
         /// @brief Sets a currency symbol for a continuous column.
         /// @details When set, the symbol is prepended to the formatted value
         ///     in the grid display. The underlying numeric data is unchanged.
@@ -344,7 +356,7 @@ namespace Wisteria::UI
                 return {};
                 }
             auto formatted =
-                wxNumberFormatter::ToString(val, 2,
+                wxNumberFormatter::ToString(val, m_precision,
                                             wxNumberFormatter::Style::Style_WithThousandsSep |
                                                 wxNumberFormatter::Style::Style_NoTrailingZeroes);
             const auto symIt = m_currencySymbols.find(contIndex);
@@ -396,6 +408,7 @@ namespace Wisteria::UI
 
         std::shared_ptr<Data::Dataset> m_dataset;
         int m_maxRows{ 0 };
+        int m_precision{ 6 };
         bool m_hasId{ false };
         size_t m_catCount{ 0 };
         size_t m_dateCount{ 0 };
