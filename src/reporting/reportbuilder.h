@@ -12,6 +12,7 @@
 #ifndef WISTERIA_REPORT_BUILDER_H
 #define WISTERIA_REPORT_BUILDER_H
 
+#include "../analyses/analysis.h"
 #include "../base/canvas.h"
 #include "../base/colorbrewer.h"
 #include "../base/commonaxisbuilder.h"
@@ -498,6 +499,63 @@ namespace Wisteria
             {
             return m_datasetPivotOptions;
             }
+
+        /// @returns The project's analyses.
+        [[nodiscard]]
+        const std::vector<std::unique_ptr<Analyses::Analysis>>& GetAnalyses() const noexcept
+            {
+            return m_analyses;
+            }
+
+        /// @private
+        [[nodiscard]]
+        std::vector<std::unique_ptr<Analyses::Analysis>>& GetAnalyses() noexcept
+            {
+            return m_analyses;
+            }
+
+        /** @brief Adds an analysis to the project.
+            @param analysis The analysis.
+            @returns The index of the analysis.*/
+        size_t AddAnalysis(std::unique_ptr<Analyses::Analysis> analysis)
+            {
+            m_analyses.push_back(std::move(analysis));
+            return m_analyses.size() - 1;
+            }
+
+        /** @brief Finds an analysis by its GUID.
+            @param guid The GUID of the analysis.
+            @returns The index of the analysis, or @c std::nullopt if not found.*/
+        [[nodiscard]]
+        std::optional<size_t> FindAnalysis(const wxString& guid) const
+            {
+            const auto foundAnalysis = std::ranges::find_if(
+                m_analyses, [&guid](const auto& analysis)
+                { return analysis != nullptr && analysis->GetGuid() == guid; });
+            if (foundAnalysis == m_analyses.cend())
+                {
+                return std::nullopt;
+                }
+            return static_cast<size_t>(std::distance(m_analyses.cbegin(), foundAnalysis));
+            }
+
+        /** @brief Removes an analysis from the project.
+            @param guid The GUID of the analysis.*/
+        void RemoveAnalysis(const wxString& guid)
+            {
+            if (const auto index = FindAnalysis(guid); index.has_value())
+                {
+                m_analyses.erase(
+                    std::next(m_analyses.begin(), static_cast<std::ptrdiff_t>(index.value())));
+                }
+            }
+
+        /** @brief Runs an analysis on its source dataset and stores its results.
+            @param index The index of the analysis.
+            @throws std::runtime_error If the source dataset is not found or the
+                analysis fails. The analysis's results are cleared either way.\n
+                The exception's @c what() message is UTF-8 encoded.*/
+        void RunAnalysis(size_t index);
 
         /// @brief Associates transform options with a named dataset.
         /// @param name The name of the dataset.
@@ -1220,6 +1278,11 @@ namespace Wisteria
         ///     referencing them by name.
         /// @param constantsNode The node containing the constants' definitions.
         void LoadConstants(const wxSimpleJSON::Ptr_t& constantsNode);
+        /// @brief Loads the analyses node into @c m_analyses and runs them.
+        /// @details Analyses that fail are kept (without results), so that their
+        ///     options are not lost. Their errors are queued as pending error messages.
+        /// @param analysesNode The analyses node.
+        void LoadAnalyses(const wxSimpleJSON::Ptr_t& analysesNode);
         /// @brief Loads the subsets node into @c m_datasets.
         /// @details These (subset) datasets are used by objects throughout the report,
         ///     referencing them by name.
@@ -1941,6 +2004,8 @@ namespace Wisteria
             m_datasetTransformOptions;
         std::map<wxString, DatasetSubsetOptions, Data::wxStringLessNoCase> m_datasetSubsetOptions;
         std::map<wxString, DatasetMergeOptions, Data::wxStringLessNoCase> m_datasetMergeOptions;
+        // analyses (options and results), from the "analyses" section
+        std::vector<std::unique_ptr<Analyses::Analysis>> m_analyses;
         std::set<DatasetFormulaInfo> m_constants;
         std::map<wxString, ValuesType, Data::wxStringLessNoCase> m_values;
         wxString m_name;

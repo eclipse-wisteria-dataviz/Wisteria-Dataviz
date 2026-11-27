@@ -358,6 +358,7 @@ namespace Wisteria
         // reset from previous calls
         m_tableLinks.clear();
         m_datasets.clear();
+        m_analyses.clear();
         m_svgExportOptions = SVGReportOptions{ wxString{} };
         m_htmlExportOptions = HtmlDashboardOptions{ wxString{} };
         m_pdfExportOptions = PdfExportOptions{};
@@ -445,6 +446,8 @@ namespace Wisteria
             m_pendingErrorMessages.push_back({ _(L"Constants Section Error"), msg });
             return reportPages;
             }
+
+        LoadAnalyses(json->GetProperty(L"analyses"));
 
         // Watermark, applied to all pages (can be overridden at individual page level).
         // These can support constants (including ones from the datasets),
@@ -2426,6 +2429,72 @@ namespace Wisteria
             else
                 {
                 wxLogWarning(_(L"Transformation dataset without a name."));
+                }
+            }
+        }
+
+    //---------------------------------------------------
+    void ReportBuilder::RunAnalysis(const size_t index)
+        {
+        wxASSERT_MSG(index < m_analyses.size(), L"Invalid analysis index!");
+        if (index >= m_analyses.size() || m_analyses[index] == nullptr)
+            {
+            return;
+            }
+        auto& analysis = *m_analyses[index];
+        analysis.ClearResults();
+        const auto foundDataset = m_datasets.find(analysis.GetSourceDatasetName());
+        if (foundDataset == m_datasets.cend() || foundDataset->second == nullptr)
+            {
+            throw std::runtime_error(
+                wxString::Format(_(L"'%s': dataset not found for analysis '%s'."),
+                                 analysis.GetSourceDatasetName(), analysis.GetName())
+                    .utf8_string());
+            }
+        analysis.Calculate(*foundDataset->second);
+        }
+
+    //---------------------------------------------------
+    void ReportBuilder::LoadAnalyses(const wxSimpleJSON::Ptr_t& analysesNode)
+        {
+        if (!analysesNode->IsOk())
+            {
+            return;
+            }
+        for (const auto& analysisNode : analysesNode->AsNodes())
+            {
+            const wxString typeName = analysisNode->GetProperty(L"type")->AsString();
+            auto analysis = Analyses::Analysis::Create(typeName);
+            if (analysis == nullptr)
+                {
+                const wxString msg = wxString::Format(_(L"'%s': unknown analysis type."), typeName);
+                wxLogError(L"%s", msg);
+                m_pendingErrorMessages.push_back({ _(L"Analysis Error"), msg });
+                continue;
+                }
+            analysis->SetName(analysisNode->GetProperty(_DT(L"name"))->AsString());
+            if (const auto guid = analysisNode->GetProperty(L"guid")->AsString(); !guid.empty())
+                {
+                analysis->SetGuid(guid);
+                }
+            analysis->SetSourceDatasetName(analysisNode->GetProperty(L"dataset")->AsString());
+            analysis->LoadOptions(analysisNode);
+
+            const size_t index = AddAnalysis(std::move(analysis));
+            try
+                {
+                RunAnalysis(index);
+                for (const auto& warning : m_analyses[index]->GetWarnings())
+                    {
+                    wxLogWarning(L"%s", warning);
+                    m_pendingErrorMessages.push_back({ _(L"Analysis Warning"), warning });
+                    }
+                }
+            catch (const std::exception& err)
+                {
+                const wxString msg{ wxString::FromUTF8(err.what()) };
+                wxLogError(L"%s", msg);
+                m_pendingErrorMessages.push_back({ _(L"Analysis Error"), msg });
                 }
             }
         }
