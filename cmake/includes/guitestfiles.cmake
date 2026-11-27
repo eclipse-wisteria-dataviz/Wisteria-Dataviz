@@ -17,6 +17,7 @@ SET(TEST_SRC_FILES
     crawfordgraphrendertests.cpp
     danielsonbryan2plotrendertests.cpp
     datatests.cpp
+    descriptivestatisticstests.cpp
     fileutiltests.cpp
     filterablegraphtests.cpp
     fleschchartrendertests.cpp
