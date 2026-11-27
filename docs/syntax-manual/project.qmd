@@ -90,6 +90,32 @@ The following properties are available:
   - `"pdf"`: The pages to leave out of PDF exports.
   - `"pptx"`: The pages to leave out of PowerPoint exports.
   - `"odp"`: The pages to leave out of OpenDocument presentation exports.
+- `"analyses"`: An array of statistical analyses. \
+  Only an analysis's settings are stored. \
+  Its results are calculated from its dataset when the project is loaded. \
+  Each analysis contains the following properties:
+  - `"type"`: The type of analysis. \
+    Available options:
+    - `"descriptive-statistics"`: Summarizes continuous columns.
+  - `"name"`: A string value representing the name of the analysis.
+  - `"guid"`: A string value uniquely identifying the analysis. \
+    This is optional.
+  - `"dataset"`: The name of the dataset to analyze.
+
+  A `"descriptive-statistics"` analysis also contains the following properties:
+  - `"variables"`: An array of the continuous columns to summarize.
+  - `"group"`: A categorical column whose groups are summarized separately. \
+    This is optional.
+  - `"statistics"`: Which statistics to include. \
+    Each property is a boolean value, which defaults to `true`. \
+    Available options:
+    - `"n"`: The number of valid (non-missing) values.
+    - `"missing"`: The number of missing values.
+    - `"mean"`: The mean.
+    - `"sd"`: The sample standard deviation.
+    - `"min"`: The minimum.
+    - `"quartiles"`: The first quartile, median, and third quartile (using Tukey's hinges).
+    - `"max"`: The maximum.
 - `"graphs"`: An array of standalone graphs. \
   Each graph is shown on its own canvas that fills the window, rather than on a page. \
   These graphs aren't included in exports or page numbering. \
@@ -144,6 +170,24 @@ Boilerplate project containing pages and rows of items:
           ]
         }
       ]
+    }
+  ]
+}
+```
+
+A project with descriptive statistics of two columns, for each region:
+
+```json
+{
+  "name": "RETENTION",
+  "analyses": [
+    {
+      "type": "descriptive-statistics",
+      "name": "Sales summary",
+      "dataset": "Sales",
+      "variables": [ "Revenue", "Units" ],
+      "group": "Region",
+      "statistics": { "missing": false }
     }
   ]
 }
