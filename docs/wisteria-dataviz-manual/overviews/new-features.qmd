@@ -7,6 +7,7 @@
 
 - Added KPI Card
 - Added Matrix Heat Map
+- Added Descriptive Statistics
 - Choropleth now supports median
 - Added **Tell Me** search box for finding and running commands
 - Added **Graphs** section to the sidebar, where new graphs are shown by themselves and fill the window
