@@ -479,6 +479,13 @@ constexpr wxWindowID ID_PIVOT_LONGER{ wxID_HIGHEST + 37 };
 constexpr wxWindowID ID_SUBSET_DATASET{ wxID_HIGHEST + 51 };
 constexpr wxWindowID ID_JOIN_DATASET{ wxID_HIGHEST + 54 };
 
+// Analyses
+constexpr wxWindowID ID_DESCRIPTIVE_STATISTICS{ wxID_HIGHEST + 100 };
+constexpr wxWindowID ID_ANALYSIS_BUTTONBAR{ wxID_HIGHEST + 101 };
+constexpr wxWindowID ID_EDIT_ANALYSIS{ wxID_HIGHEST + 102 };
+constexpr wxWindowID ID_DELETE_ANALYSIS{ wxID_HIGHEST + 103 };
+constexpr wxWindowID ID_EXPORT_ANALYSIS{ wxID_HIGHEST + 106 };
+
 // Project
 constexpr wxWindowID ID_SAVE_PROJECT{ wxID_HIGHEST + 38 };
 constexpr wxWindowID ID_SAVE_PROJECT_AS{ wxID_HIGHEST + 41 };
@@ -505,6 +512,9 @@ constexpr wxWindowID ID_BACKSTAGE_EXPORT_GRAPH{ wxID_HIGHEST + 121 };
 // Sent as a @c wxEVT_MENU event from the backstage's Export page.
 // Exports the dataset selected in the Data section.
 constexpr wxWindowID ID_BACKSTAGE_EXPORT_DATASET{ wxID_HIGHEST + 105 };
+// Sent as a @c wxEVT_MENU event from the backstage's Export page.
+// Exports the results table shown for the analysis selected in the Analysis section.
+constexpr wxWindowID ID_BACKSTAGE_EXPORT_ANALYSIS{ wxID_HIGHEST + 104 };
 constexpr wxWindowID ID_BACKSTAGE_INFO{ wxID_HIGHEST + 122 };
 constexpr wxWindowID ID_BACKSTAGE_CLOSE{ wxID_HIGHEST + 123 };
 constexpr wxWindowID ID_BACKSTAGE_SETTINGS{ wxID_HIGHEST + 124 };
@@ -514,6 +524,10 @@ constexpr wxWindowID ID_EDIT_ITEM{ wxID_HIGHEST + 39 };
 constexpr wxWindowID ID_DELETE_ITEM{ wxID_HIGHEST + 40 };
 constexpr wxWindowID ID_GOTO_DATASOURCE{ wxID_HIGHEST + 83 };
 constexpr wxWindowID ID_COPY_GRAPH_TO_PAGE{ wxID_HIGHEST + 99 };
+// the graph shown from the Graphs section
+constexpr wxWindowID ID_EDIT_GRAPH{ wxID_HIGHEST + 107 };
+constexpr wxWindowID ID_DELETE_GRAPH{ wxID_HIGHEST + 108 };
+constexpr wxWindowID ID_GRAPHS_SECTION_BUTTONBAR{ wxID_HIGHEST + 109 };
 constexpr wxWindowID ID_SOURCES_BUTTONBAR{ wxID_HIGHEST + 84 };
 constexpr wxWindowID ID_FILTER_CHOICES{ wxID_HIGHEST + 126 };
 // menu items for the choices of the selected filterable graph

@@ -204,12 +204,20 @@
           phrases="Double vertical line"/>
     <item id="ID_EDIT_ITEM" icon="images/edit.svg"
           name="Edit selected item"
-          description="Change the options of the selected item"
+          description="Change the options of the selected item on the page"
           phrases="Edit the selected graph;Change graph options"/>
     <item id="ID_DELETE_ITEM" icon="images/delete.svg"
           name="Delete selected item"
           description="Remove the selected item from the page"
           phrases="Remove the selected graph"/>
+    <item id="ID_EDIT_GRAPH" icon="images/edit.svg"
+          name="Edit graph"
+          description="Change the options of the graph shown from the Graphs section"
+          phrases="Edit graph;Change graph options"/>
+    <item id="ID_DELETE_GRAPH" icon="images/delete.svg"
+          name="Delete graph"
+          description="Remove the graph shown from the Graphs section"
+          phrases="Remove graph"/>
     <item id="ID_COPY_GRAPH_TO_PAGE" icon="images/page-add.svg"
           name="Copy graph to page"
           description="Place a copy of the graph from the Graphs section onto a page"
@@ -282,6 +290,23 @@
           name="Pivot dataset longer"
           description="Gather columns into rows"
           phrases="Pivot longer;Stack data;Gather columns"/>
+    <!-- analyses -->
+    <item id="ID_DESCRIPTIVE_STATISTICS" icon="images/table.svg"
+          name="Calculate descriptive statistics"
+          description="Summarize a dataset's continuous columns"
+          phrases="Descriptive statistics;Summary statistics;Mean;Standard deviation;Quartiles;Summarize data"/>
+    <item id="ID_EDIT_ANALYSIS" icon="images/edit.svg"
+          name="Edit analysis"
+          description="Change the selected analysis's options"
+          phrases="Change analysis;Edit statistics"/>
+    <item id="ID_EXPORT_ANALYSIS" icon="images/file-save.svg"
+          name="Export analysis results"
+          description="Save the shown results table to a text file"
+          phrases="Export statistics;Save results;Results to CSV"/>
+    <item id="ID_DELETE_ANALYSIS" icon="images/delete.svg"
+          name="Delete analysis"
+          description="Remove the selected analysis"
+          phrases="Remove analysis"/>
     <item id="ID_ADD_CONSTANT" icon="images/constants-add.svg"
           name="Add constant"
           description="Define a value to reuse in the project"

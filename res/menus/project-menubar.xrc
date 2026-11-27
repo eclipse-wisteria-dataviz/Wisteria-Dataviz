@@ -130,8 +130,24 @@
                 </object>
             </object>
         </object>
+        <object class="wxMenu" name="project_analysis_menu">
+            <label>Analysis</label>
+            <object class="wxMenu" name="project_basic_statistics_menu">
+                <label>Basic Statistics</label>
+                <object class="wxMenuItem" name="ID_DESCRIPTIVE_STATISTICS">
+                    <label>Descriptive Statistics...</label>
+                </object>
+            </object>
+            <object class="separator"/>
+            <object class="wxMenuItem" name="ID_EDIT_ANALYSIS">
+                <label>Edit...</label>
+            </object>
+            <object class="wxMenuItem" name="ID_DELETE_ANALYSIS">
+                <label>Delete</label>
+            </object>
+        </object>
         <object class="wxMenu" name="project_analyses_menu">
-            <label>Analyses</label>
+            <label>Graphs</label>
             <object class="wxMenu" name="project_graphs_menu">
                 <label>Graphs</label>
                 <object class="wxMenu" name="project_basic_graphs_menu">
@@ -281,6 +297,19 @@
             <object class="wxMenuItem" name="ID_NEW_FILTERED_GRAPH">
                 <label>Filtered...</label>
             </object>
+            <object class="separator"/>
+            <object class="wxMenu" name="project_graph_menu">
+                <label>Graph</label>
+                <object class="wxMenuItem" name="ID_EDIT_GRAPH">
+                    <label>Edit...</label>
+                </object>
+                <object class="wxMenuItem" name="ID_COPY_GRAPH_TO_PAGE">
+                    <label>Copy to Page...</label>
+                </object>
+                <object class="wxMenuItem" name="ID_DELETE_GRAPH">
+                    <label>Delete</label>
+                </object>
+            </object>
         </object>
         <object class="wxMenu" name="project_objects_menu">
             <label>Objects</label>
@@ -326,9 +355,6 @@
             <object class="wxMenuItem" name="wxID_PASTE">
                 <label>Paste</label>
                 <accel>Ctrl+V</accel>
-            </object>
-            <object class="wxMenuItem" name="ID_COPY_GRAPH_TO_PAGE">
-                <label>Copy to Page...</label>
             </object>
             <object class="wxMenuItem" name="ID_EDIT_ITEM">
                 <label>Edit...</label>

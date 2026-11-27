@@ -37,6 +37,7 @@ namespace Wisteria::UI
     } // namespace Wisteria::UI
 
 class WisteriaDoc;
+class AnalysisResultsWindow;
 
 /// @brief View class for Wisteria Dataviz projects.
 class WisteriaView final : public wxView
@@ -83,6 +84,11 @@ class WisteriaView final : public wxView
     ///     or @c nullptr if a graph from the Graphs section isn't selected.
     [[nodiscard]]
     Wisteria::Canvas* GetSelectedGraphCanvas() const noexcept;
+
+    /// @returns The results window of the analysis selected in the Analysis section,
+    ///     or @c nullptr if an analysis isn't selected.
+    [[nodiscard]]
+    AnalysisResultsWindow* GetSelectedAnalysisWindow() const noexcept;
 
     /// @returns The name of the dataset selected in the Data section,
     ///     or @c std::nullopt if a dataset isn't selected.
@@ -236,6 +242,10 @@ class WisteriaView final : public wxView
     void OnPivotLonger(wxCommandEvent& event);
     void OnSubsetDataset(wxCommandEvent& event);
     void OnJoinDataset(wxCommandEvent& event);
+    void OnDescriptiveStatistics(wxCommandEvent& event);
+    void OnEditAnalysis(wxCommandEvent& event);
+    void OnDeleteAnalysis(wxCommandEvent& event);
+    void OnExportAnalysis(wxCommandEvent& event);
     void OnInsertPage(wxCommandEvent& event);
     void OnEditPage(wxCommandEvent& event);
     void OnDeletePage(wxCommandEvent& event);
@@ -331,6 +341,13 @@ class WisteriaView final : public wxView
                         size_t axisCol);
     void OnEditItem(wxCommandEvent& event);
     void OnDeleteItem(wxCommandEvent& event);
+    void OnEditGraph(wxCommandEvent& event);
+    void OnDeleteGraph(wxCommandEvent& event);
+    /// @brief Opens the editor for an item on a canvas.
+    /// @param canvas The canvas.
+    /// @param selectedOnly @c true to edit the selected item,
+    ///     @c false to edit the canvas's graph (skipping its legend) whether or not it is selected.
+    void EditCanvasItem(Wisteria::Canvas* canvas, bool selectedOnly);
     void OnGoToDatasource(wxCommandEvent& event);
     void OnFilterDropdown(wxCommandEvent& event);
     void PopulateFilterMenu(wxMenu& menu);
@@ -515,6 +532,7 @@ class WisteriaView final : public wxView
     void UpdateGraphButtonStates() const;
     void UpdateMenuBarStates() const;
     void UpdateDatasetButtonStates() const;
+    void UpdateAnalysisButtonStates() const;
     void AddDatasetToProject(const std::shared_ptr<Wisteria::Data::Dataset>& dataset,
                              const wxString& name,
                              const Wisteria::Data::Dataset::ColumnPreviewInfo& columnInfo,
@@ -684,6 +702,37 @@ class WisteriaView final : public wxView
     [[nodiscard]]
     wxString GetGraphDisplayName(const Wisteria::Canvas& canvas) const;
 
+    /// @returns A new, hidden results window for an analysis (not yet in the sidebar).
+    /// @param analysis The analysis whose results to show.
+    [[nodiscard]]
+    AnalysisResultsWindow* CreateAnalysisWindow(const Wisteria::Analyses::Analysis& analysis);
+
+    /// @brief Adds an analysis from the report builder to the Analysis section and shows it.
+    /// @param index The index of the analysis in the report builder.
+    void AddAnalysisToSection(size_t index);
+
+    /// @brief Removes an analysis from the Analysis section and the report builder.
+    /// @param window The analysis's results window, which is destroyed.
+    void RemoveAnalysisFromSection(AnalysisResultsWindow* window);
+
+    /// @returns A sidebar label for an analysis that no other analysis is using.
+    /// @param name The analysis's preferred name.
+    /// @param ignoreGuid The GUID of an analysis to skip when checking names
+    ///     (e.g., the analysis being renamed).
+    [[nodiscard]]
+    wxString GetUniqueAnalysisName(const wxString& name, const wxString& ignoreGuid = {}) const;
+
+    /// @brief Runs an analysis and shows its error or warnings (if any).
+    /// @param index The index of the analysis in the report builder.
+    void RunAnalysisAndReport(size_t index);
+
+    /// @brief Asks for a file path and exports a dataset to it as delimited text.
+    /// @param dataset The dataset to export.
+    /// @param defaultName The default file name.
+    /// @param caption The title of the file dialog and of any error message.
+    void ExportDatasetToFile(const Wisteria::Data::Dataset& dataset, const wxString& defaultName,
+                             const wxString& caption);
+
     /// @brief Fills the dialog's destination choice with the Graphs section and the pages.
     /// @param dlg The insert dialog.
     void SetupGraphDestinations(Wisteria::UI::InsertItemDlg& dlg) const;
@@ -762,6 +811,11 @@ class WisteriaView final : public wxView
     [[nodiscard]]
     bool IsCanvasItemSelected() const noexcept;
 
+    /// @returns @c true if a single item is selected on a page
+    ///     (not on a graph from the Graphs section).
+    [[nodiscard]]
+    bool IsPageItemSelected() const noexcept;
+
     static void UpdateCanvas(Wisteria::Canvas* canvas);
 
     wxDocChildFrame* m_frame{ nullptr };
@@ -775,6 +829,8 @@ class WisteriaView final : public wxView
     wxRibbonButtonBar* m_pagesButtonBar{ nullptr };
     wxRibbonButtonBar* m_objectsButtonBar{ nullptr };
     wxRibbonButtonBar* m_sourcesButtonBar{ nullptr };
+    wxRibbonButtonBar* m_analysisButtonBar{ nullptr };
+    wxRibbonButtonBar* m_graphsSectionButtonBar{ nullptr };
     wxGrid* m_constantsGrid{ nullptr };
     bool m_sidebarShown{ true };
 
@@ -794,6 +850,9 @@ class WisteriaView final : public wxView
     std::vector<Wisteria::Canvas*> m_pages;
     std::vector<Wisteria::Canvas*> m_graphs;
     wxWindowID m_graphsFolderId{ wxID_ANY };
+    // one results window per analysis in the report builder
+    std::vector<AnalysisResultsWindow*> m_analysisWindows;
+    wxWindowID m_analysisFolderId{ wxID_ANY };
     WindowContainer m_workWindows;
 
     // the last graph placed by PlaceGraphWithLegend(), which a filterable graph replaces
@@ -823,10 +882,12 @@ class WisteriaView final : public wxView
     constexpr static size_t DATA_SUBSET_ICON_INDEX{ 5 };
     constexpr static size_t DATA_JOIN_ICON_INDEX{ 6 };
     constexpr static size_t GRAPHS_ICON_INDEX{ 7 };
+    constexpr static size_t ANALYSIS_ICON_INDEX{ 8 };
 
-    // sidebar folders: Data, Constants, Graphs, then one folder per page
-    constexpr static size_t GRAPHS_FOLDER_INDEX{ 2 };
-    constexpr static size_t FIRST_PAGE_FOLDER_INDEX{ 3 };
+    // sidebar folders: Data, Constants, Analysis, Graphs, then one folder per page
+    constexpr static size_t ANALYSIS_FOLDER_INDEX{ 2 };
+    constexpr static size_t GRAPHS_FOLDER_INDEX{ 3 };
+    constexpr static size_t FIRST_PAGE_FOLDER_INDEX{ 4 };
 
     wxDECLARE_DYNAMIC_CLASS(WisteriaView);
     };

@@ -1,3 +1,4 @@
+images/analysis.svg
 images/axis.svg
 images/barchart-image.svg
 images/barchart-serpentine-aggressive.svg

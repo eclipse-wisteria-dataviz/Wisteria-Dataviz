@@ -3,10 +3,14 @@
 # DO NOT MODIFY MANUALLY!
 
 SET(APP_WISTERIA_SRC
+    src/analyses/analysis.cpp
+    src/analyses/descriptivestatistics.cpp
+    src/app/analysisresultswindow.cpp
     src/app/appsettings.cpp
     src/app/wisteriaapp.cpp
     src/app/wisteriadoc.cpp
     src/app/wisteriaview.cpp
+    src/app/wisteriaview_analyses.cpp
     src/app/wisteriaview_edit_data.cpp
     src/base/axis.cpp
     src/base/brushes.cpp
@@ -144,6 +148,7 @@ SET(APP_WISTERIA_SRC
     src/ui/dialogs/datasetimportdlg.cpp
     src/ui/dialogs/editors/accessibilityoptionspanel.cpp
     src/ui/dialogs/editors/axisoptionspanel.cpp
+    src/ui/dialogs/editors/descriptivestatsdlg.cpp
     src/ui/dialogs/editors/filterablegraphdlg.cpp
     src/ui/dialogs/editors/insert_bullet_chart_dlg.cpp
     src/ui/dialogs/editors/insert_ishikawa_diagram_dlg.cpp

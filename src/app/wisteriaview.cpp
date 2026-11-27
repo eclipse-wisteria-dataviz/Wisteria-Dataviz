@@ -70,6 +70,7 @@
 #include "../ui/dialogs/projectsettingsdlg.h"
 #include "../ui/dialogs/svgexportdlg.h"
 #include "../util/fileutil.h"
+#include "analysisresultswindow.h"
 #include "wisteriaapp.h"
 #include "wisteriadoc.h"
 #include <algorithm>
@@ -251,11 +252,16 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         { ID_REARRANGE_PAGES, [this]() { return m_pages.size() >= 2; } },
         { wxID_COPY, [this]() { return IsCanvasItemSelected(); } },
         { wxID_PASTE, [this]() { return IsPageSelected(); } },
-        { ID_EDIT_ITEM, [this]() { return IsCanvasItemSelected(); } },
-        { ID_DELETE_ITEM, [this]() { return IsCanvasItemSelected(); } },
+        { ID_EDIT_ITEM, [this]() { return IsPageItemSelected(); } },
+        { ID_DELETE_ITEM, [this]() { return IsPageItemSelected(); } },
+        { ID_EDIT_GRAPH, [this]() { return GetSelectedGraphCanvas() != nullptr; } },
+        { ID_DELETE_GRAPH, [this]() { return GetSelectedGraphCanvas() != nullptr; } },
         { ID_COPY_GRAPH_TO_PAGE, [this]() { return CanCopyGraphToPage(); } },
         { ID_GOTO_DATASOURCE, [this]() { return IsGraphSelected(); } },
-        { ID_FILTER_CHOICES, [this]() { return GetSelectedFilterableGraph() != nullptr; } }
+        { ID_FILTER_CHOICES, [this]() { return GetSelectedFilterableGraph() != nullptr; } },
+        { ID_EDIT_ANALYSIS, [this]() { return GetSelectedAnalysisWindow() != nullptr; } },
+        { ID_DELETE_ANALYSIS, [this]() { return GetSelectedAnalysisWindow() != nullptr; } },
+        { ID_EXPORT_ANALYSIS, [this]() { return GetSelectedAnalysisWindow() != nullptr; } }
     };
     for (const auto& [commandId, isEnabled] : commandStates)
         {
@@ -357,6 +363,10 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
         dynamic_cast<wxRibbonButtonBar*>(wxDocChildFrame::FindWindowById(ID_OBJECTS_BUTTONBAR));
     m_sourcesButtonBar =
         dynamic_cast<wxRibbonButtonBar*>(wxDocChildFrame::FindWindowById(ID_SOURCES_BUTTONBAR));
+    m_analysisButtonBar =
+        dynamic_cast<wxRibbonButtonBar*>(wxDocChildFrame::FindWindowById(ID_ANALYSIS_BUTTONBAR));
+    m_graphsSectionButtonBar = dynamic_cast<wxRibbonButtonBar*>(
+        wxDocChildFrame::FindWindowById(ID_GRAPHS_SECTION_BUTTONBAR));
 
     // build the graph dropdown menus
     BuildGraphMenus();
@@ -439,32 +449,12 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
                 return;
                 }
             const auto& dataset = m_reportBuilder.GetDatasets().find(datasetName.value())->second;
-            wxFileDialog fileDlg(m_frame, _(L"Export Dataset"), wxString{}, datasetName.value(),
-                                 _(L"Comma-separated values (*.csv)|*.csv|"
-                                   "Tab-delimited text (*.txt)|*.txt"),
-                                 wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-            if (fileDlg.ShowModal() != wxID_OK)
-                {
-                return;
-                }
-            try
-                {
-                if (fileDlg.GetFilterIndex() == 0)
-                    {
-                    dataset->ExportCSV(fileDlg.GetPath());
-                    }
-                else
-                    {
-                    dataset->ExportTSV(fileDlg.GetPath());
-                    }
-                }
-            catch (const std::exception& exc)
-                {
-                wxMessageBox(wxString::FromUTF8(exc.what()), _(L"Export Dataset"),
-                             wxOK | wxICON_ERROR, m_frame);
-                }
+            ExportDatasetToFile(*dataset, datasetName.value(), _(L"Export Dataset"));
         },
         ID_BACKSTAGE_EXPORT_DATASET);
+
+    // the backstage's analysis export, which saves the shown results table as delimited text
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnExportAnalysis, this, ID_BACKSTAGE_EXPORT_ANALYSIS);
 
     // bind project settings button
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnProjectSettings, this,
@@ -522,6 +512,14 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
                   ID_SUBSET_DATASET);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnJoinDataset, this,
                   ID_JOIN_DATASET);
+
+    // bind analysis buttons
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnDescriptiveStatistics, this,
+                  ID_DESCRIPTIVE_STATISTICS);
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnEditAnalysis, this,
+                  ID_EDIT_ANALYSIS);
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnDeleteAnalysis, this,
+                  ID_DELETE_ANALYSIS);
 
     // bind add constant button
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnRibbonAddConstant, this,
@@ -640,6 +638,9 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     // bind edit/delete item buttons
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnEditItem, this, ID_EDIT_ITEM);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnDeleteItem, this, ID_DELETE_ITEM);
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnEditGraph, this, ID_EDIT_GRAPH);
+    m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnDeleteGraph, this,
+                  ID_DELETE_GRAPH);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnCopyGraphToPage, this,
                   ID_COPY_GRAPH_TO_PAGE);
     m_frame->Bind(wxEVT_RIBBONBUTTONBAR_CLICKED, &WisteriaView::OnGoToDatasource, this,
@@ -659,6 +660,11 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnPivotLonger, this, ID_PIVOT_LONGER);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnSubsetDataset, this, ID_SUBSET_DATASET);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnJoinDataset, this, ID_JOIN_DATASET);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDescriptiveStatistics, this,
+                  ID_DESCRIPTIVE_STATISTICS);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnEditAnalysis, this, ID_EDIT_ANALYSIS);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDeleteAnalysis, this, ID_DELETE_ANALYSIS);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnExportAnalysis, this, ID_EXPORT_ANALYSIS);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertPage, this, ID_INSERT_PAGE);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnEditPage, this, ID_EDIT_PAGE);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDeletePage, this, ID_DELETE_PAGE);
@@ -672,6 +678,8 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnInsertSpacer, this, ID_NEW_SPACER);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnEditItem, this, ID_EDIT_ITEM);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDeleteItem, this, ID_DELETE_ITEM);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnEditGraph, this, ID_EDIT_GRAPH);
+    m_frame->Bind(wxEVT_MENU, &WisteriaView::OnDeleteGraph, this, ID_DELETE_GRAPH);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnCopyGraphToPage, this, ID_COPY_GRAPH_TO_PAGE);
     m_frame->Bind(wxEVT_MENU, &WisteriaView::OnGoToDatasource, this, ID_GOTO_DATASOURCE);
     m_frame->Bind(
@@ -716,10 +724,16 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
                       if (evt.GetKeyCode() == WXK_DELETE || evt.GetKeyCode() == WXK_NUMPAD_DELETE ||
                           evt.GetKeyCode() == WXK_BACK)
                           {
-                          if (GetActiveCanvas() != nullptr)
+                          if (GetActivePage() != nullptr)
                               {
                               wxCommandEvent cmd;
                               OnDeleteItem(cmd);
+                              return;
+                              }
+                          if (GetSelectedGraphCanvas() != nullptr && IsCanvasItemSelected())
+                              {
+                              wxCommandEvent cmd;
+                              OnDeleteGraph(cmd);
                               return;
                               }
                           }
@@ -824,6 +838,7 @@ bool WisteriaView::OnCreate(wxDocument* doc, long flags)
 
     UpdateDatasetButtonStates();
     UpdateGraphButtonStates();
+    UpdateAnalysisButtonStates();
 
     // hide the main frame when a document window is opened
     wxGetApp().GetMainFrame()->Hide();
@@ -970,6 +985,12 @@ bool WisteriaView::LoadProject(const wxString& filename)
     nextId = wxNewId();
     m_sideBar->InsertItem(1, _(L"Constants"), constantsId, CONSTANTS_ICON_INDEX);
 
+    // add the "Analysis" folder (its analyses are added as subitems below)
+    m_analysisFolderId = nextId;
+    nextId = wxNewId();
+    m_sideBar->InsertItem(ANALYSIS_FOLDER_INDEX, _(L"Analysis"), m_analysisFolderId,
+                          ANALYSIS_ICON_INDEX);
+
     // add the "Graphs" folder (its graphs are added as subitems below)
     m_graphsFolderId = nextId;
     nextId = wxNewId();
@@ -1104,6 +1125,19 @@ bool WisteriaView::LoadProject(const wxString& filename)
         // populate constants grid with data from the loaded project
         PopulateConstantsGrid();
 
+        // add analyses as subitems under "Analysis"
+        for (const auto& analysis : m_reportBuilder.GetAnalyses())
+            {
+            if (analysis == nullptr)
+                {
+                continue;
+                }
+            auto* analysisWindow = CreateAnalysisWindow(*analysis);
+            m_analysisWindows.push_back(analysisWindow);
+            m_sideBar->InsertSubItemById(m_analysisFolderId, analysis->GetName(),
+                                         analysisWindow->GetId(), ANALYSIS_ICON_INDEX);
+            }
+
         // add standalone graphs as subitems under "Graphs"
         for (auto* graphCanvas : m_graphs)
             {
@@ -1147,10 +1181,14 @@ bool WisteriaView::LoadProject(const wxString& filename)
         m_filtersSyncedOnLoad = SyncLinkedFiltersOnLoad();
         }
 
-    // expand the Data and Graphs folders
+    // expand the Data, Analysis, and Graphs folders
     if (m_sideBar->GetFolderCount() > 0)
         {
         m_sideBar->GetFolder(0).Expand();
+        }
+    if (m_sideBar->GetFolderCount() > ANALYSIS_FOLDER_INDEX)
+        {
+        m_sideBar->GetFolder(ANALYSIS_FOLDER_INDEX).Expand();
         }
     if (m_sideBar->GetFolderCount() > GRAPHS_FOLDER_INDEX)
         {
@@ -1191,6 +1229,8 @@ void WisteriaView::TearDownProject()
     m_pages.clear();
     m_graphs.clear();
     m_graphsFolderId = wxID_ANY;
+    m_analysisWindows.clear();
+    m_analysisFolderId = wxID_ANY;
 
     m_sideBar->DeleteAllFolders();
 
@@ -1523,6 +1563,7 @@ void WisteriaView::OnSidebarClick(const wxCommandEvent& event)
     m_sideBar->Refresh();
     UpdateDatasetButtonStates();
     UpdateGraphButtonStates();
+    UpdateAnalysisButtonStates();
     }
 
 //-------------------------------------------
@@ -2966,7 +3007,8 @@ Wisteria::Canvas* WisteriaView::AddPageToProject(const size_t rows, const size_t
 
     const size_t sidebarInsertIndex =
         position.has_value() ?
-            position.value() + FIRST_PAGE_FOLDER_INDEX : // after Data, Constants, and Graphs
+            position.value() +
+                FIRST_PAGE_FOLDER_INDEX : // after Data, Constants, Analysis, and Graphs
             m_sideBar->GetFolderCount();
 
     m_sideBar->InsertItem(sidebarInsertIndex, displayName, pageId, PAGE_ICON_INDEX);
@@ -3059,6 +3101,13 @@ bool WisteriaView::IsCanvasItemSelected() const noexcept
     }
 
 //-------------------------------------------
+bool WisteriaView::IsPageItemSelected() const noexcept
+    {
+    // the active canvas is the page when one is shown
+    return GetActivePage() != nullptr && IsCanvasItemSelected();
+    }
+
+//-------------------------------------------
 void WisteriaView::UpdateDatasetButtonStates() const
     {
     const bool enabled = IsDatasetSelected();
@@ -3120,9 +3169,17 @@ void WisteriaView::UpdateGraphButtonStates() const
         m_objectsButtonBar->EnableButton(ID_NEW_DIVIDER, true);
         m_objectsButtonBar->EnableButton(wxID_COPY, IsCanvasItemSelected());
         m_objectsButtonBar->EnableButton(wxID_PASTE, IsPageSelected());
-        m_objectsButtonBar->EnableButton(ID_COPY_GRAPH_TO_PAGE, CanCopyGraphToPage());
-        m_objectsButtonBar->EnableButton(ID_EDIT_ITEM, IsCanvasItemSelected());
-        m_objectsButtonBar->EnableButton(ID_DELETE_ITEM, IsCanvasItemSelected());
+        m_objectsButtonBar->EnableButton(ID_EDIT_ITEM, IsPageItemSelected());
+        m_objectsButtonBar->EnableButton(ID_DELETE_ITEM, IsPageItemSelected());
+        }
+
+    // the graph shown from the Graphs section
+    if (m_graphsSectionButtonBar != nullptr)
+        {
+        const bool graphShown = (GetSelectedGraphCanvas() != nullptr);
+        m_graphsSectionButtonBar->EnableButton(ID_EDIT_GRAPH, graphShown);
+        m_graphsSectionButtonBar->EnableButton(ID_COPY_GRAPH_TO_PAGE, CanCopyGraphToPage());
+        m_graphsSectionButtonBar->EnableButton(ID_DELETE_GRAPH, graphShown);
         }
 
     if (m_quickToolbar != nullptr)
@@ -3156,8 +3213,10 @@ void WisteriaView::UpdateMenuBarStates() const
     menuBar->Enable(ID_REARRANGE_PAGES, m_pages.size() >= 2);
     menuBar->Enable(wxID_COPY, IsCanvasItemSelected());
     menuBar->Enable(wxID_PASTE, IsPageSelected());
-    menuBar->Enable(ID_EDIT_ITEM, IsCanvasItemSelected());
-    menuBar->Enable(ID_DELETE_ITEM, IsCanvasItemSelected());
+    menuBar->Enable(ID_EDIT_ITEM, IsPageItemSelected());
+    menuBar->Enable(ID_DELETE_ITEM, IsPageItemSelected());
+    menuBar->Enable(ID_EDIT_GRAPH, GetSelectedGraphCanvas() != nullptr);
+    menuBar->Enable(ID_DELETE_GRAPH, GetSelectedGraphCanvas() != nullptr);
     menuBar->Enable(ID_COPY_GRAPH_TO_PAGE, CanCopyGraphToPage());
     menuBar->Enable(ID_GOTO_DATASOURCE, IsGraphSelected());
     menuBar->Enable(ID_FILTER_CHOICES, GetSelectedFilterableGraph() != nullptr);
@@ -4206,7 +4265,10 @@ void WisteriaView::EditTable(Wisteria::Graphs::Graph2D& graph, Wisteria::Canvas*
     }
 
 //-------------------------------------------
-void WisteriaView::OnCanvasDClick(wxCommandEvent& event) { OnEditItem(event); }
+void WisteriaView::OnCanvasDClick([[maybe_unused]] wxCommandEvent& event)
+    {
+    EditCanvasItem(GetActiveCanvas(), true);
+    }
 
 //-------------------------------------------
 void WisteriaView::OnCanvasCopyGraph(wxCommandEvent& event)
@@ -4239,7 +4301,33 @@ void WisteriaView::OnCanvasCopyGraph(wxCommandEvent& event)
 //-------------------------------------------
 void WisteriaView::OnEditItem([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = GetActiveCanvas();
+    EditCanvasItem(GetActivePage(), true);
+    }
+
+//-------------------------------------------
+void WisteriaView::OnEditGraph([[maybe_unused]] wxCommandEvent& event)
+    {
+    EditCanvasItem(GetSelectedGraphCanvas(), false);
+    }
+
+//-------------------------------------------
+void WisteriaView::OnDeleteGraph([[maybe_unused]] wxCommandEvent& event)
+    {
+    auto* canvas = GetSelectedGraphCanvas();
+    if (canvas == nullptr)
+        {
+        return;
+        }
+    if (wxMessageBox(_(L"Are you sure you want to delete this graph?"), _(L"Delete Graph"),
+                     wxYES_NO | wxICON_QUESTION, m_frame) == wxYES)
+        {
+        RemoveGraphFromSection(canvas);
+        }
+    }
+
+//-------------------------------------------
+void WisteriaView::EditCanvasItem(Wisteria::Canvas* canvas, const bool selectedOnly)
+    {
     if (canvas == nullptr)
         {
         return;
@@ -4247,7 +4335,7 @@ void WisteriaView::OnEditItem([[maybe_unused]] wxCommandEvent& event)
 
     SyncPageNumber(canvas);
 
-    // find the selected item in the canvas grid
+    // find the selected item (or the graph) in the canvas grid
     const auto [gridRows, gridCols] = canvas->GetFixedObjectsGridSize();
     std::shared_ptr<Wisteria::GraphItems::GraphItemBase> selectedItem;
     size_t itemRow{ 0 };
@@ -4258,7 +4346,12 @@ void WisteriaView::OnEditItem([[maybe_unused]] wxCommandEvent& event)
         for (size_t col = 0; col < gridCols; ++col)
             {
             auto item = canvas->GetFixedObject(row, col);
-            if (item != nullptr && (item->IsSelected() || !item->GetSelectedIds().empty()))
+            if (item == nullptr)
+                {
+                continue;
+                }
+            if (selectedOnly ? (item->IsSelected() || !item->GetSelectedIds().empty()) :
+                               !IsLegendItem(item.get()))
                 {
                 ++selectedCount;
                 selectedItem = item;
@@ -5027,7 +5120,7 @@ std::optional<wxString> WisteriaView::PlaceFilterableGraphInGrid(
 //-------------------------------------------
 void WisteriaView::OnDeleteItem([[maybe_unused]] wxCommandEvent& event)
     {
-    auto* canvas = GetActiveCanvas();
+    auto* canvas = GetActivePage();
     if (canvas == nullptr)
         {
         return;
@@ -5070,17 +5163,6 @@ void WisteriaView::OnDeleteItem([[maybe_unused]] wxCommandEvent& event)
         {
         wxMessageBox(_(L"Please select an item to delete."), _(L"Delete"),
                      wxOK | wxICON_INFORMATION, m_frame);
-        return;
-        }
-
-    // a Graphs section canvas only holds its graph, so remove the whole canvas
-    if (IsGraphsSectionCanvas(canvas))
-        {
-        if (wxMessageBox(_(L"Are you sure you want to delete this graph?"), _(L"Delete Graph"),
-                         wxYES_NO | wxICON_QUESTION, m_frame) == wxYES)
-            {
-            RemoveGraphFromSection(canvas);
-            }
         return;
         }
 

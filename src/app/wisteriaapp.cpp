@@ -131,6 +131,10 @@ const std::vector<std::pair<const wchar_t*, wxWindowID>>& WisteriaApp::GetComman
         { L"ID_JOIN_DATASET", ID_JOIN_DATASET },
         { L"ID_PIVOT_WIDER", ID_PIVOT_WIDER },
         { L"ID_PIVOT_LONGER", ID_PIVOT_LONGER },
+        { L"ID_DESCRIPTIVE_STATISTICS", ID_DESCRIPTIVE_STATISTICS },
+        { L"ID_EDIT_ANALYSIS", ID_EDIT_ANALYSIS },
+        { L"ID_DELETE_ANALYSIS", ID_DELETE_ANALYSIS },
+        { L"ID_EXPORT_ANALYSIS", ID_EXPORT_ANALYSIS },
         { L"ID_ADD_CONSTANT", ID_ADD_CONSTANT },
         { L"ID_DELETE_CONSTANT", ID_DELETE_CONSTANT },
         { L"ID_GOTO_DATASOURCE", ID_GOTO_DATASOURCE },
@@ -149,6 +153,8 @@ const std::vector<std::pair<const wchar_t*, wxWindowID>>& WisteriaApp::GetComman
         { L"ID_EDIT_ITEM", ID_EDIT_ITEM },
         { L"ID_DELETE_ITEM", ID_DELETE_ITEM },
         { L"ID_COPY_GRAPH_TO_PAGE", ID_COPY_GRAPH_TO_PAGE },
+        { L"ID_EDIT_GRAPH", ID_EDIT_GRAPH },
+        { L"ID_DELETE_GRAPH", ID_DELETE_GRAPH },
         { L"ID_VIEW_LOG_REPORT", ID_VIEW_LOG_REPORT },
         { L"ID_SCRIPT_WINDOW", ID_SCRIPT_WINDOW },
         { L"ID_PROJECT_SETTINGS", ID_PROJECT_SETTINGS },
@@ -1727,12 +1733,37 @@ wxRibbonBar* WisteriaApp::CreateRibbon(wxWindow* parent, const wxDocument* doc)
                                             _(L"Choose the filter value to show"));
         sourcesButtonBar->SetKeyTip(ID_FILTER_CHOICES, _DT(L"W"));
 
-        // Analyses tab
-        auto* analysesPage = new wxRibbonPage(ribbon, wxID_ANY, _(L"Analyses"));
-        ribbon->SetPageKeyTip(analysesPage, _DT(L"A"));
+        // Analysis tab
+        auto* analysisPage = new wxRibbonPage(ribbon, wxID_ANY, _(L"Analysis"));
+        ribbon->SetPageKeyTip(analysisPage, _DT(L"A"));
+
+        // Basic Statistics panel
+        auto* basicStatsPanel = new wxRibbonPanel(analysisPage, wxID_ANY, _(L"Basic Statistics"));
+        basicStatsPanel->SetKeyTip(_DT(L"B"));
+        auto* basicStatsButtonBar = new wxRibbonButtonBar(basicStatsPanel, wxID_ANY);
+        basicStatsButtonBar->AddButton(ID_DESCRIPTIVE_STATISTICS, _(L"Descriptive Statistics"),
+                                       ReadSvgIcon(L"images/table.svg"),
+                                       _(L"Summarize a dataset's continuous columns"));
+        basicStatsButtonBar->SetKeyTip(ID_DESCRIPTIVE_STATISTICS, _DT(L"D"));
+
+        // Results panel (applies to any type of analysis)
+        auto* resultsPanel = new wxRibbonPanel(analysisPage, wxID_ANY, _(L"Results"));
+        resultsPanel->SetKeyTip(_DT(L"R"));
+        auto* resultsButtonBar = new wxRibbonButtonBar(resultsPanel, ID_ANALYSIS_BUTTONBAR);
+        resultsButtonBar->AddButton(ID_EDIT_ANALYSIS, _(L"Edit"), ReadSvgIcon(L"images/edit.svg"),
+                                    _(L"Edit the selected analysis"));
+        resultsButtonBar->SetKeyTip(ID_EDIT_ANALYSIS, _DT(L"E"));
+        resultsButtonBar->AddButton(ID_DELETE_ANALYSIS, _(L"Delete"),
+                                    ReadSvgIcon(L"images/delete.svg"),
+                                    _(L"Delete the selected analysis"));
+        resultsButtonBar->SetKeyTip(ID_DELETE_ANALYSIS, _DT(L"T"));
+
+        // Graphs tab
+        auto* graphsPage = new wxRibbonPage(ribbon, wxID_ANY, _(L"Graphs"));
+        ribbon->SetPageKeyTip(graphsPage, _DT(L"G"));
 
         // Graph category panel
-        auto* graphPanel = new wxRibbonPanel(analysesPage, wxID_ANY, _(L"Graphs"));
+        auto* graphPanel = new wxRibbonPanel(graphsPage, wxID_ANY, _(L"Graphs"));
         graphPanel->SetKeyTip(_DT(L"G"));
         auto* graphButtonBar = new wxRibbonButtonBar(graphPanel, ID_GRAPH_BUTTONBAR);
 
@@ -1782,6 +1813,22 @@ wxRibbonBar* WisteriaApp::CreateRibbon(wxWindow* parent, const wxDocument* doc)
                                   _(L"Insert a graph that can be filtered by a column's values"));
         graphButtonBar->SetKeyTip(ID_NEW_FILTERED_GRAPH, _DT(L"F"));
 
+        // Graph panel (the graph shown from the Graphs section)
+        auto* graphSectionPanel = new wxRibbonPanel(graphsPage, wxID_ANY, _(L"Graph"));
+        graphSectionPanel->SetKeyTip(_DT(L"H"));
+        auto* graphSectionButtonBar =
+            new wxRibbonButtonBar(graphSectionPanel, ID_GRAPHS_SECTION_BUTTONBAR);
+        graphSectionButtonBar->AddButton(ID_EDIT_GRAPH, _(L"Edit"), ReadSvgIcon(L"images/edit.svg"),
+                                         _(L"Edit the graph"));
+        graphSectionButtonBar->SetKeyTip(ID_EDIT_GRAPH, _DT(L"E"));
+        graphSectionButtonBar->AddButton(ID_COPY_GRAPH_TO_PAGE, _(L"Copy to Page"),
+                                         ReadSvgIcon(L"images/page-add.svg"),
+                                         _(L"Copy the graph to a page"));
+        graphSectionButtonBar->SetKeyTip(ID_COPY_GRAPH_TO_PAGE, _DT(L"CG"));
+        graphSectionButtonBar->AddButton(ID_DELETE_GRAPH, _(L"Delete"),
+                                         ReadSvgIcon(L"images/delete.svg"), _(L"Delete the graph"));
+        graphSectionButtonBar->SetKeyTip(ID_DELETE_GRAPH, _DT(L"D"));
+
         // Objects tab
         auto* objectsPage = new wxRibbonPage(ribbon, wxID_ANY, _(L"Objects"));
         ribbon->SetPageKeyTip(objectsPage, _DT(L"O"));
@@ -1820,10 +1867,6 @@ wxRibbonBar* WisteriaApp::CreateRibbon(wxWindow* parent, const wxDocument* doc)
         objectsButtonBar->AddButton(wxID_PASTE, _(L"Paste"), ReadSvgIcon(L"images/paste.svg"),
                                     _(L"Paste the copied item"));
         objectsButtonBar->SetKeyTip(wxID_PASTE, _DT(L"U"));
-        objectsButtonBar->AddButton(ID_COPY_GRAPH_TO_PAGE, _(L"Copy to Page"),
-                                    ReadSvgIcon(L"images/page-add.svg"),
-                                    _(L"Copy the graph to a page"));
-        objectsButtonBar->SetKeyTip(ID_COPY_GRAPH_TO_PAGE, _DT(L"CG"));
         objectsButtonBar->AddButton(ID_EDIT_ITEM, _(L"Edit"), ReadSvgIcon(L"images/edit.svg"),
                                     _(L"Edit the selected item"));
         objectsButtonBar->SetKeyTip(ID_EDIT_ITEM, _DT(L"W"));
@@ -2363,6 +2406,23 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
     datasetExportSizer->Add(datasetExportDetails, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
     exportSizer->Add(datasetExportSizer, wxSizerFlags{}.Expand());
 
+    // the analysis selected in the Analysis section, which is only shown when there is one
+    auto* analysisExportSizer = new wxBoxSizer(wxVERTICAL);
+    analysisExportSizer->Add(new wxBackstageHeading(exportPage, wxID_ANY, _(L"Selected Analysis"),
+                                                    wxBackstageHeadingStyle::Section),
+                             wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    auto* analysisExportDetails = new wxBoxSizer(wxVERTICAL);
+    auto* analysisExportButton =
+        new wxBackstageButton(exportPage, ID_BACKSTAGE_EXPORT_ANALYSIS, _(L"Export Results"),
+                              GetResourceManager().GetSVG(L"images/analysis.svg"));
+    analysisExportButton->SetIconSize(wxSize{ 64, 64 });
+    analysisExportDetails->Add(analysisExportButton, wxSizerFlags{}.Border(wxBOTTOM, margin / 2));
+    addExportBullets(exportPage, analysisExportDetails,
+                     { _(L"Exports the shown results table to a text file."),
+                       _(L"Choose from comma-separated or tab-delimited formats.") });
+    analysisExportSizer->Add(analysisExportDetails, wxSizerFlags{}.Border(wxLEFT | wxTOP, margin));
+    exportSizer->Add(analysisExportSizer, wxSizerFlags{}.Expand());
+
     // the project-level exports, which only need a heading when a selection's export is shown
     auto* projectExportHeading = new wxBackstageHeading(exportPage, wxID_ANY, _(L"Project"),
                                                         wxBackstageHeadingStyle::Section);
@@ -2433,7 +2493,8 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
     exportPage->SetSizer(exportSizer);
     selectExportType(0);
 
-    for (const auto commandId : { ID_BACKSTAGE_EXPORT_GRAPH, ID_BACKSTAGE_EXPORT_DATASET })
+    for (const auto commandId :
+         { ID_BACKSTAGE_EXPORT_GRAPH, ID_BACKSTAGE_EXPORT_DATASET, ID_BACKSTAGE_EXPORT_ANALYSIS })
         {
         backstage->Bind(
             wxEVT_BUTTON,
@@ -2445,17 +2506,20 @@ wxBackstage* WisteriaApp::CreateBackstage(wxWindow* parent, wxRibbonBar* ribbon,
             commandId);
         }
 
-    // shows the selected graph's or dataset's export (and the project heading below it)
-    // only if one is selected
-    const auto refreshSelectionExport =
-        [doc, exportPage, exportSizer, graphExportSizer, datasetExportSizer, projectExportHeading]()
+    // shows the selected graph's, dataset's, or analysis's export
+    // (and the project heading below it) only if one is selected
+    const auto refreshSelectionExport = [doc, exportPage, exportSizer, graphExportSizer,
+                                         datasetExportSizer, analysisExportSizer,
+                                         projectExportHeading]()
     {
         const auto* view = dynamic_cast<WisteriaView*>(doc->GetFirstView());
         const bool hasGraph = (view != nullptr && view->GetSelectedGraphCanvas() != nullptr);
         const bool hasDataset = (view != nullptr && view->GetSelectedDatasetName().has_value());
+        const bool hasAnalysis = (view != nullptr && view->GetSelectedAnalysisWindow() != nullptr);
         exportSizer->Show(graphExportSizer, hasGraph, true);
         exportSizer->Show(datasetExportSizer, hasDataset, true);
-        exportSizer->Show(projectExportHeading, hasGraph || hasDataset);
+        exportSizer->Show(analysisExportSizer, hasAnalysis, true);
+        exportSizer->Show(projectExportHeading, hasGraph || hasDataset || hasAnalysis);
         exportPage->Layout();
     };
     refreshSelectionExport();
@@ -2667,6 +2731,7 @@ void WisteriaApp::InitProjectSidebar()
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/subset.svg"));
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/join.svg"));
     m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/chart-basic.svg"));
+    m_projectSideBarImageList.emplace_back(ReadSvgIcon(L"images/analysis.svg"));
     }
 
 //-------------------------------------------

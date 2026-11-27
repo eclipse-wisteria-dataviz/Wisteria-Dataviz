@@ -49,6 +49,7 @@
 #include "../ui/dialogs/pdfexportdlg.h"
 #include "../ui/dialogs/projectsettingsdlg.h"
 #include "../ui/dialogs/svgexportdlg.h"
+#include "analysisresultswindow.h"
 #include "wisteriaapp.h"
 #include "wisteriadoc.h"
 #include "wisteriaview.h"
@@ -764,6 +765,29 @@ void WisteriaView::OnDeleteDataset([[maybe_unused]] wxCommandEvent& event)
             }
         }
 
+    // collect the analyses of this dataset and of its dependent datasets
+    const auto isRemovedDataset = [&selectedDatasetName, &dependentNames](const wxString& dsName)
+    {
+        return dsName.CmpNoCase(selectedDatasetName) == 0 ||
+               std::ranges::any_of(dependentNames, [&dsName](const auto& depName)
+                                   { return depName.CmpNoCase(dsName) == 0; });
+    };
+    std::vector<AnalysisResultsWindow*> dependentAnalysisWindows;
+    std::vector<wxString> dependentAnalysisNames;
+    for (auto* analysisWindow : m_analysisWindows)
+        {
+        const auto index = m_reportBuilder.FindAnalysis(analysisWindow->GetGuid());
+        if (index.has_value())
+            {
+            const auto& analysis = *m_reportBuilder.GetAnalyses()[index.value()];
+            if (isRemovedDataset(analysis.GetSourceDatasetName()))
+                {
+                dependentAnalysisWindows.push_back(analysisWindow);
+                dependentAnalysisNames.push_back(analysis.GetName());
+                }
+            }
+        }
+
     // build confirmation message
     wxString confirmMsg = wxString::Format(
         _(L"Are you sure you want to delete the dataset \"%s\"?"), selectedDatasetName);
@@ -773,6 +797,14 @@ void WisteriaView::OnDeleteDataset([[maybe_unused]] wxCommandEvent& event)
         for (const auto& depName : dependentNames)
             {
             confirmMsg += L"\n    • " + depName;
+            }
+        }
+    if (!dependentAnalysisNames.empty())
+        {
+        confirmMsg += _(L"\n\nThe following analyses will also be removed:\n");
+        for (const auto& analysisName : dependentAnalysisNames)
+            {
+            confirmMsg += L"\n    • " + analysisName;
             }
         }
 
@@ -813,6 +845,12 @@ void WisteriaView::OnDeleteDataset([[maybe_unused]] wxCommandEvent& event)
         m_reportBuilder.GetDatasetTransformOptions().erase(dsName);
         std::erase(m_reportBuilder.GetDatasetInsertionOrder(), dsName);
     };
+
+    // remove the analyses of the removed datasets
+    for (auto* analysisWindow : dependentAnalysisWindows)
+        {
+        RemoveAnalysisFromSection(analysisWindow);
+        }
 
     // remove dependent datasets first
     for (const auto& depName : dependentNames)

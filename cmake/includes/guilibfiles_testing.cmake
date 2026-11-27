@@ -3,6 +3,8 @@
 # DO NOT MODIFY MANUALLY!
 
 SET(WISTERIA_SRC
+    ../../src/analyses/analysis.cpp
+    ../../src/analyses/descriptivestatistics.cpp
     ../../src/base/axis.cpp
     ../../src/base/brushes.cpp
     ../../src/base/canvas.cpp
@@ -147,6 +149,7 @@ SET(WISTERIA_SRC
     ../../src/ui/dialogs/aboutdlg.cpp
     ../../src/ui/dialogs/archivedlg.cpp
     ../../src/ui/dialogs/datasetimportdlg.cpp
+    ../../src/ui/dialogs/editors/descriptivestatsdlg.cpp
     ../../src/ui/dialogs/editors/filterablegraphdlg.cpp
     ../../src/ui/dialogs/editors/joindlg.cpp
     ../../src/ui/dialogs/editors/pivotlongerdlg.cpp

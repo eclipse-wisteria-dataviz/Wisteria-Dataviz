@@ -83,7 +83,8 @@ bool WisteriaDoc::SaveProject(const wxString& filePath) const
         wxString::Format(L"{\"name\": \"%s\", \"subject\": \"%s\", \"author\": \"%s\", "
                          L"\"keywords\": \"%s\", "
                          L"\"watermark\": {}, \"print\": {}, "
-                         L"\"datasets\": [], \"constants\": [], \"graphs\": [], \"pages\": []}",
+                         L"\"datasets\": [], \"constants\": [], \"analyses\": [], "
+                         L"\"graphs\": [], \"pages\": []}",
                          EscapeJsonStr(projectName),
                          EscapeJsonStr(view->GetReportBuilder().GetSubject()),
                          EscapeJsonStr(view->GetReportBuilder().GetAuthor()),
@@ -516,6 +517,31 @@ bool WisteriaDoc::SaveProject(const wxString& filePath) const
             }
 
         pagesArray->ArrayAdd(pageObj);
+        }
+
+    // analyses (only their options; their results are recalculated when loaded)
+    //------------------
+    if (const auto& analyses = view->GetReportBuilder().GetAnalyses(); !analyses.empty())
+        {
+        auto analysesArray = root->GetProperty(L"analyses");
+        for (const auto& analysis : analyses)
+            {
+            if (analysis == nullptr)
+                {
+                continue;
+                }
+            auto analysisNode = wxSimpleJSON::Create(wxSimpleJSON::JSONType::IS_OBJECT, true);
+            analysisNode->Add(L"type", analysis->GetTypeName());
+            analysisNode->Add(L"name", analysis->GetName());
+            analysisNode->Add(L"guid", analysis->GetGuid());
+            analysisNode->Add(L"dataset", analysis->GetSourceDatasetName());
+            analysis->SaveOptions(analysisNode);
+            analysesArray->ArrayAdd(analysisNode);
+            }
+        }
+    else
+        {
+        root->DeleteProperty(L"analyses");
         }
 
     // standalone graphs
