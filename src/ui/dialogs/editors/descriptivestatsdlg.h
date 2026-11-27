@@ -58,7 +58,6 @@ namespace Wisteria::UI
         void OnDatasetChanged();
         void OnSelectColumns();
         void UpdateColumnsLabel();
-        void FillGroupChoices();
         [[nodiscard]]
         std::shared_ptr<const Data::Dataset> GetSelectedDataset() const;
 
@@ -67,10 +66,10 @@ namespace Wisteria::UI
 
         std::vector<wxString> m_datasetNames;
         std::vector<wxString> m_columns;
+        wxString m_groupColumn;
 
         // DDX values
         int m_datasetIndex{ 0 };
-        int m_groupIndex{ 0 };
         wxString m_outputName;
         bool m_includeN{ true };
         bool m_includeMissing{ true };
@@ -81,8 +80,8 @@ namespace Wisteria::UI
         bool m_includeMax{ true };
 
         wxChoice* m_datasetChoice{ nullptr };
-        wxChoice* m_groupChoice{ nullptr };
         wxStaticText* m_columnsLabel{ nullptr };
+        wxStaticText* m_groupLabel{ nullptr };
         };
     } // namespace Wisteria::UI
 

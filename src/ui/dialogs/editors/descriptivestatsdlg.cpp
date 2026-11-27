@@ -21,11 +21,11 @@ namespace Wisteria::UI
                                              const wxSize& size, const long style)
         : DialogWithHelp(parent, id, caption, pos, size, style), m_reportBuilder(reportBuilder),
           m_analysis(std::make_unique<Analyses::DescriptiveStatistics>(analysis)),
-          m_columns(analysis.GetColumns()), m_outputName(analysis.GetName()),
-          m_includeN(analysis.m_includeN), m_includeMissing(analysis.m_includeMissing),
-          m_includeMean(analysis.m_includeMean), m_includeStdDev(analysis.m_includeStdDev),
-          m_includeMin(analysis.m_includeMin), m_includeQuartiles(analysis.m_includeQuartiles),
-          m_includeMax(analysis.m_includeMax)
+          m_columns(analysis.GetColumns()), m_groupColumn(analysis.GetGroupColumn()),
+          m_outputName(analysis.GetName()), m_includeN(analysis.m_includeN),
+          m_includeMissing(analysis.m_includeMissing), m_includeMean(analysis.m_includeMean),
+          m_includeStdDev(analysis.m_includeStdDev), m_includeMin(analysis.m_includeMin),
+          m_includeQuartiles(analysis.m_includeQuartiles), m_includeMax(analysis.m_includeMax)
         {
         // a new analysis starts on the first dataset, but an existing analysis whose
         // dataset is gone starts with no dataset selected
@@ -43,13 +43,6 @@ namespace Wisteria::UI
             }
 
         CreateControls();
-        FillGroupChoices();
-        // preselect the group column (if any)
-        if (!analysis.GetGroupColumn().empty())
-            {
-            const int groupIndex = m_groupChoice->FindString(analysis.GetGroupColumn());
-            m_groupIndex = (groupIndex != wxNOT_FOUND) ? groupIndex : 0;
-            }
         if (const auto dataset = GetSelectedDataset(); dataset != nullptr)
             {
             // drop the columns that are no longer continuous columns in the dataset
@@ -59,6 +52,15 @@ namespace Wisteria::UI
                               return dataset->GetContinuousColumn(column) ==
                                      dataset->GetContinuousColumns().cend();
                           });
+            if (!m_groupColumn.empty() && dataset->GetCategoricalColumn(m_groupColumn) ==
+                                              dataset->GetCategoricalColumns().cend())
+                {
+                m_groupColumn.clear();
+                }
+            }
+        else
+            {
+            m_groupColumn.clear();
             }
         UpdateColumnsLabel();
 
@@ -74,7 +76,7 @@ namespace Wisteria::UI
         {
         auto* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-        // dataset and group selectors
+        // dataset selector
         auto* choicesSizer = new wxFlexGridSizer(
             2, wxSize{ wxSizerFlags::GetDefaultBorder() * 2, wxSizerFlags::GetDefaultBorder() });
         choicesSizer->AddGrowableCol(1, 1);
@@ -88,25 +90,27 @@ namespace Wisteria::UI
             m_datasetChoice->Append(name);
             }
         choicesSizer->Add(m_datasetChoice, wxSizerFlags{}.Expand());
-
-        choicesSizer->Add(new wxStaticText(this, wxID_ANY, _(L"Group by:")),
-                          wxSizerFlags{}.CenterVertical());
-        m_groupChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr,
-                                     0, wxGenericValidator(&m_groupIndex));
-        choicesSizer->Add(m_groupChoice, wxSizerFlags{}.Expand());
         mainSizer->Add(choicesSizer, wxSizerFlags{}.Expand().Border());
 
-        // column selection
+        // column and group selection
         auto* colButton = new wxButton(this, wxID_ANY, _(L"Select Columns..."));
         mainSizer->Add(colButton, wxSizerFlags{}.Border(wxLEFT | wxRIGHT));
-        auto* columnsSizer = new wxBoxSizer(wxHORIZONTAL);
-        auto* columnsHeader = new wxStaticText(this, wxID_ANY, _(L"Columns:"));
-        columnsHeader->SetFont(columnsHeader->GetFont().Bold());
-        columnsSizer->Add(columnsHeader, wxSizerFlags{}.Border(wxRIGHT));
-        m_columnsLabel = new wxStaticText(this, wxID_ANY, wxString{});
-        m_columnsLabel->SetForegroundColour(wxColour{ 0, 102, 204 });
-        columnsSizer->Add(m_columnsLabel, wxSizerFlags{ 1 });
-        mainSizer->Add(columnsSizer, wxSizerFlags{}.Expand().Border());
+        auto* varsSizer = new wxFlexGridSizer(
+            2, wxSize{ wxSizerFlags::GetDefaultBorder(), wxSizerFlags::GetDefaultBorder() });
+        varsSizer->AddGrowableCol(1, 1);
+        const auto addVarLabel = [this, varsSizer](const wxString& header)
+        {
+            auto* headerLabel = new wxStaticText(this, wxID_ANY, header);
+            headerLabel->SetFont(headerLabel->GetFont().Bold());
+            varsSizer->Add(headerLabel);
+            auto* valueLabel = new wxStaticText(this, wxID_ANY, wxString{});
+            valueLabel->SetForegroundColour(wxColour{ 0, 102, 204 });
+            varsSizer->Add(valueLabel, wxSizerFlags{ 1 });
+            return valueLabel;
+        };
+        m_columnsLabel = addVarLabel(_(L"Columns:"));
+        m_groupLabel = addVarLabel(_(L"Group by:"));
+        mainSizer->Add(varsSizer, wxSizerFlags{}.Expand().Border());
 
         // statistics to include
         auto* statsBox = new wxStaticBoxSizer(wxVERTICAL, this, _(L"Statistics"));
@@ -165,27 +169,11 @@ namespace Wisteria::UI
         }
 
     //-------------------------------------------
-    void DescriptiveStatsDlg::FillGroupChoices()
-        {
-        m_groupChoice->Clear();
-        m_groupChoice->Append(_(L"(none)"));
-        if (const auto dataset = GetSelectedDataset(); dataset != nullptr)
-            {
-            for (const auto& column : dataset->GetCategoricalColumns())
-                {
-                m_groupChoice->Append(column.GetName());
-                }
-            }
-        m_groupIndex = 0;
-        m_groupChoice->GetValidator()->TransferToWindow();
-        }
-
-    //-------------------------------------------
     void DescriptiveStatsDlg::OnDatasetChanged()
         {
         m_datasetChoice->GetValidator()->TransferFromWindow();
-        FillGroupChoices();
         m_columns.clear();
+        m_groupColumn.clear();
         UpdateColumnsLabel();
         }
 
@@ -206,19 +194,35 @@ namespace Wisteria::UI
             columnInfo.emplace_back(column.GetName(), Data::Dataset::ColumnImportType::Numeric,
                                     wxString{});
             }
+        for (const auto& column : dataset->GetCategoricalColumns())
+            {
+            columnInfo.emplace_back(column.GetName(), Data::Dataset::ColumnImportType::String,
+                                    wxString{});
+            }
 
         using VLI = VariableSelectDlg::VariableListInfo;
-        VariableSelectDlg dlg(this, columnInfo,
-                              { VLI{}
-                                    .Label(_(L"Columns"))
-                                    .Required(true)
-                                    .AcceptedTypes({ Data::Dataset::ColumnImportType::Numeric })
-                                    .DefaultVariables(m_columns) });
+        VariableSelectDlg dlg(
+            this, columnInfo,
+            { VLI{}
+                  .Label(_(L"Columns"))
+                  .Required(true)
+                  .AcceptedTypes({ Data::Dataset::ColumnImportType::Numeric })
+                  .DefaultVariables(m_columns),
+              VLI{}
+                  .Label(_(L"Group by"))
+                  .SingleSelection(true)
+                  .Required(false)
+                  .AcceptedTypes({ Data::Dataset::ColumnImportType::String })
+                  .DefaultVariables(m_groupColumn.empty() ?
+                                        std::vector<wxString>{} :
+                                        std::vector<wxString>{ m_groupColumn }) });
         if (dlg.ShowModal() != wxID_OK)
             {
             return;
             }
         m_columns = dlg.GetSelectedVariables(0);
+        const auto groupVars = dlg.GetSelectedVariables(1);
+        m_groupColumn = groupVars.empty() ? wxString{} : groupVars.front();
         UpdateColumnsLabel();
         }
 
@@ -236,6 +240,7 @@ namespace Wisteria::UI
             }
         m_columnsLabel->SetLabel(columnsStr);
         m_columnsLabel->Wrap(FromDIP(400));
+        m_groupLabel->SetLabel(m_groupColumn.empty() ? _(L"(none)") : m_groupColumn);
         Layout();
         }
 
@@ -297,8 +302,7 @@ namespace Wisteria::UI
             analysis->SetSourceDatasetName(m_datasetNames[m_datasetIndex]);
             }
         analysis->SetColumns(m_columns);
-        analysis->SetGroupColumn((m_groupIndex > 0) ? m_groupChoice->GetString(m_groupIndex) :
-                                                      wxString{});
+        analysis->SetGroupColumn(m_groupColumn);
         analysis->m_includeN = m_includeN;
         analysis->m_includeMissing = m_includeMissing;
         analysis->m_includeMean = m_includeMean;
