@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6b4fa0"/>
+      <stop offset="100%" stop-color="#3a7bd5"/>
+    </linearGradient>
+    <linearGradient id="lensGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#cfe0f7" stop-opacity="0.9"/>
+    </linearGradient>
+    <linearGradient id="handleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8a8a8a"/>
+      <stop offset="100%" stop-color="#484848"/>
+    </linearGradient>
+  </defs>
+  <!-- Results table -->
+  <rect x="16" y="24" width="184" height="168" rx="12" fill="#fafafa" stroke="#6b6b6b" stroke-width="8"/>
+  <!-- Header row -->
+  <path d="M20 36 a8 8 0 0 1 8 -8 h160 a8 8 0 0 1 8 8 v28 h-176 z" fill="url(#headerGrad)"/>
+  <!-- Row lines -->
+  <line x1="20" y1="100" x2="196" y2="100" stroke="#b5b5b5" stroke-width="6"/>
+  <line x1="20" y1="136" x2="196" y2="136" stroke="#b5b5b5" stroke-width="6"/>
+  <!-- Column line -->
+  <line x1="76" y1="64" x2="76" y2="188" stroke="#b5b5b5" stroke-width="6"/>
+  <!-- Values -->
+  <line x1="92" y1="82" x2="136" y2="82" stroke="#3a7bd5" stroke-width="10" stroke-linecap="round"/>
+  <line x1="92" y1="118" x2="124" y2="118" stroke="#3a7bd5" stroke-width="10" stroke-linecap="round"/>
+  <!-- Magnifying glass handle -->
+  <line x1="200" y1="200" x2="236" y2="236" stroke="url(#handleGrad)" stroke-width="22" stroke-linecap="round"/>
+  <!-- Magnifying glass lens -->
+  <circle cx="164" cy="164" r="50" fill="url(#lensGrad)" stroke="url(#handleGrad)" stroke-width="14"/>
+  <!-- Bars seen through the lens -->
+  <rect x="138" y="164" width="14" height="26" rx="3" fill="#6b4fa0"/>
+  <rect x="157" y="146" width="14" height="44" rx="3" fill="#5065b8"/>
+  <rect x="176" y="156" width="14" height="34" rx="3" fill="#3a7bd5"/>
+</svg>
